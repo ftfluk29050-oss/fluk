@@ -175,13 +175,14 @@ body[data-page="home"] footer,body[data-page="menu"] footer{display:none}
 
 
 /* Ambient light + butterflies */
+body:not([data-page="home"]) #fx{display:none}
 #fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:25}
 .cover-art::before{content:"";position:absolute;left:50%;top:44%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.55) 0deg 5deg,transparent 5deg 16deg);-webkit-mask-image:radial-gradient(closest-side,#000 18%,transparent 72%);mask-image:radial-gradient(closest-side,#000 18%,transparent 72%);animation:rays 70s linear infinite;pointer-events:none}
 .cover-art::after{content:"";position:absolute;z-index:2;mix-blend-mode:screen;left:50%;top:30%;width:80%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,255,255,.7),rgba(255,255,255,.2) 45%,transparent 75%);animation:glow 5s ease-in-out infinite;pointer-events:none}
 .cover-art img{position:relative;z-index:1}
 @keyframes rays{to{transform:translate(-50%,-50%) rotate(360deg)}}
 @keyframes glow{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
-.banner .shine{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.16) 45%,rgba(255,255,255,.32) 50%,rgba(255,255,255,.16) 55%,transparent 65%);background-size:250% 100%;animation:sheen 7s ease-in-out infinite}
+.banner .shine{display:none;position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.16) 45%,rgba(255,255,255,.32) 50%,rgba(255,255,255,.16) 55%,transparent 65%);background-size:250% 100%;animation:sheen 7s ease-in-out infinite}
 @keyframes sheen{0%{background-position:130% 0}60%,100%{background-position:-30% 0}}
 
 /* Main */
@@ -593,6 +594,7 @@ function route(h){
   else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
   else{showPage('home');setSel(null)}
   scrollTo(0,0);
+  if(window.fxWake)window.fxWake();
 }
 function go(h){const before=location.hash;try{location.hash=h}catch(e){}if(location.hash!=='#'+h||before==='#'+h)route(h)}
 window.addEventListener('hashchange',()=>route());
@@ -677,9 +679,10 @@ document.addEventListener('keydown',e=>{if(lb.hidden){if(pf&&!e.target.closest('
     else{ctx.beginPath();ctx.arc(x,y,m.r,0,6.28);ctx.fill()}
     ctx.restore();
   }
-  let last=performance.now(),run=true;
+  let last=performance.now(),run=false;
+  const active=()=>!document.hidden&&document.body.dataset.page==='home';
   function step(now){
-    if(!run)return;const dt=Math.min(.05,(now-last)/1000);last=now;const t=now/1000;
+    if(!active()){run=false;ctx.clearRect(0,0,W,H);return}const dt=Math.min(.05,(now-last)/1000);last=now;const t=now/1000;
     ctx.clearRect(0,0,W,H);
     for(const m of motes){if(!reduce){m.x+=m.vx*dt;m.y+=m.vy*dt+Math.sin(t*.7+m.ph)*.0004;if(m.y<-.03){m.y=1.03;m.x=R(0,1)}if(m.x<-.03)m.x=1.03;if(m.x>1.03)m.x=-.03}drawMote(m,t)}
     for(const b of bs){
@@ -693,8 +696,8 @@ document.addEventListener('keydown',e=>{if(lb.hidden){if(pf&&!e.target.closest('
     }
     requestAnimationFrame(step);
   }
-  document.addEventListener('visibilitychange',()=>{run=!document.hidden;if(run){last=performance.now();requestAnimationFrame(step)}});
-  requestAnimationFrame(step);
+  window.fxWake=function(){if(!run&&active()){run=true;last=performance.now();requestAnimationFrame(step)}};
+  document.addEventListener('visibilitychange',window.fxWake);
 })();
 route();
 </script>
