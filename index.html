@@ -109,6 +109,30 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .dcard[aria-selected="true"][data-d="work"]{border-color:var(--work);box-shadow:0 0 0 3px color-mix(in srgb,var(--work) 22%,transparent),var(--shadow)}
 .dcard[aria-selected="true"]::after{content:"กำลังดู";position:absolute;top:16px;right:16px;font-size:12px;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
 
+
+/* Mascot cards */
+:root{--glow:rgba(255,255,255,.75);--st-self:linear-gradient(165deg,#eef1ff,#cdd7ff);--st-work:linear-gradient(165deg,#fff0f2,#ffcdd4);--st-book:linear-gradient(165deg,#fff8e6,#f3dca0)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--st-self:linear-gradient(165deg,#1d2a66,#2b3f9e);--st-work:linear-gradient(165deg,#4a1623,#7a2334);--st-book:linear-gradient(165deg,#3b3014,#6b5320);--glow:rgba(255,255,255,.28)}}
+:root[data-theme="dark"]{--st-self:linear-gradient(165deg,#1d2a66,#2b3f9e);--st-work:linear-gradient(165deg,#4a1623,#7a2334);--st-book:linear-gradient(165deg,#3b3014,#6b5320);--glow:rgba(255,255,255,.28)}
+.dcard{grid-template-columns:minmax(0,1fr);padding:0;gap:0}
+.stagebg{position:relative;height:176px;display:flex;justify-content:center;align-items:flex-end;overflow:hidden}
+.stagebg::before{content:"";position:absolute;inset:0;background-image:var(--pattern);opacity:.18}
+.stagebg::after{content:"";position:absolute;left:50%;bottom:-40px;width:240px;height:200px;transform:translateX(-50%);background:radial-gradient(closest-side,var(--glow),transparent);pointer-events:none}
+.dcard[data-d="self"] .stagebg{background:var(--st-self)}
+.dcard[data-d="work"] .stagebg{background:var(--st-work)}
+.dcard[data-d="book"] .stagebg{background:var(--st-book)}
+.mascot{position:relative;z-index:1;height:166px;width:auto;margin-bottom:2px;transition:transform .35s cubic-bezier(.34,1.56,.64,1)}
+.dcard:hover .mascot{transform:translateY(-6px) rotate(-2deg)}
+.dcard[aria-selected="true"] .mascot{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.dtext{padding:18px 22px 0;display:block}
+.dcard .meta{margin:14px 22px 20px}
+.dcard[aria-selected="true"]::after{z-index:2;background:rgba(255,255,255,.92);color:#0b1437;font-weight:500}
+.banner .b-mascot{position:absolute;right:26px;bottom:0;height:calc(100% - 18px);max-height:250px;width:auto;z-index:1;filter:drop-shadow(0 12px 18px rgba(0,0,0,.35))}
+.banner{min-height:250px}
+.banner::after{right:230px}
+.banner h2{max-width:min(14em,calc(100% - 210px))}
+
 /* Main */
 .main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:48px 80px}
 .side{min-width:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + 86px);align-self:start}
@@ -257,7 +281,14 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
   .wrap{padding-inline:16px}
   .brand-text{display:none}
   .domains{grid-template-columns:1fr;gap:12px}
-  .dcard{padding:20px}.dcard h2{font-size:21px}
+  .dcard{padding:0;grid-template-columns:112px minmax(0,1fr)}.dcard h2{font-size:20px}
+  .stagebg{height:auto;grid-row:1/3;align-self:stretch}.mascot{height:122px;margin-inline:-6px}
+  .stagebg::after{width:140px;height:140px;bottom:-30px}
+  .dtext{padding:16px 16px 0}.dcard p{font-size:13.5px}
+  .dcard .meta{grid-column:2;margin:10px 16px 16px;padding-top:10px;gap:4px 12px;font-size:12.5px}.dcard .meta b{font-size:16px}
+  .dcard[aria-selected="true"]::after{top:10px;right:auto;left:10px;font-size:11px;padding:1px 8px}
+  .banner .b-mascot{height:120px;right:6px}.banner{min-height:0}.banner::after{display:none}
+  .banner h2{max-width:none;padding-right:78px}.banner .facts{padding-right:96px;gap:4px 18px}
   .banner{padding:26px 22px 24px;border-radius:20px}.banner::after{font-size:96px;bottom:auto;top:14px;right:14px;-webkit-text-stroke-width:1px}.banner h2{padding-right:70px}.jl{display:none}.jump{gap:6px}.jump a{padding:4px 12px}
   .ind{border-radius:16px}
   .ind-toggle{grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;padding:18px}
@@ -361,9 +392,9 @@ const pad=n=>String(n).padStart(2,'0');
 function countImgs(n){return DATA[n].reduce((a,s)=>a+s.blocks.filter(b=>b.img).length,0)}
 function domStats(d){let f=0,i=0,p=0;for(const n in FOLDERS)if(FOLDERS[n].d===d){f++;i+=DATA[n].length;p+=countImgs(n)}return{f,i,p}}
 document.getElementById('domains').innerHTML=['self','work'].map((d,x)=>{const s=domStats(d);
-  return `<button class="dcard" role="tab" data-d="${d}"><span class="ico">${ICON[d]}</span><span><small>ด้านที่ ${x+1}</small><h2>${DNAME[d]}</h2><p>${DDESC[d]}</p></span>
+  return `<button class="dcard" role="tab" data-d="${d}"><span class="stagebg"><img class="mascot" src="img/mascot-${d}.png" alt="" loading="lazy"></span><span class="dtext"><small>ด้านที่ ${x+1}</small><h2>${DNAME[d]}</h2><p>${DDESC[d]}</p></span>
   <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('')
-  +`<button class="dcard" role="tab" data-d="book"><span class="ico">${ICO_BOOK}</span><span><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
+  +`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
   <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`;
 
 function renderSide(d){
@@ -375,7 +406,7 @@ function plain(h){const t=document.createElement('div');t.innerHTML=h;return t.t
 function isDesc(s,b){const fi=s.blocks.findIndex(x=>x.img);if(fi<0)return true;const tb=s.blocks.slice(0,fi).filter(x=>x.html);return !(tb.length>=2&&b===tb[tb.length-1]&&plain(b.html).length<90)}
 function renderView(n){
   const f=FOLDERS[n],secs=DATA[n];
-  let html=`<div class="fade"><div class="banner" data-num="${pad(f.k)}">
+  let html=`<div class="fade"><div class="banner" data-num="${pad(f.k)}"><img class="b-mascot" src="img/mascot-${f.d}.png" alt="">
     <div class="kick"><span class="g">${DNAME[f.d]}</span><span>แฟ้มที่ ${n}</span></div>
     <h2><small>องค์ประกอบที่ ${f.k}</small>${f.name}</h2>
     <div class="facts"><span><b>${secs.length}</b>ตัวชี้วัด</span><span><b>${countImgs(n)}</b>ภาพร่องรอยหลักฐาน</span></div></div>
@@ -415,7 +446,7 @@ function openBook(scroll){
   killBook();current=0;document.body.dataset.domain='book';
   document.querySelectorAll('.seg button,.dcard').forEach(t=>t.setAttribute('aria-selected',t.dataset.d==='book'));
   const pages=Array.from({length:BOOK_PAGES},(_,i)=>`<div class="page"${i===0||i===BOOK_PAGES-1?' data-density="hard"':''}><img data-src="${bsrc(i)}" alt="รูปเล่มรายงาน หน้า ${i+1}"></div>`).join('');
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner" data-num="03">
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner" data-num="03"><img class="b-mascot" src="img/mascot-book.png" alt="">
     <div class="kick"><span class="g">หัวข้อที่ 3</span><span>E-book · ${BOOK_PAGES} หน้า</span></div>
     <h2><small>รูปเล่มรายงานผลการปฏิบัติงาน</small>การเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</h2>
     <div class="facts"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวดในสารบัญ</span></div></div>
