@@ -173,6 +173,17 @@ body[data-page="home"] footer,body[data-page="menu"] footer{display:none}
 @media (max-width:1000px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.fgrid{grid-template-columns:1fr}.menu-head{margin:14px auto 20px}.crumbs{font-size:13px;padding-top:16px}.crumbs .back{padding:5px 12px 5px 8px}}
 
+
+/* Ambient light + butterflies */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:25}
+.cover-art::before{content:"";position:absolute;left:50%;top:44%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.55) 0deg 5deg,transparent 5deg 16deg);-webkit-mask-image:radial-gradient(closest-side,#000 18%,transparent 72%);mask-image:radial-gradient(closest-side,#000 18%,transparent 72%);animation:rays 70s linear infinite;pointer-events:none}
+.cover-art::after{content:"";position:absolute;z-index:2;mix-blend-mode:screen;left:50%;top:30%;width:80%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(closest-side,rgba(255,255,255,.7),rgba(255,255,255,.2) 45%,transparent 75%);animation:glow 5s ease-in-out infinite;pointer-events:none}
+.cover-art img{position:relative;z-index:1}
+@keyframes rays{to{transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes glow{0%,100%{opacity:.75;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.banner .shine{position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.16) 45%,rgba(255,255,255,.32) 50%,rgba(255,255,255,.16) 55%,transparent 65%);background-size:250% 100%;animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%{background-position:130% 0}60%,100%{background-position:-30% 0}}
+
 /* Main */
 .main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:18px 64px}
 .main.full{grid-template-columns:minmax(0,1fr)}
@@ -366,6 +377,8 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
   </div>
 </div></div>
 
+<canvas id="fx" aria-hidden="true"></canvas>
+
 <header class="cover screen" data-page="home" id="top">
   <div class="cover-in">
     <div class="cover-text">
@@ -459,7 +472,7 @@ function plain(h){const t=document.createElement('div');t.innerHTML=h;return t.t
 function isDesc(s,b){const fi=s.blocks.findIndex(x=>x.img);if(fi<0)return true;const tb=s.blocks.slice(0,fi).filter(x=>x.html);return !(tb.length>=2&&b===tb[tb.length-1]&&plain(b.html).length<90)}
 function renderView(n){
   const f=FOLDERS[n],secs=DATA[n];
-  let html=`<div class="fade"><div class="banner" data-num="${pad(f.k)}"><img class="b-mascot" src="img/mascot-${f.d}.png" alt="">
+  let html=`<div class="fade"><div class="banner" data-num="${pad(f.k)}"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-${f.d}.png" alt="">
     <div class="kick"><span class="g">${DNAME[f.d]}</span><span>แฟ้มที่ ${n}</span></div>
     <h2><small>องค์ประกอบที่ ${f.k}</small>${f.name}</h2>
     <div class="facts"><span><b>${secs.length}</b>ตัวชี้วัด</span><span><b>${countImgs(n)}</b>ภาพร่องรอยหลักฐาน</span></div></div>
@@ -500,7 +513,7 @@ function openBook(){
   document.getElementById('main').classList.add('full');
   crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],['รูปเล่มรายงาน']]);
   const pages=Array.from({length:BOOK_PAGES},(_,i)=>`<div class="page"${i===0||i===BOOK_PAGES-1?' data-density="hard"':''}><img data-src="${bsrc(i)}" alt="รูปเล่มรายงาน หน้า ${i+1}"></div>`).join('');
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner" data-num="03"><img class="b-mascot" src="img/mascot-book.png" alt="">
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner" data-num="03"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-book.png" alt="">
     <div class="kick"><span class="g">หัวข้อที่ 3</span><span>E-book · ${BOOK_PAGES} หน้า</span></div>
     <h2><small>รูปเล่มรายงานผลการปฏิบัติงาน</small>การเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</h2>
     <div class="facts"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวดในสารบัญ</span></div></div>
@@ -555,7 +568,7 @@ function showDomain(d){
   const s=domStats(d),x=d==='self'?1:2,ids=Object.keys(FOLDERS).filter(n=>FOLDERS[n].d===d);
   crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],[DNAME[d]]]);
   const nxt=d==='self'?['work','ด้านที่ 2 →',DNAME.work]:['book','หัวข้อที่ 3 →','รูปเล่มรายงาน'];
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="${pad(x)}"><img class="b-mascot" src="img/mascot-${d}.png" alt="">
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="${pad(x)}"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-${d}.png" alt="">
     <div class="kick"><span class="g">ด้านที่ ${x}</span><span>การประเมินครั้งที่ 3</span></div>
     <h2><small>การประเมินด้านที่ ${x}</small>${DNAME[d]}</h2>
     <div class="facts"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></div></div>
@@ -612,6 +625,76 @@ document.addEventListener('keydown',e=>{if(lb.hidden){if(pf&&!e.target.closest('
   function apply(){root.dataset.theme=theme;sun.classList.toggle('off',theme!=='light');moon.classList.toggle('off',theme!=='dark')}
   apply();
   document.getElementById('theme-switch').addEventListener('click',()=>{theme=theme==='light'?'dark':'light';try{localStorage.setItem('theme',theme)}catch(e){}apply()});
+})();
+
+/* ---------- ambient FX: white light + butterflies ---------- */
+(function(){
+  const cv=document.getElementById('fx');if(!cv||!cv.getContext)return;
+  const ctx=cv.getContext('2d');
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,dpr=1;
+  function size(){dpr=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+  size();addEventListener('resize',size);
+  const R=(a,b)=>a+Math.random()*(b-a);
+  const PAL=[['#fff6d6','#ffc94a','#e39b1b'],['#ffe3f1','#ff8fc4','#e0569b'],['#e3f4ff','#7cc6f5','#3a8fd0'],['#ffffff','#f2f4ff','#c9a24a'],['#f1e8ff','#b89cff','#7d5ce0'],['#fff0e0','#ffab5e','#e0742a']];
+  // light motes
+  const motes=Array.from({length:46},()=>({x:R(0,1),y:R(0,1),r:R(1.2,3.6),vx:R(-.012,.012),vy:R(-.03,-.008),ph:R(0,6.28),sp:R(.6,1.6),star:Math.random()<.35}));
+  // butterflies
+  function makeB(){const pal=PAL[Math.floor(Math.random()*PAL.length)];
+    return {x:R(0,W),y:R(0,H),a:R(0,6.28),v:R(40,72),s:R(15,24),ph:R(0,6.28),fl:R(9,14),seed:R(0,100),turn:R(.5,1.2),pal}}
+  let bs=[];function count(){return W<640?5:8}
+  function ensure(){while(bs.length<count())bs.push(makeB());bs.length=count()}
+  ensure();addEventListener('resize',ensure);
+  function wing(x,y,w,h,rot,flip,c){
+    ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.scale(flip,1);
+    const g=ctx.createRadialGradient(w*.25,-h*.1,1,w*.4,-h*.2,Math.max(w,h));g.addColorStop(0,c[0]);g.addColorStop(.55,c[1]);g.addColorStop(1,c[2]);
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(w*.2,-h*1.1,w*1.15,-h*1.05,w,-h*.2);ctx.bezierCurveTo(w*.95,h*.25,w*.35,h*.2,0,0);ctx.fill();
+    ctx.lineWidth=.8;ctx.strokeStyle='rgba(60,40,20,.35)';ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.85)';ctx.beginPath();ctx.arc(w*.62,-h*.55,w*.09,0,6.28);ctx.fill();
+    ctx.restore();
+  }
+  function lower(x,y,w,h,flip,c){
+    ctx.save();ctx.translate(x,y);ctx.scale(flip,1);
+    ctx.fillStyle=c[1];ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(w*.9,h*.1,w*.85,h*.95,w*.25,h*.8);ctx.bezierCurveTo(w*.05,h*.7,0,h*.3,0,0);ctx.fill();
+    ctx.lineWidth=.8;ctx.strokeStyle='rgba(60,40,20,.3)';ctx.stroke();ctx.restore();
+  }
+  function drawB(b){
+    const open=.32+.68*Math.abs(Math.cos(b.ph));const s=b.s;
+    ctx.save();ctx.translate(b.x,b.y+Math.sin(b.ph*.5)*2);ctx.rotate(b.a+Math.PI/2);
+    ctx.shadowColor='rgba(255,255,255,.9)';ctx.shadowBlur=10;
+    ctx.save();ctx.scale(open,1);
+    wing(0,-s*.05,s,s*.9,0,1,b.pal);wing(0,-s*.05,s,s*.9,0,-1,b.pal);
+    lower(0,s*.05,s*.75,s*.75,1,b.pal);lower(0,s*.05,s*.75,s*.75,-1,b.pal);
+    ctx.restore();ctx.shadowBlur=0;
+    ctx.fillStyle='#3a2a1a';ctx.beginPath();ctx.ellipse(0,s*.1,s*.09,s*.55,0,0,6.28);ctx.fill();
+    ctx.strokeStyle='#3a2a1a';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,-s*.4);ctx.quadraticCurveTo(-s*.15,-s*.8,-s*.3,-s*.9);ctx.moveTo(0,-s*.4);ctx.quadraticCurveTo(s*.15,-s*.8,s*.3,-s*.9);ctx.stroke();
+    ctx.restore();
+  }
+  function drawMote(m,t){
+    const x=m.x*W,y=m.y*H,tw=.45+.55*Math.abs(Math.sin(t*m.sp+m.ph));
+    ctx.save();ctx.globalAlpha=tw;ctx.shadowColor='rgba(255,214,120,.95)';ctx.shadowBlur=m.r*5;ctx.fillStyle='#fff';
+    if(m.star){const r=m.r*2.4;ctx.beginPath();ctx.moveTo(x,y-r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.quadraticCurveTo(x,y,x,y+r);ctx.quadraticCurveTo(x,y,x-r,y);ctx.quadraticCurveTo(x,y,x,y-r);ctx.fill()}
+    else{ctx.beginPath();ctx.arc(x,y,m.r,0,6.28);ctx.fill()}
+    ctx.restore();
+  }
+  let last=performance.now(),run=true;
+  function step(now){
+    if(!run)return;const dt=Math.min(.05,(now-last)/1000);last=now;const t=now/1000;
+    ctx.clearRect(0,0,W,H);
+    for(const m of motes){if(!reduce){m.x+=m.vx*dt;m.y+=m.vy*dt+Math.sin(t*.7+m.ph)*.0004;if(m.y<-.03){m.y=1.03;m.x=R(0,1)}if(m.x<-.03)m.x=1.03;if(m.x>1.03)m.x=-.03}drawMote(m,t)}
+    for(const b of bs){
+      if(!reduce){
+        b.a+=Math.sin(t*b.turn+b.seed)*1.6*dt+Math.sin(t*2.3+b.seed*2)*.8*dt;
+        const m=60;// steer back inside
+        if(b.x<m)b.a+=(0-b.a%6.283)*.0;if(b.x<-m||b.x>W+m||b.y<-m||b.y>H+m){const tx=W/2-b.x,ty=H/2-b.y,ta=Math.atan2(ty,tx);let d=ta-b.a;d=Math.atan2(Math.sin(d),Math.cos(d));b.a+=d*2*dt}
+        b.x+=Math.cos(b.a)*b.v*dt;b.y+=Math.sin(b.a)*b.v*dt;b.ph+=b.fl*dt;
+      }
+      drawB(b);
+    }
+    requestAnimationFrame(step);
+  }
+  document.addEventListener('visibilitychange',()=>{run=!document.hidden;if(run){last=performance.now();requestAnimationFrame(step)}});
+  requestAnimationFrame(step);
 })();
 route();
 </script>
