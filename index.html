@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
 <style>
-/* Layout: 16:9 cover from the Canva design, then ceremonial navy with gold Thai prajam-yam pattern, overlapping domain cards, sticky folder index, bold banner header per folder, indicator cards */
+/* Layout: separate screens (home cover 16:9 / topic menu / domain / folder / e-book) routed by #hash; ceremonial navy with gold Thai prajam-yam pattern, overlapping domain cards, sticky folder index, bold banner header per folder, indicator cards */
 :root{
   --bg:#f2f4f9; --surface:#ffffff; --surface-2:#eef1f8; --fg:#0f1530; --muted:#5b6380; --faint:#9aa1b8; --line:#e2e6f0;
   --navy:#0b1437; --navy-2:#1a2a6c; --gold:#d4a940; --gold-hi:#f3dd9a; --gold-ink:#9a7418;
@@ -91,7 +91,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cover-art img{height:100%;max-height:100%;width:auto;max-width:100%;object-fit:contain;object-position:bottom;display:block;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%);mask-composite:intersect;mix-blend-mode:multiply}
 
 /* Domain cards overlapping hero */
-.domains{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px;scroll-margin-top:80px}
+.domains{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .dcard{position:relative;overflow:hidden;text-align:left;border-radius:20px;padding:24px 22px 20px;align-content:start;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;transition:transform .2s,box-shadow .2s,border-color .2s}
 .dcard:hover{transform:translateY(-3px)}
 .dcard .ico{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;color:#fff}
@@ -133,8 +133,50 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .banner::after{right:230px}
 .banner h2{max-width:min(14em,calc(100% - 210px))}
 
+
+/* Screens & navigation */
+.screen{animation:fade .35s ease both}
+body[data-page="home"] footer,body[data-page="menu"] footer{display:none}
+.banner.compact{min-height:0;padding-block:28px 26px}
+.banner.compact .b-mascot{max-height:210px}
+.banner.compact h2{margin-top:10px}
+.banner.compact .facts{margin-top:14px}
+.brand{text-align:left;cursor:pointer;border-radius:12px;padding:2px 6px 2px 0}
+.brand:hover .brand-text b{color:var(--gold-hi)}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:14px;color:var(--muted);padding-top:22px}
+.crumbs button{color:var(--muted);padding:2px 4px;border-radius:6px}
+.crumbs button:hover{color:var(--accent)}
+.crumbs .sep{color:var(--faint)}
+.crumbs b{color:var(--fg);font-weight:500}
+.crumbs .back{display:inline-flex;align-items:center;gap:6px;padding:6px 14px 6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);margin-right:8px;box-shadow:var(--shadow)}
+.crumbs .back svg{width:16px;height:16px}
+.crumbs .back:hover{border-color:var(--accent)}
+.menu-page{box-sizing:border-box;min-height:calc(100vh - 63px);min-height:calc(100svh - 63px);background:radial-gradient(60% 50% at 50% 0%,color-mix(in srgb,var(--gold) 14%,transparent),transparent 70%),var(--bg);position:relative;padding-bottom:56px}
+.menu-page::before{content:"";position:absolute;inset:0;background-image:var(--pattern);opacity:.08;pointer-events:none}
+.menu-page .wrap{position:relative}
+.menu-head{text-align:center;max-width:760px;margin:22px auto 30px}
+.menu-head .chip{color:#0b1437}
+.menu-head h1{font-weight:600;font-size:clamp(28px,3.4vw,44px);line-height:1.3;margin-top:14px}
+.menu-head p{margin:8px 0 0;color:var(--muted);font-size:15.5px}
+.sec-title{display:flex;align-items:center;gap:12px;margin:22px 0 14px;font-family:var(--f-head);font-weight:500;font-size:19px}
+.sec-title::after{content:"";flex:1;height:1px;background:var(--line)}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.fcard{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:16px;align-items:center;text-align:left;padding:14px 16px 14px 14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
+.fcard:hover{transform:translateY(-3px);border-color:var(--accent)}
+.fcard img{width:78px;aspect-ratio:707/1000;object-fit:cover;border-radius:8px;display:block;background:var(--surface-2)}
+.fcard .fn{display:block;font-size:12.5px;color:var(--accent);letter-spacing:.04em;font-weight:500}
+.fcard h3{font-size:17px;font-weight:500;line-height:1.45;margin-top:2px}
+.fcard .fm{display:block;font-size:13px;color:var(--faint);margin-top:6px}
+.fcard .go{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--muted);transition:background .2s,color .2s}
+.fcard:hover .go{background:var(--grad);color:#fff}
+.fcard .go svg{width:17px;height:17px}
+@media (max-width:1000px){.fgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.fgrid{grid-template-columns:1fr}.menu-head{margin:14px auto 20px}.crumbs{font-size:13px;padding-top:16px}.crumbs .back{padding:5px 12px 5px 8px}}
+
 /* Main */
-.main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:48px 80px}
+.main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:18px 64px}
+.main.full{grid-template-columns:minmax(0,1fr)}
+.main.full .side{display:none}
 .side{min-width:0;position:sticky;top:calc(env(safe-area-inset-top,0px) + 86px);align-self:start}
 .side-title{font-family:var(--f-head);font-weight:500;font-size:13px;letter-spacing:.12em;color:var(--faint);margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .side-title::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -161,8 +203,8 @@ body[data-domain="work"] .banner{background:radial-gradient(70% 120% at 100% 0%,
 .banner .facts{display:flex;gap:26px;margin-top:22px;flex-wrap:wrap;font-size:14px;color:#d4d9f2}
 .banner .facts b{font-family:var(--f-head);font-size:26px;font-weight:600;color:#fff;margin-right:6px;font-variant-numeric:tabular-nums}
 .jump{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 6px}
-.jump a{text-decoration:none;font-size:14px;font-weight:500;padding:5px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-variant-numeric:tabular-nums;transition:all .15s}
-.jump a:hover{border-color:var(--accent);color:var(--accent)}
+.jump a,.jump button{text-decoration:none;font-size:14px;font-weight:500;padding:5px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);color:var(--muted);font-variant-numeric:tabular-nums;transition:all .15s}
+.jump a:hover,.jump button:hover{border-color:var(--accent);color:var(--accent)}
 
 /* Indicator cards */
 .ind{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:30px 32px;box-shadow:var(--shadow);scroll-margin-top:84px}
@@ -289,7 +331,7 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
   .dcard[aria-selected="true"]::after{top:10px;right:auto;left:10px;font-size:11px;padding:1px 8px}
   .banner .b-mascot{height:120px;right:6px}.banner{min-height:0}.banner::after{display:none}
   .banner h2{max-width:none;padding-right:78px}.banner .facts{padding-right:96px;gap:4px 18px}
-  .banner{padding:26px 22px 24px;border-radius:20px}.banner::after{font-size:96px;bottom:auto;top:14px;right:14px;-webkit-text-stroke-width:1px}.banner h2{padding-right:70px}.jl{display:none}.jump{gap:6px}.jump a{padding:4px 12px}
+  .banner{padding:26px 22px 24px;border-radius:20px}.banner::after{font-size:96px;bottom:auto;top:14px;right:14px;-webkit-text-stroke-width:1px}.banner h2{padding-right:70px}.jl{display:none}.jump{gap:6px}.jump a,.jump button{padding:4px 12px}
   .ind{border-radius:16px}
   .ind-toggle{grid-template-columns:minmax(0,1fr) auto;gap:10px 12px;padding:18px}
   .ind-toggle .no{grid-column:1/-1}
@@ -310,7 +352,7 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
 
 
 <div class="top"><div class="wrap">
-  <div class="brand"><img class="logo" src="img/logo.png" width="44" height="44" alt="โลโก้กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม"><div class="brand-text"><b>นายระพีพัฒน์ กลัดกันแสง</b><span>ครูผู้ช่วย · โรงเรียนวังหลวงพิทยาสรรพ์</span></div></div>
+  <button class="brand" data-nav="home" title="กลับหน้าแรก"><img class="logo" src="img/logo.png" width="44" height="44" alt="โลโก้กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม"><div class="brand-text"><b>นายระพีพัฒน์ กลัดกันแสง</b><span>ครูผู้ช่วย · โรงเรียนวังหลวงพิทยาสรรพ์</span></div></button>
   <div class="tools">
     <div class="seg" role="tablist" aria-label="ด้านการประเมิน">
       <button role="tab" data-d="self"><span class="lg">ด้านการ</span>ปฏิบัติตน</button>
@@ -324,7 +366,7 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
   </div>
 </div></div>
 
-<header class="cover" id="top">
+<header class="cover screen" data-page="home" id="top">
   <div class="cover-in">
     <div class="cover-text">
       <div class="badge-row"><span class="chip solid">ครั้งที่ ๓</span><span class="chip">ข้าราชการครูและบุคลากรทางการศึกษา</span></div>
@@ -333,23 +375,34 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
       <div class="rule" aria-hidden="true"><i></i><b></b><i></i></div>
       <div class="who"><b>นายระพีพัฒน์ กลัดกันแสง</b><span>ตำแหน่ง ครูผู้ช่วย · โรงเรียนวังหลวงพิทยาสรรพ์</span></div>
       <p class="org">สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาหนองคาย<br>สำนักงานคณะกรรมการการศึกษาขั้นพื้นฐาน กระทรวงศึกษาธิการ</p>
-      <button class="enter" data-enter>เปิดแฟ้มผลงาน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></button>
+      <button class="enter" data-nav="menu">เปิดแฟ้มผลงาน <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
     </div>
     <div class="cover-art"><img src="img/cover-art.jpg" alt="ภาพนายระพีพัฒน์ กลัดกันแสง ขณะปฏิบัติงาน พร้อมตราโรงเรียน"></div>
   </div>
 </header>
 
-<div class="wrap">
-  <div class="domains" role="tablist" aria-label="เลือกด้านการประเมิน" id="domains"></div>
-</div>
+<section class="screen menu-page" data-page="menu" hidden>
+  <div class="wrap">
+    <nav class="crumbs" aria-label="ตำแหน่งหน้า"><button class="back" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>ย้อนกลับ</button><button data-nav="home">หน้าแรก</button><span class="sep">›</span><b>เลือกหัวข้อ</b></nav>
+    <div class="menu-head">
+      <span class="chip solid">การประเมินครั้งที่ ๓</span>
+      <h1>เลือกหัวข้อที่ต้องการดู</h1>
+      <p>แฟ้มผลงานการประเมินการเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย · นายระพีพัฒน์ กลัดกันแสง</p>
+    </div>
+    <div class="domains" role="tablist" aria-label="เลือกหัวข้อ" id="domains"></div>
+  </div>
+</section>
 
-<div class="wrap main">
-  <aside class="side">
-    <div class="side-title" id="side-title">องค์ประกอบ</div>
-    <ul class="flist" id="flist"></ul>
-  </aside>
-  <section id="view" aria-live="polite"></section>
-</div>
+<section class="screen" data-page="content" hidden>
+  <div class="wrap"><nav class="crumbs" id="crumbs" aria-label="ตำแหน่งหน้า"></nav></div>
+  <div class="wrap main" id="main">
+    <aside class="side">
+      <div class="side-title" id="side-title">องค์ประกอบ</div>
+      <ul class="flist" id="flist"></ul>
+    </aside>
+    <section id="view" aria-live="polite"></section>
+  </div>
+</section>
 
 <footer><div class="wrap"><span class="f-brand"><img src="img/logo.png" width="40" height="40" alt="" aria-hidden="true"><span><b>นายระพีพัฒน์ กลัดกันแสง</b> · ครูผู้ช่วย โรงเรียนวังหลวงพิทยาสรรพ์</span></span><span>สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาหนองคาย · การประเมินครั้งที่ 3</span></div></footer>
 
@@ -411,7 +464,7 @@ function renderView(n){
     <h2><small>องค์ประกอบที่ ${f.k}</small>${f.name}</h2>
     <div class="facts"><span><b>${secs.length}</b>ตัวชี้วัด</span><span><b>${countImgs(n)}</b>ภาพร่องรอยหลักฐาน</span></div></div>
     <div class="tools-row"><span class="hint">${ICO_HAND}กดที่หัวข้อตัวชี้วัดเพื่อเปิดดูรายละเอียดและภาพหลักฐาน</span><button class="allbtn" data-all>เปิดทั้งหมด</button></div>
-    ${secs.length>1?`<nav class="jump" aria-label="ตัวชี้วัด">${secs.map((s,i)=>`<a href="#i${n}-${i}" data-jump="i${n}-${i}"><span class="jl">ตัวชี้วัด </span>${s.no}</a>`).join('')}</nav>`:''}`;
+    ${secs.length>1?`<nav class="jump" aria-label="ตัวชี้วัด">${secs.map((s,i)=>`<button data-jump="i${n}-${i}"><span class="jl">ตัวชี้วัด </span>${s.no}</button>`).join('')}</nav>`:''}`;
   lbList=[];
   secs.forEach((s,i)=>{
     const desc=[],ev=[];let seen=false,gal=[];
@@ -435,16 +488,17 @@ function renderView(n){
       </div></div></div></article>`;
   });
   const p=n>1?n-1:null,x=n<12?n+1:null;
-  html+=`<nav class="pager">${p?`<button data-go="${p}"><small>← แฟ้มที่ ${p}</small><span>${FOLDERS[p].name}</span></button>`:''}${x?`<button class="next" data-go="${x}"><small>แฟ้มที่ ${x} →</small><span>${FOLDERS[x].name}</span></button>`:''}</nav></div>`;
+  html+=`<nav class="pager">${p?`<button data-go="${p}"><small>← แฟ้มที่ ${p}</small><span>${FOLDERS[p].name}</span></button>`:''}${x?`<button class="next" data-go="${x}"><small>แฟ้มที่ ${x} →</small><span>${FOLDERS[x].name}</span></button>`:`<button class="next" data-nav="book"><small>หัวข้อที่ 3 →</small><span>รูปเล่มรายงาน</span></button>`}</nav></div>`;
   document.getElementById('view').innerHTML=html;
 }
 
 let pf=null;
 const bsrc=i=>'book/p'+String(i+1).padStart(2,'0')+'.jpg';
 function killBook(){if(pf){try{pf.destroy()}catch(e){}pf=null}}
-function openBook(scroll){
-  killBook();current=0;document.body.dataset.domain='book';
-  document.querySelectorAll('.seg button,.dcard').forEach(t=>t.setAttribute('aria-selected',t.dataset.d==='book'));
+function openBook(){
+  killBook();current=0;document.body.dataset.domain='book';setSel('book');
+  document.getElementById('main').classList.add('full');
+  crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],['รูปเล่มรายงาน']]);
   const pages=Array.from({length:BOOK_PAGES},(_,i)=>`<div class="page"${i===0||i===BOOK_PAGES-1?' data-density="hard"':''}><img data-src="${bsrc(i)}" alt="รูปเล่มรายงาน หน้า ${i+1}"></div>`).join('');
   document.getElementById('view').innerHTML=`<div class="fade"><div class="banner" data-num="03"><img class="b-mascot" src="img/mascot-book.png" alt="">
     <div class="kick"><span class="g">หัวข้อที่ 3</span><span>E-book · ${BOOK_PAGES} หน้า</span></div>
@@ -461,8 +515,6 @@ function openBook(scroll){
         <button id="b-full" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>เต็มจอ</button>
       </div></div></div>`;
   lbList=Array.from({length:BOOK_PAGES},(_,i)=>bsrc(i));
-  try{history.replaceState(null,'','#book')}catch(e){}
-  if(scroll){const y=document.querySelector('.main').getBoundingClientRect().top+scrollY-70;scrollTo({top:y,behavior:'smooth'})}
   const el=document.getElementById('book'), wrap=document.getElementById('book-wrap');
   loadNear(0);
   const narrow=matchMedia('(max-width: 720px)').matches; wrap.classList.toggle('portrait',narrow);
@@ -489,25 +541,59 @@ function updBook(i){
   let act=0;TOC.forEach(([,p],k)=>{if(p<=i+(two?1:0))act=k});
   document.querySelectorAll('.toc button').forEach((b,k)=>b.setAttribute('aria-current',k===act));
 }
-function open(n,scroll){
-  killBook();n=+n;if(!DATA[n])n=1;current=n;const d=FOLDERS[n].d;document.body.dataset.domain=d;
-  document.querySelectorAll('.seg button,.dcard').forEach(t=>t.setAttribute('aria-selected',t.dataset.d===d));
+const ICO_BACK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>';
+const ICO_GO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
+function setSel(d){document.querySelectorAll('.seg button,.dcard').forEach(t=>t.setAttribute('aria-selected',t.dataset.d===d))}
+function showPage(p){document.body.dataset.page=p;document.querySelectorAll('.screen').forEach(s=>s.hidden=s.dataset.page!==p)}
+function crumbs(items){
+  const back=items.length>1?items[items.length-2][1]:null;
+  document.getElementById('crumbs').innerHTML=(back?`<button class="back" data-nav="${back}">${ICO_BACK}ย้อนกลับ</button>`:'')+
+    items.map(([l,nv],i)=>i===items.length-1?`<b>${l}</b>`:`<button data-nav="${nv}">${l}</button><span class="sep">›</span>`).join('');
+}
+function showDomain(d){
+  document.body.dataset.domain=d;setSel(d);document.getElementById('main').classList.add('full');
+  const s=domStats(d),x=d==='self'?1:2,ids=Object.keys(FOLDERS).filter(n=>FOLDERS[n].d===d);
+  crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],[DNAME[d]]]);
+  const nxt=d==='self'?['work','ด้านที่ 2 →',DNAME.work]:['book','หัวข้อที่ 3 →','รูปเล่มรายงาน'];
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="${pad(x)}"><img class="b-mascot" src="img/mascot-${d}.png" alt="">
+    <div class="kick"><span class="g">ด้านที่ ${x}</span><span>การประเมินครั้งที่ 3</span></div>
+    <h2><small>การประเมินด้านที่ ${x}</small>${DNAME[d]}</h2>
+    <div class="facts"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></div></div>
+    <div class="sec-title">เลือกแฟ้มที่ต้องการดู</div>
+    <div class="fgrid">${ids.map(n=>{const f=FOLDERS[n];return `<button class="fcard" data-f="${n}"><img src="img/cover${n}.jpg" alt="" loading="lazy"><span><span class="fn">แฟ้มที่ ${n} · องค์ประกอบที่ ${f.k}</span><h3>${f.name}</h3><span class="fm">${DATA[n].length} ตัวชี้วัด · ${countImgs(n)} ภาพหลักฐาน</span></span><span class="go">${ICO_GO}</span></button>`}).join('')}</div>
+    <nav class="pager"><button data-nav="menu"><small>← กลับ</small><span>เลือกหัวข้อ</span></button><button class="next" data-nav="${nxt[0]}"><small>${nxt[1]}</small><span>${nxt[2]}</span></button></nav></div>`;
+}
+function openFolder(n){
+  current=n;const d=FOLDERS[n].d;document.body.dataset.domain=d;setSel(d);
+  document.getElementById('main').classList.remove('full');
+  crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],[DNAME[d],d],['แฟ้มที่ '+n+' '+FOLDERS[n].name]]);
   renderSide(d);renderView(n);
   const ac=document.querySelector('.flist button[aria-current="true"]');if(ac){const ul=ac.closest('.flist');if(ul.scrollWidth>ul.clientWidth)ul.scrollLeft=ac.parentElement.offsetLeft-16}
-  try{history.replaceState(null,'','#f'+n)}catch(e){}
-  if(scroll){const y=document.querySelector('.main').getBoundingClientRect().top+scrollY-70;scrollTo({top:y,behavior:'smooth'})}
 }
+function route(h){
+  h=h||(location.hash||'').slice(1)||'home';
+  killBook();if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
+  let m;
+  if(h==='menu'){showPage('menu');setSel(null)}
+  else if(h==='self'||h==='work'){showPage('content');showDomain(h)}
+  else if(h==='book'){showPage('content');openBook()}
+  else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
+  else{showPage('home');setSel(null)}
+  scrollTo(0,0);
+}
+function go(h){const before=location.hash;try{location.hash=h}catch(e){}if(location.hash!=='#'+h||before==='#'+h)route(h)}
+window.addEventListener('hashchange',()=>route());
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-enter],[data-bp]');if(!t)return;
+  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp]');if(!t)return;
+  if(t.dataset.nav){go(t.dataset.nav);return}
   if(t.dataset.bp!==undefined){if(pf){loadNear(+t.dataset.bp);pf.flip(+t.dataset.bp)}return}
-  if(t.dataset.enter!==undefined){document.getElementById('domains').scrollIntoView({behavior:'smooth'});return}
   if(t.dataset.tog!==undefined){setOpen(t.closest('.ind'),!t.closest('.ind').classList.contains('open'));updAll();return}
   if(t.dataset.all!==undefined){const all=[...document.querySelectorAll('.ind')];const openAll=all.some(a=>!a.classList.contains('open'));all.forEach(a=>setOpen(a,openAll));updAll();return}
   if(t.dataset.jump){e.preventDefault();const a=document.getElementById(t.dataset.jump);setOpen(a,true);updAll();a.scrollIntoView({behavior:'smooth'});return}
   if(t.dataset.lb!==undefined){showLb(+t.dataset.lb);return}
-  if(t.dataset.go){open(t.dataset.go,true);return}
-  if(t.dataset.f){open(t.dataset.f,true);return}
-  if(t.dataset.d){if(t.dataset.d==='book')openBook(true);else open(t.dataset.d==='self'?1:7,true)}
+  if(t.dataset.go){go('f'+t.dataset.go);return}
+  if(t.dataset.f){go('f'+t.dataset.f);return}
+  if(t.dataset.d){go(t.dataset.d)}
 });
 function setOpen(a,o){a.classList.toggle('open',o);a.querySelector('.ind-toggle').setAttribute('aria-expanded',o)}
 function updAll(){const b=document.querySelector('[data-all]');if(!b)return;const all=[...document.querySelectorAll('.ind')];b.textContent=all.every(a=>a.classList.contains('open'))?'ปิดทั้งหมด':'เปิดทั้งหมด'}
@@ -527,7 +613,7 @@ document.addEventListener('keydown',e=>{if(lb.hidden){if(pf&&!e.target.closest('
   apply();
   document.getElementById('theme-switch').addEventListener('click',()=>{theme=theme==='light'?'dark':'light';try{localStorage.setItem('theme',theme)}catch(e){}apply()});
 })();
-const m=(location.hash||'').match(/^#f(\d+)$/);if(location.hash==='#book'){open(1,false);openBook(false)}else open(m?m[1]:1,false);
+route();
 </script>
 
 </body>
