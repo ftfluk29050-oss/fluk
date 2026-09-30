@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="สื่อการเรียนรู้แบบ 3 มิติ วันสำคัญทางพระพุทธศาสนา 6 วัน พร้อมเส้นเวลาปฏิทินจันทรคติ">
+<title>วันสำคัญทางพระพุทธศาสนา</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Sarabun:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: ตู้พระธรรมลายรดน้ำ — gold on black lacquer. 3D object on the left, a reading panel on the right, the lunar year strip below. */
+:root{
+  --bg:#130F0C;
+  --surface:#1C1612;
+  --surface-2:#271F18;
+  --line:rgba(217,174,85,.26);
+  --gold:#D9AE55;
+  --gold-hi:#F3D68E;
+  --ink:#EFE6D5;
+  --ink-dim:#B8AA93;
+  --on-gold:#1A120C;
+  --red-wash:rgba(142,43,30,.24);
+  --red-line:rgba(192,74,51,.5);
+  --leaf:#CDB077;
+  --leaf-hi:#DCC592;
+  --leaf-ink:#3A2814;
+  --leaf-title:#7A4516;
+  --font-display:"Chonburi","Sarabun","Noto Serif Thai",serif;
+  --font-body:"Sarabun","Noto Sans Thai","Leelawadee UI",Tahoma,system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.07;background-size:44px 44px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23D9AE55' stroke-width='1'%3E%3Cpath d='M22 13c4 4 4 6 0 9c-4-3-4-5 0-9zM31 22c-4 4-6 4-9 0c3-4 5-4 9 0zM22 31c-4-4-4-6 0-9c4 3 4 5 0 9zM13 22c4-4 6-4 9 0c-3 4-5 4-9 0z'/%3E%3C/g%3E%3Ccircle cx='22' cy='22' r='1.3' fill='%23D9AE55'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding-inline:20px;padding-block:28px 56px}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+
+/* Header */
+.head{display:grid;gap:6px;margin-bottom:22px}
+.eyebrow{margin:0;font-size:14px;color:var(--gold);letter-spacing:.04em}
+h1{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.8vw,48px);line-height:1.4;color:var(--gold-hi);text-wrap:balance}
+.lede{margin:0;color:var(--ink-dim);max-width:62ch}
+.next-badge{justify-self:start;margin-top:8px;display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:7px 14px;border-radius:999px;border:1px solid var(--gold);background:var(--surface-2);cursor:pointer;font-size:15px;text-align:left}
+.next-badge b{color:var(--gold-hi);font-weight:600}
+.next-badge .cd{color:var(--on-gold);background:var(--gold);border-radius:999px;padding:0 9px;font-weight:600;font-variant-numeric:tabular-nums}
+.next-badge:hover{background:var(--surface)}
+
+/* Main */
+.main{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:880px){.main{grid-template-columns:minmax(0,1fr)}}
+.left{min-width:0}
+
+.stage{position:relative;height:460px;border-radius:20px;border:1px solid var(--line);overflow:hidden;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:pan-y;
+  background:radial-gradient(ellipse 60% 55% at 50% 44%,rgba(217,174,85,.16),transparent 70%),var(--surface)}
+.stage:active{cursor:grabbing}
+.obj{position:absolute;left:50%;top:47%;width:var(--s,260px);height:var(--s,260px);margin-left:calc(var(--s,260px)/-2);margin-top:calc(var(--s,260px)/-2);transform-style:preserve-3d;will-change:transform}
+.floor{position:absolute;left:50%;bottom:5%;width:calc(var(--s,260px)*1.25);height:calc(var(--s,260px)*.18);transform:translateX(-50%);background:radial-gradient(closest-side,rgba(0,0,0,.65),transparent);pointer-events:none;transition:opacity .6s}
+.stage[data-mode="net"] .floor{opacity:0}
+.hint{position:absolute;left:14px;bottom:10px;margin:0;font-size:13px;color:var(--ink-dim);pointer-events:none}
+.fs{position:absolute;right:10px;top:10px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);font-size:13px;cursor:pointer;color:var(--ink-dim)}
+.fs:hover{color:var(--ink);border-color:var(--gold)}
+
+/* Faces */
+.face{position:absolute;inset:0;display:grid;grid-template-rows:60% 40%;border:2px solid var(--gold);border-radius:8px;overflow:hidden;background:#0F0B08;backface-visibility:hidden;-webkit-backface-visibility:hidden;cursor:pointer}
+.face::after{content:"";position:absolute;inset:5px;border:1px solid rgba(243,214,142,.4);border-radius:4px;pointer-events:none}
+.face.is-active{border-color:var(--gold-hi);box-shadow:0 0 0 2px var(--gold-hi),0 0 34px rgba(243,214,142,.35)}
+.face-art{min-height:0}
+.face-art svg{display:block;width:100%;height:100%}
+.face-band{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:calc(var(--s,260px)*.01);padding:calc(var(--s,260px)*.03) calc(var(--s,260px)*.07);background:linear-gradient(#1D140E,#0F0B08);border-top:2px solid var(--gold);text-align:center;min-height:0}
+.face-date{display:flex;align-items:center;gap:.45em;font-size:calc(var(--s,260px)*.05);color:var(--gold);font-weight:600;line-height:1.3}
+.face-date .moon-ic{width:1.2em;height:1.2em}
+.face-title{margin:0;font-family:var(--font-display);font-weight:400;font-size:calc(var(--s,260px)*.094);line-height:1.3;color:var(--gold-hi)}
+.face-line{margin:0;font-size:calc(var(--s,260px)*.05);line-height:1.35;color:var(--ink-dim)}
+.svg-label{font-family:var(--font-body);font-weight:600}
+
+/* Controls */
+.controls{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}
+.seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.seg-label{padding:0 8px 0 10px;font-size:13px;color:var(--ink-dim)}
+.seg button{border:0;background:transparent;color:var(--ink-dim);font-size:14.5px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--on-gold);font-weight:600}
+.toggle{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font-size:14.5px;cursor:pointer;color:var(--ink-dim)}
+.toggle .dot{width:9px;height:9px;border-radius:50%;background:var(--ink-dim);opacity:.5}
+.toggle[aria-pressed="true"]{color:var(--ink);border-color:var(--gold)}
+.toggle[aria-pressed="true"] .dot{background:var(--gold-hi);opacity:1;box-shadow:0 0 8px var(--gold-hi)}
+
+.chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+@media (max-width:560px){.chips{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.chip{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:10px;align-items:center;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);text-align:left;cursor:pointer;min-width:0}
+.chip .moon-ic{grid-row:span 2}
+.chip .nm{font-size:15.5px;font-weight:600;line-height:1.3}
+.chip .dt{grid-column:2;font-size:12.5px;color:var(--ink-dim);line-height:1.3}
+.chip:hover{border-color:var(--gold)}
+.chip[aria-current="true"]{border-color:var(--gold);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--gold)}
+.chip[aria-current="true"] .nm{color:var(--gold-hi)}
+
+/* Panel */
+.panel{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:22px 26px 20px}
+.panel.in{animation:panelIn .45s var(--ease)}
+@keyframes panelIn{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:none}}
+.p-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 12px;font-size:14px}
+.p-date{display:inline-flex;align-items:center;gap:8px;color:var(--gold);font-weight:600}
+.p-order{color:var(--ink-dim)}
+.p-soon{color:var(--on-gold);background:var(--gold);border-radius:999px;padding:0 10px;font-weight:600}
+.p-title{margin:8px 0 0;font-family:var(--font-display);font-weight:400;font-size:clamp(28px,3.4vw,38px);line-height:1.4;color:var(--gold-hi);text-wrap:balance}
+.p-alt{margin:0;color:var(--ink-dim);font-size:15px}
+.p-summary{margin:10px 0 0;font-size:17.5px;max-width:60ch}
+.p-meta{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;margin:16px 0 0;padding:12px 0;border-block:1px solid var(--line);font-size:15px}
+.p-meta div{display:contents}
+.p-meta dt{color:var(--gold);font-weight:600;white-space:nowrap}
+.p-meta dd{margin:0;min-width:0}
+.p-sec{margin-top:16px}
+.p-sec h3{margin:0 0 8px;font-size:15.5px;line-height:1.4;color:var(--gold);font-weight:700}
+.p-events{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:ev}
+.p-events li{counter-increment:ev;display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.p-events li::before{content:counter(ev);width:26px;height:26px;border-radius:50%;border:1px solid var(--gold);color:var(--gold-hi);display:grid;place-items:center;font-size:13px;font-weight:700;line-height:1;margin-top:1px}
+.leaf{position:relative;margin-top:18px;padding:12px 20px 12px 46px;border-radius:6px 16px 16px 6px;color:var(--leaf-ink);
+  background:repeating-linear-gradient(180deg,transparent 0 23px,rgba(90,60,20,.13) 23px 24px),linear-gradient(180deg,var(--leaf-hi),var(--leaf))}
+.leaf::before{content:"";position:absolute;left:18px;top:50%;width:11px;height:11px;margin-top:-5.5px;border-radius:50%;background:var(--bg);box-shadow:inset 0 1px 2px rgba(0,0,0,.7)}
+.leaf h3{margin:0 0 4px;font-size:15.5px;line-height:1.4;color:var(--leaf-title);font-weight:700}
+.leaf ul{margin:0;padding-left:1.1em;display:grid;gap:2px}
+.leaf li{font-weight:500}
+.leaf li::marker{color:var(--leaf-title)}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{padding:3px 12px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);font-size:14.5px}
+.fact{margin:16px 0 0;padding:11px 14px;border-radius:12px;background:var(--red-wash);border:1px solid var(--red-line);font-size:15px}
+.fact strong{color:var(--gold-hi);margin-right:6px}
+.p-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.p-nav button{flex:1 1 0;min-width:0;padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);cursor:pointer;font-size:14.5px;color:var(--ink-dim)}
+.p-nav button:hover{color:var(--ink);border-color:var(--gold)}
+.p-nav button:last-child{text-align:right}
+.p-nav b{display:block;color:var(--ink);font-weight:600}
+
+/* Year strip */
+.year{margin-top:36px}
+.year h2{margin:0;font-family:var(--font-display);font-weight:400;font-size:clamp(22px,2.6vw,28px);line-height:1.4;color:var(--gold-hi)}
+.year .sub{margin:2px 0 14px;color:var(--ink-dim);font-size:15px}
+.tl-scroll{overflow-x:auto;padding-bottom:6px}
+.tl{position:relative;min-width:780px;height:186px}
+.tl-months{position:absolute;left:0;right:0;top:64px;height:60px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));border-block:1px solid var(--line);background:var(--surface)}
+.tl-months div{text-align:center;padding-top:5px;line-height:1.25;border-left:1px dashed rgba(217,174,85,.15)}
+.tl-months div:first-child{border-left:0}
+.tl-months b{display:block;font-size:13.5px;font-weight:600}
+.tl-months small{font-size:11.5px;color:var(--ink-dim)}
+.tl-band{position:absolute;top:104px;height:17px;border-radius:9px;background:rgba(217,174,85,.2);border:1px solid rgba(217,174,85,.55);display:flex;align-items:center;justify-content:center;font-size:11.5px;line-height:1;color:var(--gold-hi);white-space:nowrap}
+.tl-mark{position:absolute;display:flex;flex-direction:column;align-items:center;transform:translateX(-50%)}
+.tl-mark.up{top:0;height:64px}
+.tl-mark.down{top:124px}
+.tl-stem{width:1px;background:var(--gold);opacity:.65;flex:1}
+.tl-mark.down .tl-stem{flex:none;height:18px}
+.tl-dot{width:9px;height:9px;border-radius:50%;background:var(--gold-hi);box-shadow:0 0 0 3px var(--bg)}
+.tl-mark.up .tl-dot{margin-bottom:-5px}
+.tl-mark.down .tl-dot{margin-top:-5px}
+.tl-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);font-size:13.5px;white-space:nowrap;cursor:pointer}
+.tl-pill:hover{border-color:var(--gold)}
+.tl-pill[aria-current="true"]{background:var(--gold);color:var(--on-gold);border-color:var(--gold);font-weight:600}
+.leap-note{margin:12px 0 0;max-width:80ch;font-size:15px;color:var(--ink-dim)}
+.leap-note b{color:var(--gold)}
+.foot{margin-top:28px;font-size:13px;color:var(--ink-dim)}
+
+@media (max-width:560px){
+  .panel{padding:18px 18px 16px}
+  .seg button{padding:6px 11px}
+}
+@media (prefers-reduced-motion:reduce){.panel.in{animation:none}}
+[hidden]{display:none!important}
+.back{display:inline-flex;align-items:center;gap:6px;margin:0 0 14px -6px;padding:6px 12px 6px 6px;border-radius:10px;border:1px solid transparent;color:var(--ink-dim);text-decoration:none;font-size:15px}
+.back:hover{color:var(--ink);border-color:var(--line)}
+.back svg{width:18px;height:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="index.html#media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>กลับแฟ้มผลงาน</a>
+  <header class="head">
+    <p class="eyebrow">สื่อการเรียนรู้ · พระพุทธศาสนา</p>
+    <h1>วันสำคัญทางพระพุทธศาสนา</h1>
+    <p class="lede">หมุนโมเดลเพื่อดูวันสำคัญทั้ง 6 วัน แตะด้านใดด้านหนึ่งหรือกดชื่อวันด้านล่าง เพื่ออ่านรายละเอียด</p>
+    <button class="next-badge" id="nextBadge" type="button" hidden></button>
+  </header>
+
+  <div class="main">
+    <div class="left">
+      <div class="stage" id="stage" data-mode="cube" tabindex="0" aria-label="โมเดล 3 มิติ กดลูกศรซ้ายหรือขวาเพื่อเปลี่ยนวัน">
+        <div class="floor"></div>
+        <div class="obj" id="obj"></div>
+        <p class="hint" id="hint">ลากเพื่อหมุน · แตะด้านที่อยากอ่าน</p>
+        <button class="fs" id="fsBtn" type="button" hidden>เต็มจอ</button>
+      </div>
+
+      <div class="controls">
+        <div class="seg" role="group" aria-label="รูปทรง">
+          <span class="seg-label">รูปทรง</span>
+          <button type="button" data-mode="cube" aria-pressed="true">กล่อง</button>
+          <button type="button" data-mode="prism" aria-pressed="false">หกเหลี่ยม</button>
+          <button type="button" data-mode="net" aria-pressed="false">กางกล่อง</button>
+        </div>
+        <button class="toggle" id="autoBtn" type="button" aria-pressed="true"><span class="dot"></span>หมุนอัตโนมัติ</button>
+      </div>
+
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <article class="panel" id="panel" aria-live="polite"></article>
+  </div>
+
+  <section class="year" aria-labelledby="yearTitle">
+    <h2 id="yearTitle">ลำดับวันสำคัญในรอบปี</h2>
+    <p class="sub">ปฏิทินจันทรคติไทย · ด้านบนคือวันข้างขึ้น (วันเพ็ญ) ด้านล่างคือวันข้างแรม</p>
+    <div class="tl-scroll"><div class="tl" id="tl"></div></div>
+    <p class="leap-note"><b>ปีอธิกมาส</b> คือปีที่มีเดือน 8 สองครั้ง (เดือน 8 แรก และเดือน 8 หลัง) ในปีแบบนี้วันมาฆบูชาเลื่อนไปเป็นเดือน 4 วันวิสาขบูชาและวันอัฏฐมีบูชาเลื่อนไปเป็นเดือน 7 ส่วนวันอาสาฬหบูชาและวันเข้าพรรษาอยู่ในเดือน 8 หลัง ปี 2569 เป็นปีอธิกมาส</p>
+  </section>
+
+  <p class="foot">วันที่ของปี 2569 อ้างอิงจากปฏิทินจันทรคติไทย</p>
+</div>
+
+<script>
+(function(){
+/* ---------- drawing helpers ---------- */
+function rng(seed){let a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const f1=n=>(+n).toFixed(1);
+function stars(seed,n,ymax){const r=rng(seed);let s='';for(let i=0;i<n;i++){s+=`<circle cx="${f1(r()*240)}" cy="${f1(r()*ymax)}" r="${(0.35+r()*0.8).toFixed(2)}" fill="#FFFFFF" opacity="${(0.3+r()*0.6).toFixed(2)}"/>`;}return s;}
+const glow=(id,color,op)=>`<radialGradient id="${id}"><stop offset="0" stop-color="${color}" stop-opacity="${op}"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></radialGradient>`;
+function moonShape(cx,cy,r,phase,lit,dark){
+  if(phase==='full')return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${lit}"/>`;
+  const rx=phase==='wan1'?r*0.72:0;
+  const second=rx?` A${f1(rx)} ${r} 0 0 0 ${cx} ${cy-r}`:'';
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${dark}"/><path d="M${cx} ${cy-r} A${r} ${r} 0 0 0 ${cx} ${cy+r}${second} Z" fill="${lit}"/>`;
+}
+function moonArt(cx,cy,r,phase,gid){
+  let s=`<circle cx="${cx}" cy="${cy}" r="${f1(r*2.8)}" fill="url(#${gid})"/>`+moonShape(cx,cy,r,phase,'#F8EDCB','#2B2B4A');
+  if(phase==='full')s+=`<circle cx="${f1(cx-r*.3)}" cy="${f1(cy-r*.2)}" r="${f1(r*.18)}" fill="#E6D7AA" opacity=".7"/><circle cx="${f1(cx+r*.28)}" cy="${f1(cy+r*.32)}" r="${f1(r*.13)}" fill="#E6D7AA" opacity=".6"/>`;
+  return s;
+}
+function moonIcon(phase,size){
+  return `<svg class="moon-ic" width="${size}" height="${size}" viewBox="0 0 20 20" aria-hidden="true">${moonShape(10,10,8,phase,'#F3D68E','#3D3552')}<circle cx="10" cy="10" r="8" fill="none" stroke="#F3D68E" stroke-opacity=".5" stroke-width=".8"/></svg>`;
+}
+const ROBES=['#D9781C','#E38B2A','#C86A16'];
+function monkSit(x,y,s,c){return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})"><path d="M-5.6 6 C-5.8 0.5 -3.2 -1.8 0 -1.8 C3.2 -1.8 5.8 0.5 5.6 6 Z" fill="${c}"/><path d="M-4.8 0.6 L3.4 -1.5 L5.4 5.9 L1.2 6 Z" fill="#8F4A0E" opacity=".45"/><circle cy="-4.3" r="2.5" fill="#E2AE7E"/></g>`;}
+function monkStand(x,y,s,c){return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})"><path d="M-4 13 C-4.6 5 -4.2 -1 0 -1.2 C4.2 -1 4.6 5 4 13 Z" fill="${c}"/><path d="M-3.8 1 L3 -1 L4 12.6 L0.5 13 Z" fill="#8F4A0E" opacity=".4"/><ellipse cx="0" cy="5.2" rx="2.8" ry="1.9" fill="#2A211B"/><circle cy="-3.6" r="2.4" fill="#E2AE7E"/></g>`;}
+function throne(cx,cy,s){let p='';for(let k=-3;k<=3;k++){const x=k*5;p+=`<path d="M${x} -5 C${x-4} -2 ${x-3.4} 4 ${x} 8 C${x+3.4} 4 ${x+4} -2 ${x} -5 Z" fill="#E9C46A" stroke="#A8782A" stroke-width=".5"/>`;}
+  return `<g transform="translate(${cx} ${cy}) scale(${s})"><path d="M-19 8 H19 L15 13 H-15 Z" fill="#8C5E22"/>${p}<ellipse cx="0" cy="-5" rx="17" ry="3.2" fill="#F3D68E"/></g>`;}
+function lotus(x,y,s){const pt=(rot,sc,col)=>`<path d="M0 0 C-3.2 -3.5 -2.4 -9 0 -12 C2.4 -9 3.2 -3.5 0 0 Z" fill="${col}" transform="rotate(${rot}) scale(${sc})"/>`;
+  return `<g transform="translate(${x} ${y}) scale(${s})">${pt(-64,.78,'#E7859F')}${pt(64,.78,'#E7859F')}${pt(-32,.94,'#F29BB8')}${pt(32,.94,'#F29BB8')}${pt(0,1,'#F9C9D8')}</g>`;}
+function bamboo(x,h,lean){
+  const x2=x+lean,y0=150,y2=150-h,xc=x+lean*.3,yc=150-h*.5;
+  const P=t=>[(1-t)*(1-t)*x+2*(1-t)*t*xc+t*t*x2,(1-t)*(1-t)*y0+2*(1-t)*t*yc+t*t*y2];
+  let s=`<path d="M${x} ${y0} Q${f1(xc)} ${f1(yc)} ${f1(x2)} ${f1(y2)}" stroke="#1F4A31" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  [.22,.42,.62,.8].forEach(t=>{const [px,py]=P(t);s+=`<path d="M${f1(px-2.2)} ${f1(py)} h4.4" stroke="#3A7A50" stroke-width="1"/>`;});
+  [[-28,.66],[26,.72],[-38,.8],[32,.86],[-20,.92],[18,.97]].forEach(([ang,t])=>{const [px,py]=P(t);s+=`<ellipse cx="${f1(px+(ang<0?-6:6))}" cy="${f1(py)}" rx="7" ry="1.5" fill="#2E6B40" transform="rotate(${ang} ${f1(px)} ${f1(py)})"/>`;});
+  return s;
+}
+function deer(x,y,flip,antler){
+  return `<g transform="translate(${x} ${y}) scale(${flip?-1:1} 1)">
+  <path d="M-13 -2 l-3.5 -2.4" stroke="#E8C193" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="0" cy="0" rx="13" ry="6.5" fill="#C98A4E"/>
+  <ellipse cx="1" cy="3" rx="9" ry="2.6" fill="#E8C193"/>
+  <path d="M5 5.4 q5 1.2 10 0" stroke="#A56D39" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+  <path d="M7 -3 C10 -8 11.5 -12 13.5 -15.5 L18 -13.5 C16 -9 14 -5 12 -0.5 Z" fill="#C98A4E"/>
+  <ellipse cx="18" cy="-15" rx="5.2" ry="3.2" transform="rotate(20 18 -15)" fill="#C98A4E"/>
+  <circle cx="22.6" cy="-12.8" r="1.1" fill="#3A2515"/>
+  <circle cx="18.2" cy="-16" r=".75" fill="#221A12"/>
+  <path d="M14.6 -17.2 l-3.6 -3.6 l4.4 .8 z" fill="#A56D39"/>
+  ${antler?'<path d="M16.4 -18 l-1 -6.5 M15.8 -21.5 l-3 -2.2 M17.2 -18.6 l3 -5.6 M18.6 -21.6 l2.4 -.8" stroke="#E8C193" stroke-width="1.1" fill="none" stroke-linecap="round"/>':''}
+  <circle cx="-6" cy="-2" r="1" fill="#E8C193" opacity=".8"/><circle cx="-2" cy="-3.2" r="1" fill="#E8C193" opacity=".8"/><circle cx="2.4" cy="-2" r="1" fill="#E8C193" opacity=".8"/><circle cx="-4" cy="1" r=".9" fill="#E8C193" opacity=".8"/>
+  </g>`;
+}
+function svgWrap(inner){return `<svg viewBox="0 0 240 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${inner}</svg>`;}
+
+/* ---------- the six scenes ---------- */
+function artMagha(){
+  let s=`<defs><linearGradient id="mg-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0D1440"/><stop offset=".7" stop-color="#2B2562"/><stop offset="1" stop-color="#43305C"/></linearGradient>
+  ${glow('mg-glow','#FFF4D2',.6)}
+  <radialGradient id="mg-aura"><stop offset="0" stop-color="#FFF1C4" stop-opacity=".95"/><stop offset=".4" stop-color="#F2C25A" stop-opacity=".45"/><stop offset="1" stop-color="#F2C25A" stop-opacity="0"/></radialGradient></defs>
+  <rect width="240" height="150" fill="url(#mg-sky)"/>${stars(7,28,72)}${moonArt(198,28,12,'full','mg-glow')}`;
+  s+=bamboo(6,128,6)+bamboo(16,112,10)+bamboo(27,96,4)+bamboo(234,124,-6)+bamboo(224,108,-10)+bamboo(213,92,-3);
+  s+=`<path d="M0 106 Q120 92 240 106 V150 H0 Z" fill="#2B2417"/><circle cx="120" cy="74" r="44" fill="url(#mg-aura)"/>`;
+  for(let i=0;i<14;i++){const a=Math.PI*(1.05+i*0.9/13),L=34+(i%2)*10;s+=`<line x1="120" y1="74" x2="${f1(120+Math.cos(a)*L)}" y2="${f1(74+Math.sin(a)*L)}" stroke="#F3D68E" stroke-opacity=".3" stroke-width=".8"/>`;}
+  s+=throne(120,92,1);
+  const rows=[{y:106,s:.6,n:11,sp:12.5,lift:5},{y:121,s:.82,n:12,sp:17,lift:9},{y:139,s:1.05,n:12,sp:20.5,lift:13}];
+  let c=0;
+  rows.forEach(r=>{for(let j=0;j<r.n;j++){const x=120+(j-(r.n-1)/2)*r.sp,dx=(x-120)/120;s+=monkSit(x,r.y-dx*dx*r.lift,r.s,ROBES[(c++)%3]);}});
+  return svgWrap(s);
+}
+function artVisakha(){
+  let s=`<defs><linearGradient id="vs-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0F1946"/><stop offset=".65" stop-color="#2B2B64"/><stop offset="1" stop-color="#3F2F5E"/></linearGradient>
+  ${glow('vs-glow','#FFF4D2',.6)}${glow('vs-aura','#F3D68E',.75)}</defs>
+  <rect width="240" height="150" fill="url(#vs-sky)"/>${stars(21,30,50)}${moonArt(120,19,9,'full','vs-glow')}`;
+  [44,120,196].forEach(cx=>{s+=`<path d="M${cx-34} 132 V74 Q${cx-34} 54 ${cx} 36 Q${cx+34} 54 ${cx+34} 74 V132 Z" fill="#141C48" fill-opacity=".6" stroke="#D9AE55" stroke-width="1.3"/>`;});
+  // birth: lotus pond
+  s+=`<ellipse cx="44" cy="122" rx="30" ry="7" fill="#1D4466"/><ellipse cx="28" cy="122" rx="8" ry="2.4" fill="#2F6B45"/><ellipse cx="60" cy="120.5" rx="7" ry="2.1" fill="#2F6B45"/>
+  <path d="M44 121 V110 M30 121 V114 M58 120 V112" stroke="#3C7A4A" stroke-width="1.2"/>`;
+  s+=lotus(44,110,1.35)+lotus(30,114,.8)+`<path d="M58 112 C55 108 56 104 58 101 C60 104 61 108 58 112 Z" fill="#F29BB8"/>`;
+  for(let i=0;i<5;i++){s+=lotus(24+i*10,96-Math.sin(i/4*Math.PI)*8,.32);}
+  s+=`<text class="svg-label" x="44" y="145" text-anchor="middle" font-size="9.5" fill="#F3D68E">ประสูติ</text>`;
+  // enlightenment: bodhi tree
+  s+=`<circle cx="120" cy="108" r="30" fill="url(#vs-aura)"/>
+  <path d="M116 126 C117 110 114 100 118 86 L122 86 C126 100 123 110 124 126 Z" fill="#5A3A22"/>
+  <path d="M119 96 L106 80 M121 94 L135 79 M120 90 L120 70" stroke="#5A3A22" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="120" cy="70" r="19" fill="#2F6B3A"/><circle cx="103" cy="79" r="12" fill="#2A5E34"/><circle cx="137" cy="79" r="12" fill="#2A5E34"/>
+  <circle cx="111" cy="62" r="11" fill="#3C8446"/><circle cx="130" cy="62" r="11" fill="#3C8446"/><circle cx="120" cy="54" r="10" fill="#4F9A52"/>`;
+  [[108,70],[126,58],[134,72],[114,52],[100,78],[123,76]].forEach(([x,y])=>{s+=`<path d="M${x} ${y+4} C${x-4} ${y} ${x-3} ${y-3} ${x} ${y-2} C${x+3} ${y-3} ${x+4} ${y} ${x} ${y+4} Z" fill="#78B86A" opacity=".85"/>`;});
+  s+=throne(120,121,.55)+`<text class="svg-label" x="120" y="145" text-anchor="middle" font-size="9.5" fill="#F3D68E">ตรัสรู้</text>`;
+  // parinibbana: twin sala trees
+  s+=`<path d="M175 128 C176 110 174 96 177 84 L181 84 C183 96 181 110 182 128 Z" fill="#4A3322"/><path d="M210 128 C211 110 209 96 212 84 L216 84 C218 96 216 110 217 128 Z" fill="#4A3322"/>
+  <ellipse cx="178" cy="72" rx="14" ry="19" fill="#24523A"/><ellipse cx="214" cy="72" rx="14" ry="19" fill="#2C6444"/>
+  <rect x="184" y="114" width="24" height="7" rx="2" fill="#8C5E22"/><rect x="185" y="111" width="22" height="4" rx="1.5" fill="#D9AE55"/><rect x="185" y="121" width="2" height="6" fill="#6B4518"/><rect x="205" y="121" width="2" height="6" fill="#6B4518"/>`;
+  const r=rng(5);for(let i=0;i<26;i++){s+=`<circle cx="${f1(166+r()*62)}" cy="${f1(58+r()*64)}" r="${(0.7+r()*0.9).toFixed(2)}" fill="${r()>.5?'#F6D9E0':'#FBEBC7'}" opacity=".9"/>`;}
+  s+=`<text class="svg-label" x="196" y="145" text-anchor="middle" font-size="9.5" fill="#F3D68E">ปรินิพพาน</text>`;
+  return svgWrap(s);
+}
+function artAtthami(){
+  let s=`<defs><linearGradient id="at-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E0A12"/><stop offset=".6" stop-color="#4A1719"/><stop offset="1" stop-color="#7E3419"/></linearGradient>
+  ${glow('at-glow','#FFF4D2',.5)}${glow('at-fire','#FF9A3C',.6)}
+  <linearGradient id="at-flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#FFE38A"/><stop offset=".5" stop-color="#F59A2B"/><stop offset="1" stop-color="#C8391C" stop-opacity=".85"/></linearGradient></defs>
+  <rect width="240" height="150" fill="url(#at-sky)"/>${stars(33,14,48)}${moonArt(204,26,11,'lastq','at-glow')}`;
+  // stupa silhouette
+  s+=`<g fill="#2A0F10" stroke="#D9AE55" stroke-opacity=".35" stroke-width=".8"><rect x="24" y="100" width="44" height="14"/><rect x="30" y="94" width="32" height="7"/><path d="M32 94 C32 70 60 70 60 94 Z"/><rect x="42" y="70" width="8" height="6"/><path d="M43 70 L46 38 L49 70 Z"/></g>
+  <path d="M43.6 64 h4.8 M44.2 58 h3.6 M44.8 52 h2.4" stroke="#D9AE55" stroke-opacity=".4" stroke-width=".8"/>`;
+  s+=`<g fill="#1D0B0C"><ellipse cx="206" cy="86" rx="22" ry="17"/><ellipse cx="230" cy="80" rx="16" ry="20"/><rect x="204" y="96" width="4" height="24"/><rect x="228" y="94" width="4" height="26"/></g>`;
+  s+=`<path d="M0 118 Q120 108 240 118 V150 H0 Z" fill="#24100D"/><circle cx="120" cy="92" r="62" fill="url(#at-fire)"/>`;
+  // pyre
+  s+=`<rect x="84" y="119" width="72" height="7" rx="3.5" fill="#6E3F22"/>`;
+  for(let x=88;x<=152;x+=8)s+=`<circle cx="${x}" cy="114" r="3.3" fill="#8A5230" stroke="#5A321A" stroke-width=".7"/>`;
+  s+=`<rect x="86" y="103" width="68" height="7" rx="3.5" fill="#6E3F22"/>`;
+  for(let x=90;x<=150;x+=8)s+=`<circle cx="${x}" cy="98" r="3.3" fill="#8A5230" stroke="#5A321A" stroke-width=".7"/>`;
+  s+=`<rect x="88" y="88" width="64" height="7" rx="3.5" fill="#7A4726"/>`;
+  s+=`<path d="M92 90 C88 76 98 70 97 56 C105 64 107 72 109 62 C111 50 118 44 120 28 C127 44 132 54 130 66 C136 60 139 52 139 44 C148 60 150 76 148 90 Z" fill="url(#at-flame)"/>
+  <path d="M104 90 C102 80 109 74 111 66 C115 72 115 78 118 70 C122 76 127 82 128 76 C131 82 133 86 134 90 Z" fill="#FFF3C0" opacity=".85"/>`;
+  const r=rng(9);for(let i=0;i<18;i++){s+=`<circle cx="${f1(96+r()*48)}" cy="${f1(18+r()*50)}" r="${(0.6+r()*1).toFixed(2)}" fill="#FFB54A" opacity="${(0.4+r()*0.5).toFixed(2)}"/>`;}
+  [24,46,68,172,194,216].forEach(x=>{s+=monkSit(x,141,1.15,'#B8621A');});
+  return svgWrap(s);
+}
+function artAsalha(){
+  let s=`<defs><linearGradient id="as-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B2B40"/><stop offset=".65" stop-color="#184058"/><stop offset="1" stop-color="#25394C"/></linearGradient>
+  ${glow('as-glow','#FFF4D2',.6)}${glow('as-wheel','#F3D68E',.55)}</defs>
+  <rect width="240" height="150" fill="url(#as-sky)"/>${stars(51,26,60)}${moonArt(36,28,12,'full','as-glow')}
+  <path d="M0 106 Q8 90 18 100 Q26 84 38 97 Q48 88 58 99 Q70 86 82 98 L158 98 Q170 86 182 99 Q192 88 202 97 Q214 84 222 100 Q232 90 240 106 V150 H0 Z" fill="#122A22"/>
+  <path d="M0 110 Q120 98 240 110 V150 H0 Z" fill="#1B3527"/>
+  <circle cx="120" cy="60" r="46" fill="url(#as-wheel)"/>
+  <path d="M114 90 h12 l2 34 h-16 z" fill="#8C5E22"/><rect x="109" y="85" width="22" height="6" rx="1.5" fill="#D9AE55"/>
+  <g transform="translate(120 60)"><circle r="24" fill="none" stroke="#E9C46A" stroke-width="3.6"/><circle r="19" fill="none" stroke="#E9C46A" stroke-width="1"/>`;
+  for(let i=0;i<8;i++){const a=i*Math.PI/4,c=Math.cos(a),n=Math.sin(a);s+=`<line x1="${f1(c*5)}" y1="${f1(n*5)}" x2="${f1(c*19)}" y2="${f1(n*19)}" stroke="#E9C46A" stroke-width="2"/><circle cx="${f1(c*27.5)}" cy="${f1(n*27.5)}" r="2" fill="#E9C46A"/>`;}
+  s+=`<circle r="5.5" fill="#E9C46A"/><circle r="2.2" fill="#8C5E22"/></g>`;
+  s+=deer(78,112,false,true)+deer(162,112,true,false);
+  [64,92,120,148,176].forEach((x,i)=>{s+=monkSit(x,140,1.12,ROBES[i%3]);});
+  return svgWrap(s);
+}
+function artKhao(){
+  let s=`<defs><linearGradient id="kp-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#17212F"/><stop offset=".65" stop-color="#2A394C"/><stop offset="1" stop-color="#394A5B"/></linearGradient>
+  ${glow('kp-glow','#FFF4D2',.45)}${glow('kp-flame','#FFC45C',.6)}
+  <linearGradient id="kp-wax" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9A043"/><stop offset=".5" stop-color="#F7DA92"/><stop offset="1" stop-color="#CE9536"/></linearGradient></defs>
+  <rect width="240" height="150" fill="url(#kp-sky)"/>${moonArt(200,24,10,'wan1','kp-glow')}
+  <g fill="#56657A"><ellipse cx="216" cy="31" rx="22" ry="7"/><ellipse cx="190" cy="34" rx="17" ry="5.5"/><ellipse cx="44" cy="20" rx="26" ry="7"/><ellipse cx="70" cy="24" rx="16" ry="5"/><ellipse cx="128" cy="14" rx="20" ry="5"/></g>`;
+  // ubosot
+  s+=`<rect x="16" y="118" width="116" height="10" fill="#5A4636"/><rect x="28" y="94" width="92" height="24" fill="#BFAF95"/>
+  <g fill="#8E7E66"><rect x="33" y="96" width="4" height="22"/><rect x="50" y="96" width="4" height="22"/><rect x="94" y="96" width="4" height="22"/><rect x="111" y="96" width="4" height="22"/></g>
+  <rect x="66" y="100" width="16" height="18" fill="#D9AE55"/><path d="M74 100 v18" stroke="#8C5E22" stroke-width=".8"/>
+  <path d="M18 97 L74 70 L130 97 Z" fill="#9A3A22" stroke="#D9AE55" stroke-width="1.3" stroke-linejoin="round"/>
+  <path d="M34 81 L74 53 L114 81 Z" fill="#B24A2A" stroke="#D9AE55" stroke-width="1.3" stroke-linejoin="round"/>
+  <path d="M73 54 C72 47 76 43 80 44 C77 45 75.5 48 75.5 54 Z" fill="#E9C46A"/>
+  <path d="M18 97 C14 95 13 90 16 87 C15 91 17 94 20 95 Z M130 97 C134 95 135 90 132 87 C133 91 131 94 128 95 Z" fill="#E9C46A"/>
+  <path d="M34 81 C31 79 30 75 32 73 C32 76 33 78 36 79 Z M114 81 C117 79 118 75 116 73 C116 76 115 78 112 79 Z" fill="#E9C46A"/>`;
+  // candle
+  s+=`<circle cx="174" cy="60" r="22" fill="url(#kp-flame)"/>
+  <rect x="154" y="122" width="40" height="6" rx="1.5" fill="#8C5E22"/><rect x="159" y="116" width="30" height="7" rx="1.5" fill="#B8862E"/>
+  <rect x="165" y="70" width="18" height="47" rx="2" fill="url(#kp-wax)"/><ellipse cx="174" cy="70" rx="9" ry="2" fill="#F9E3A8"/>`;
+  [80,93,106].forEach(y=>{s+=`<path d="M165 ${y} l4.5 -4 l4.5 4 l4.5 -4 l4.5 4" stroke="#A8782A" stroke-width="1" fill="none"/><path d="M165 ${y+4} h18" stroke="#A8782A" stroke-width=".6"/>`;});
+  s+=`<path d="M174 70 v-4" stroke="#3A2A1A" stroke-width="1"/><path d="M174 50 C178.5 56 179.5 61 174 67 C168.5 61 169.5 56 174 50 Z" fill="#FFD36B"/><path d="M174 56 C176 59 176.4 62 174 65 C171.6 62 172 59 174 56 Z" fill="#FFF6D0"/>`;
+  // rice field
+  s+=`<rect x="0" y="130" width="240" height="20" fill="#1E3326"/>`;
+  for(let row=0;row<2;row++)for(let x=4+row*4;x<240;x+=9){const y=139+row*8;s+=`<path d="M${x} ${y} l-2.2 -6 M${x} ${y} l0 -7 M${x} ${y} l2.2 -6" stroke="#5E9A48" stroke-width="1" stroke-linecap="round"/>`;}
+  const r=rng(77);let rain='';for(let i=0;i<70;i++){const x=r()*250,y=r()*140;rain+=`M${f1(x)} ${f1(y)} l-3 8 `;}
+  s+=`<path d="${rain}" stroke="#A9C3DA" stroke-opacity=".38" stroke-width=".7" stroke-linecap="round"/>`;
+  return svgWrap(s);
+}
+function artOk(){
+  let s=`<defs><linearGradient id="op-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#170F2E"/><stop offset=".65" stop-color="#33194A"/><stop offset="1" stop-color="#4D2552"/></linearGradient>
+  ${glow('op-glow','#FFF4D2',.65)}
+  <linearGradient id="op-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F7E2A6"/><stop offset="1" stop-color="#C8962F"/></linearGradient></defs>
+  <rect width="240" height="150" fill="url(#op-sky)"/>${stars(88,30,70)}${moonArt(44,32,14,'full','op-glow')}`;
+  s+=`<polygon points="174,30 184,30 82,132 58,132" fill="#BFE6F2" opacity=".22"/><polygon points="208,30 218,30 154,132 130,132" fill="#DCE1EE" opacity=".25"/>
+  <polygon points="186,26 206,26 128,134 80,134" fill="#F3D68E" opacity=".18"/>
+  <polygon points="190,28 202,28 122,132 86,132" fill="url(#op-gold)"/>`;
+  for(let i=1;i<18;i++){const t=i/18,y=28+t*104,l=190+t*(86-190),rr=202+t*(122-202);s+=`<line x1="${f1(l)}" y1="${f1(y)}" x2="${f1(rr)}" y2="${f1(y)}" stroke="#8C5E22" stroke-opacity=".55" stroke-width=".8"/>`;}
+  s+=`<g fill="#EDE3F3" opacity=".92"><ellipse cx="196" cy="24" rx="26" ry="8"/><ellipse cx="216" cy="18" rx="16" ry="7"/><ellipse cx="178" cy="19" rx="13" ry="6"/></g>`;
+  [[.3,.5],[.55,.7],[.8,.92]].forEach(([t,sc],i)=>{const y=28+t*104,cx=(190+t*(86-190)+202+t*(122-202))/2;s+=monkStand(cx,y-13*sc,sc,ROBES[i%3]);});
+  s+=`<path d="M0 130 Q120 122 240 130 V150 H0 Z" fill="#25162F"/>`;
+  const ppl=[[16,'#8E6FB0'],[30,'#C97B5A'],[44,'#5E8FB0'],[58,'#B0876F'],[150,'#C97B5A'],[164,'#8E6FB0'],[178,'#5E8FB0'],[192,'#A8966B'],[206,'#C97B5A'],[220,'#8E6FB0']];
+  ppl.forEach(([x,c])=>{s+=`<rect x="${x-3.6}" y="136" width="7.2" height="12" rx="3" fill="${c}"/><circle cx="${x}" cy="132.5" r="2.6" fill="#D9A77A"/>`;});
+  [[62,96,-20],[74,82,15],[50,110,30],[150,98,-10],[163,84,25],[176,104,-30]].forEach(([x,y,a])=>{s+=`<g transform="translate(${x} ${y}) rotate(${a})"><path d="M0 -3 q-2 -4 1 -8" stroke="#CDB88A" stroke-width=".7" fill="none"/><path d="M0 -3.4 L3.4 2.4 L-3.4 2.4 Z" fill="#6FAF5A" stroke="#3E7A33" stroke-width=".5"/></g>`;});
+  return svgWrap(s);
+}
+
+/* ---------- content ---------- */
+const DAYS=[
+{key:'magha',name:'วันมาฆบูชา',short:'มาฆบูชา',alt:'วันจาตุรงคสันนิบาต',phase:'full',lunar:'ขึ้น 15 ค่ำ เดือน 3',month:3,frac:.5,lane:0,art:artMagha,
+ faceLine:'พระสงฆ์ 1,250 รูปมาประชุมโดยมิได้นัดหมาย',
+ summary:'เป็นวันที่พระสงฆ์ 1,250 รูปมาประชุมพร้อมกันโดยมิได้นัดหมาย และพระพุทธเจ้าทรงแสดงโอวาทปาฏิโมกข์',
+ place:'วัดเวฬุวัน เมืองราชคฤห์ แคว้นมคธ',approx:'ราวเดือนกุมภาพันธ์ถึงมีนาคม',
+ leap:'เลื่อนเป็นขึ้น 15 ค่ำ เดือน 4',y2569:'อังคารที่ 3 มีนาคม 2569 (ขึ้น 15 ค่ำ เดือน 4)',iso:'2026-03-03',shortDate:'อังคาร 3 มี.ค. 2569',
+ eventsTitle:'จาตุรงคสันนิบาต การประชุมที่มีองค์ประกอบ 4 ประการ',
+ events:['พระสงฆ์ 1,250 รูปมาประชุมพร้อมกันโดยมิได้นัดหมาย','พระสงฆ์ทุกรูปเป็นพระอรหันต์','ทุกรูปได้รับการบวชจากพระพุทธเจ้าโดยตรง เรียกว่า เอหิภิกขุอุปสัมปทา','ตรงกับวันเพ็ญ ขึ้น 15 ค่ำ เดือน 3 (เดือนมาฆะ)'],
+ dhammaTitle:'โอวาทปาฏิโมกข์ หัวใจของพระพุทธศาสนา',
+ dhamma:['การไม่ทำความชั่วทั้งปวง','การทำความดีให้ถึงพร้อม','การทำจิตใจของตนให้ผ่องใส'],
+ acts:['ตักบาตรทำบุญ','ฟังธรรม','เวียนเทียนรอบอุโบสถ','รักษาศีล 5'],
+ fact:'พิธีมาฆบูชาในประเทศไทยเริ่มขึ้นครั้งแรกในสมัยรัชกาลที่ 4'},
+{key:'visakha',name:'วันวิสาขบูชา',short:'วิสาขบูชา',alt:'',phase:'full',lunar:'ขึ้น 15 ค่ำ เดือน 6',month:6,frac:.5,lane:0,art:artVisakha,
+ faceLine:'ประสูติ ตรัสรู้ และปรินิพพาน',
+ summary:'เป็นวันที่พระพุทธเจ้าประสูติ ตรัสรู้ และปรินิพพาน ทั้ง 3 เหตุการณ์เกิดในวันเพ็ญเดือน 6 เหมือนกัน แต่ต่างปีกัน',
+ place:'ลุมพินีวัน · พุทธคยา · เมืองกุสินารา',approx:'ราวเดือนพฤษภาคม',
+ leap:'เลื่อนเป็นขึ้น 15 ค่ำ เดือน 7',y2569:'อาทิตย์ที่ 31 พฤษภาคม 2569 (ขึ้น 15 ค่ำ เดือน 7)',iso:'2026-05-31',shortDate:'อาทิตย์ 31 พ.ค. 2569',
+ eventsTitle:'เหตุการณ์ 3 ประการ',
+ events:['ประสูติ ที่สวนลุมพินีวัน ระหว่างเมืองกบิลพัสดุ์กับเมืองเทวทหะ','ตรัสรู้ เมื่อพระชนมายุ 35 พรรษา ใต้ต้นพระศรีมหาโพธิ์ ริมฝั่งแม่น้ำเนรัญชรา','ปรินิพพาน เมื่อพระชนมายุ 80 พรรษา ที่สาลวโนทยาน เมืองกุสินารา'],
+ dhammaTitle:'อริยสัจ 4 ความจริงที่พระพุทธเจ้าตรัสรู้',
+ dhamma:['ทุกข์ คือ ความไม่สบายกายไม่สบายใจ','สมุทัย คือ เหตุที่ทำให้เกิดทุกข์','นิโรธ คือ ความดับทุกข์','มรรค คือ ทางที่นำไปสู่ความดับทุกข์'],
+ acts:['ตักบาตรทำบุญ','ฟังธรรม','เวียนเทียน','ปฏิบัติธรรม'],
+ fact:'องค์การสหประชาชาติประกาศให้วันวิสาขบูชาเป็นวันสำคัญสากล เมื่อ พ.ศ. 2542'},
+{key:'atthami',name:'วันอัฏฐมีบูชา',short:'อัฏฐมีบูชา',alt:'',phase:'lastq',lunar:'แรม 8 ค่ำ เดือน 6',month:6,frac:.78,lane:1,art:artAtthami,
+ faceLine:'ถวายพระเพลิงพระพุทธสรีระ',
+ summary:'เป็นวันถวายพระเพลิงพระพุทธสรีระของพระพุทธเจ้า หลังจากเสด็จปรินิพพานแล้ว 8 วัน',
+ place:'มกุฏพันธนเจดีย์ เมืองกุสินารา',approx:'8 วันหลังวันวิสาขบูชา',
+ leap:'เลื่อนเป็นแรม 8 ค่ำ เดือน 7',y2569:'จันทร์ที่ 8 มิถุนายน 2569 (แรม 8 ค่ำ เดือน 7)',iso:'2026-06-08',shortDate:'จันทร์ 8 มิ.ย. 2569',
+ eventsTitle:'เหตุการณ์สำคัญ',
+ events:['มัลลกษัตริย์แห่งเมืองกุสินาราจัดพิธีถวายพระเพลิงพระพุทธสรีระ','เพลิงยังไม่ติด จนพระมหากัสสปะเดินทางมาถึงและถวายบังคมพระพุทธบาท เพลิงจึงลุกขึ้นเอง','โทณพราหมณ์แบ่งพระบรมสารีริกธาตุเป็น 8 ส่วน ให้เมืองต่าง ๆ นำไปสร้างสถูปไว้บูชา'],
+ dhammaTitle:'ปัจฉิมโอวาท คำสอนสุดท้ายของพระพุทธเจ้า',
+ dhamma:['สังขารทั้งหลายมีความเสื่อมไปเป็นธรรมดา','ท่านทั้งหลายจงยังความไม่ประมาทให้ถึงพร้อมเถิด'],
+ acts:['ฟังธรรม','เวียนเทียน (บางวัด)','ระลึกถึงพระคุณของพระพุทธเจ้า'],
+ fact:'วันอัฏฐมีบูชาไม่ใช่วันหยุดราชการ แต่หลายวัดยังจัดพิธีบูชาเป็นประจำทุกปี'},
+{key:'asalha',name:'วันอาสาฬหบูชา',short:'อาสาฬหบูชา',alt:'',phase:'full',lunar:'ขึ้น 15 ค่ำ เดือน 8',month:8,frac:.5,lane:0,art:artAsalha,
+ faceLine:'ปฐมเทศนา และพระรัตนตรัยครบ 3',
+ summary:'เป็นวันที่พระพุทธเจ้าทรงแสดงปฐมเทศนา และเกิดพระรัตนตรัยครบ 3 ประการ',
+ place:'ป่าอิสิปตนมฤคทายวัน เมืองพาราณสี',approx:'ราวเดือนกรกฎาคม',
+ leap:'ตรงกับขึ้น 15 ค่ำ เดือน 8 หลัง',y2569:'พุธที่ 29 กรกฎาคม 2569 (ขึ้น 15 ค่ำ เดือน 8 หลัง)',iso:'2026-07-29',shortDate:'พุธ 29 ก.ค. 2569',
+ eventsTitle:'เหตุการณ์สำคัญ',
+ events:['ทรงแสดงปฐมเทศนา ชื่อ ธัมมจักกัปปวัตตนสูตร แก่ปัญจวัคคีย์ทั้ง 5','ท่านโกณฑัญญะฟังแล้วได้ดวงตาเห็นธรรม และขอบวชเป็นพระสงฆ์รูปแรก','เกิดพระรัตนตรัยครบ 3 คือ พระพุทธ พระธรรม พระสงฆ์'],
+ dhammaTitle:'หลักธรรมในปฐมเทศนา',
+ dhamma:['มัชฌิมาปฏิปทา ทางสายกลาง ไม่ตึงและไม่หย่อนเกินไป','อริยสัจ 4 คือ ทุกข์ สมุทัย นิโรธ มรรค'],
+ acts:['ตักบาตรทำบุญ','ฟังธรรม','เวียนเทียน'],
+ fact:'ประเทศไทยเริ่มจัดวันอาสาฬหบูชาเป็นวันสำคัญครั้งแรกเมื่อ พ.ศ. 2501'},
+{key:'khao',name:'วันเข้าพรรษา',short:'เข้าพรรษา',alt:'',phase:'wan1',lunar:'แรม 1 ค่ำ เดือน 8',month:8,frac:.54,lane:1,art:artKhao,
+ faceLine:'พระสงฆ์อยู่ประจำที่ 3 เดือนฤดูฝน',
+ summary:'เป็นวันที่พระภิกษุสงฆ์อธิษฐานอยู่ประจำที่ตลอด 3 เดือนในฤดูฝน เรียกว่า การจำพรรษา',
+ place:'วัดที่พระสงฆ์แต่ละรูปอยู่จำพรรษา',approx:'วันถัดจากวันอาสาฬหบูชา',
+ leap:'ตรงกับแรม 1 ค่ำ เดือน 8 หลัง',y2569:'พฤหัสบดีที่ 30 กรกฎาคม 2569 (แรม 1 ค่ำ เดือน 8 หลัง)',iso:'2026-07-30',shortDate:'พฤหัสบดี 30 ก.ค. 2569',
+ eventsTitle:'ทำไมพระสงฆ์ต้องจำพรรษา',
+ events:['ฤดูฝนเป็นช่วงที่ชาวบ้านทำนา การเดินทางอาจเหยียบย่ำต้นข้าวเสียหาย','เป็นเวลาให้พระสงฆ์ได้ศึกษาและปฏิบัติธรรมอยู่กับที่','หากมีกิจจำเป็น ไปค้างที่อื่นได้ไม่เกิน 7 วัน เรียกว่า สัตตาหกรณียะ'],
+ dhammaTitle:'ประเพณีสำคัญ',
+ dhamma:['หล่อเทียนและแห่เทียนพรรษาไปถวายวัด','ถวายผ้าอาบน้ำฝนแก่พระสงฆ์','ตักบาตรดอกไม้ ที่จังหวัดสระบุรี'],
+ acts:['ตั้งใจงดเหล้าเข้าพรรษา','ตั้งใจทำความดีตลอดพรรษา','ฟังธรรม'],
+ fact:'ประเพณีแห่เทียนพรรษาของจังหวัดอุบลราชธานีมีชื่อเสียงมาก'},
+{key:'ok',name:'วันออกพรรษา',short:'ออกพรรษา',alt:'วันมหาปวารณา',phase:'full',lunar:'ขึ้น 15 ค่ำ เดือน 11',month:11,frac:.5,lane:0,art:artOk,
+ faceLine:'สิ้นสุดการจำพรรษา 3 เดือน',
+ summary:'เป็นวันสิ้นสุดระยะเวลาจำพรรษา หลังจากวันนี้พระสงฆ์เดินทางไปที่อื่นได้ตามปกติ',
+ place:'วัดทั่วไป · ตำนานเทโวโรหณะที่เมืองสังกัสสะ',approx:'ราวเดือนตุลาคม',
+ leap:'',y2569:'จันทร์ที่ 26 ตุลาคม 2569 (ขึ้น 15 ค่ำ เดือน 11)',iso:'2026-10-26',shortDate:'จันทร์ 26 ต.ค. 2569',
+ eventsTitle:'เหตุการณ์และประเพณีสำคัญ',
+ events:['พระสงฆ์ทำพิธีปวารณา คือ เปิดโอกาสให้กันและกันว่ากล่าวตักเตือนได้','วันรุ่งขึ้น (แรม 1 ค่ำ เดือน 11) มีการตักบาตรเทโว ระลึกถึงวันที่พระพุทธเจ้าเสด็จลงจากสวรรค์ชั้นดาวดึงส์ หลังเสด็จไปโปรดพุทธมารดา','ช่วง 1 เดือนหลังออกพรรษาเป็นเทศกาลทอดกฐิน (แรม 1 ค่ำ เดือน 11 ถึงขึ้น 15 ค่ำ เดือน 12)'],
+ dhammaTitle:'ข้อคิดจากพิธีปวารณา',
+ dhamma:['ยอมรับคำตักเตือนด้วยใจที่เปิดกว้าง','ตักเตือนผู้อื่นด้วยความหวังดี'],
+ acts:['ตักบาตรเทโว','ทอดกฐิน','ฟังธรรม'],
+ fact:'ช่วงออกพรรษามีประเพณีท้องถิ่น เช่น ไหลเรือไฟที่จังหวัดนครพนม และประเพณีชักพระทางภาคใต้'}
+];
+
+/* ---------- elements & state ---------- */
+const stage=document.getElementById('stage'),obj=document.getElementById('obj'),panel=document.getElementById('panel');
+const chipsEl=document.getElementById('chips'),tl=document.getElementById('tl'),autoBtn=document.getElementById('autoBtn');
+const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DUR=reduce?'.01s':'.95s';
+const CUBE=[[0,0],[0,90],[0,180],[0,270],[90,0],[-90,0]];
+const NET=[[0,0],[1,0],[2,0],[-1,0],[0,-1],[0,1]],NETR=[[0,0],[0,0],[0,360],[0,360],[0,0],[0,0]];
+const G=6;
+let S=260,W=600,H=460,mode='cube',ax=-20,ay=-36,sel=0,auto=!reduce,drag=null,kFor={cube:1,prism:1,net:.5};
+const faces=[];
+
+/* ---------- build ---------- */
+DAYS.forEach((d,i)=>{
+  const f=document.createElement('div');f.className='face';f.dataset.i=i;f.setAttribute('aria-hidden','true');
+  f.innerHTML=`<div class="face-art">${d.art()}</div><div class="face-band"><div class="face-date">${moonIcon(d.phase,14)}<span>${d.lunar}</span></div><h3 class="face-title">${d.name}</h3><p class="face-line">${d.faceLine}</p></div>`;
+  obj.appendChild(f);faces.push(f);
+  const c=document.createElement('button');c.type='button';c.className='chip';c.dataset.i=i;
+  c.innerHTML=`${moonIcon(d.phase,20)}<span class="nm">${d.name}</span><span class="dt">${d.lunar}</span>`;
+  c.addEventListener('click',()=>goTo(i));chipsEl.appendChild(c);
+});
+const pos=(m,fr)=>((m-1)+fr)/12*100;
+(function buildTimeline(){
+  const names=['เดือนอ้าย','เดือนยี่','เดือน 3','เดือน 4','เดือน 5','เดือน 6','เดือน 7','เดือน 8','เดือน 9','เดือน 10','เดือน 11','เดือน 12'];
+  const greg=['ธ.ค.','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.'];
+  let h='<div class="tl-months">'+names.map((n,i)=>`<div><b>${n}</b><small>≈ ${greg[i]}</small></div>`).join('')+'</div>';
+  const a=pos(8,.54),b=pos(11,.5);
+  h+=`<div class="tl-band" style="left:${a}%;width:${b-a}%">ช่วงจำพรรษา 3 เดือน</div>`;
+  DAYS.forEach((d,i)=>{
+    const pill=`<button class="tl-pill" type="button" data-i="${i}">${moonIcon(d.phase,14)}<span>${d.short}</span></button>`;
+    h+=`<div class="tl-mark ${d.lane?'down':'up'}" style="left:${pos(d.month,d.frac)}%">`+(d.lane?`<span class="tl-dot"></span><span class="tl-stem"></span>${pill}`:`${pill}<span class="tl-stem"></span><span class="tl-dot"></span>`)+'</div>';
+  });
+  tl.innerHTML=h;
+  tl.querySelectorAll('.tl-pill').forEach(p=>p.addEventListener('click',()=>goTo(+p.dataset.i)));
+})();
+
+/* ---------- upcoming ---------- */
+function upcoming(){
+  const n=new Date(),today=new Date(n.getFullYear(),n.getMonth(),n.getDate());let best=null;
+  DAYS.forEach((d,i)=>{const [y,m,dd]=d.iso.split('-').map(Number);const diff=Math.round((new Date(y,m-1,dd)-today)/86400000);if(diff>=0&&(!best||diff<best.diff))best={i,diff};});
+  return best;
+}
+const UP=upcoming();
+if(UP){
+  const nb=document.getElementById('nextBadge'),d=DAYS[UP.i];
+  nb.innerHTML=UP.diff===0?`<b>วันนี้คือ${d.name}</b><span>${d.shortDate}</span>`:`<span>วันสำคัญถัดไป</span><b>${d.name}</b><span>${d.shortDate}</span><span class="cd">อีก ${UP.diff} วัน</span>`;
+  nb.hidden=false;nb.addEventListener('click',()=>goTo(UP.i));
+}
+
+/* ---------- transforms ---------- */
+function faceT(i){
+  if(mode==='cube'){const [rx,ry]=CUBE[i];return `translate3d(0px,0px,0px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${S/2}px)`;}
+  if(mode==='prism')return `translate3d(0px,0px,0px) rotateX(0deg) rotateY(${i*60}deg) translateZ(${f1(S*0.866)}px)`;
+  const [gx,gy]=NET[i],[rx,ry]=NETR[i];
+  return `translate3d(${f1((gx-.5)*(S+G))}px,${f1(gy*(S+G))}px,0px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(0px)`;
+}
+function applyFaces(animate){faces.forEach((f,i)=>{f.style.transition=animate?`transform ${DUR} var(--ease)`:'none';f.style.transform=faceT(i);});}
+function applyObj(animate){
+  const k=kFor[mode];
+  obj.style.transition=animate?`transform ${DUR} var(--ease)`:'none';
+  obj.style.transform=`rotateX(${f1(ax)}deg) rotateY(${f1(ay)}deg) scale3d(${k.toFixed(3)},${k.toFixed(3)},${k.toFixed(3)})`;
+}
+function layout(){
+  W=stage.clientWidth;
+  S=Math.round(Math.max(168,Math.min(290,W*.54)));
+  H=Math.round(S*1.74);
+  stage.style.height=H+'px';stage.style.setProperty('--s',S+'px');stage.style.perspective=Math.round(S*4.4)+'px';
+  kFor={cube:1,prism:Math.min(1,(W-24)/(2.25*S)),net:Math.min(1,(W-28)/(4*S+3*G),(H-28)/(3*S+2*G))};
+  applyFaces(false);applyObj(false);
+}
+
+/* ---------- selection ---------- */
+function setAuto(on){auto=on&&!reduce;autoBtn.setAttribute('aria-pressed',String(auto));}
+function highlight(){
+  faces.forEach((f,i)=>f.classList.toggle('is-active',i===sel));
+  chipsEl.querySelectorAll('.chip').forEach((c,i)=>c.setAttribute('aria-current',String(i===sel)));
+  tl.querySelectorAll('.tl-pill').forEach(p=>p.setAttribute('aria-current',String(+p.dataset.i===sel)));
+}
+function goTo(i,opt){
+  opt=opt||{};sel=i;highlight();renderPanel();
+  if(opt.stop!==false)setAuto(false);
+  if(opt.rotate===false||mode==='net')return;
+  let tax,tay;
+  if(mode==='cube'){if(i<4){tax=-12;tay=-i*90+16;}else if(i===4){tax=-74;tay=16;}else{tax=74;tay=16;}}
+  else{tax=-8;tay=-i*60;}
+  ay=tay+360*Math.round((ay-tay)/360);ax=tax;applyObj(true);
+}
+function frontFace(){
+  const R=Math.PI/180;let best=sel,bz=-9;
+  for(let i=0;i<6;i++){
+    const [frx,fry]=mode==='cube'?CUBE[i]:[0,i*60];
+    const x=Math.sin(fry*R),y=-Math.cos(fry*R)*Math.sin(frx*R),z=Math.cos(fry*R)*Math.cos(frx*R);
+    const z1=-x*Math.sin(ay*R)+z*Math.cos(ay*R);
+    const z2=y*Math.sin(ax*R)+z1*Math.cos(ax*R);
+    if(z2>bz){bz=z2;best=i;}
+  }
+  return best;
+}
+function setMode(m){
+  if(m===mode)return;mode=m;stage.dataset.mode=m;
+  document.querySelectorAll('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===m)));
+  document.getElementById('hint').textContent=m==='net'?'แตะด้านที่อยากอ่าน':'ลากเพื่อหมุน · แตะด้านที่อยากอ่าน';
+  applyFaces(true);
+  if(m==='net'){ax=16;ay=360*Math.round(ay/360);applyObj(true);}
+  else goTo(sel,{stop:false});
+}
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+autoBtn.addEventListener('click',()=>setAuto(!auto));
+
+/* ---------- panel ---------- */
+function esc(s){return String(s);}
+function renderPanel(){
+  const d=DAYS[sel],p=DAYS[(sel+5)%6],n=DAYS[(sel+1)%6];
+  const soon=UP&&UP.i===sel?`<span class="p-soon">${UP.diff===0?'วันนี้':'อีก '+UP.diff+' วัน'}</span>`:`<span class="p-order">ลำดับที่ ${sel+1} จาก 6 ในรอบปี</span>`;
+  panel.innerHTML=`
+  <div class="p-top"><span class="p-date">${moonIcon(d.phase,20)}${d.lunar}</span>${soon}</div>
+  <h2 class="p-title">${d.name}</h2>
+  ${d.alt?`<p class="p-alt">หรือ ${d.alt}</p>`:''}
+  <p class="p-summary">${esc(d.summary)}</p>
+  <dl class="p-meta">
+    <div><dt>สถานที่</dt><dd>${d.place}</dd></div>
+    <div><dt>ช่วงเวลา</dt><dd>${d.approx}</dd></div>
+    ${d.leap?`<div><dt>ปีอธิกมาส</dt><dd>${d.leap}</dd></div>`:''}
+    <div><dt>ปี 2569</dt><dd>${d.y2569}</dd></div>
+  </dl>
+  <section class="p-sec"><h3>${d.eventsTitle}</h3><ol class="p-events">${d.events.map(e=>`<li><span>${e}</span></li>`).join('')}</ol></section>
+  <section class="leaf"><h3>${d.dhammaTitle}</h3><ul>${d.dhamma.map(e=>`<li>${e}</li>`).join('')}</ul></section>
+  <section class="p-sec"><h3>สิ่งที่ชาวพุทธทำในวันนี้</h3><div class="tags">${d.acts.map(a=>`<span class="tag">${a}</span>`).join('')}</div></section>
+  <p class="fact"><strong>รู้ไหม</strong>${d.fact}</p>
+  <nav class="p-nav" aria-label="เปลี่ยนวัน">
+    <button type="button" data-go="-1">‹ ก่อนหน้า<b>${p.name}</b></button>
+    <button type="button" data-go="1">ถัดไป ›<b>${n.name}</b></button>
+  </nav>`;
+  panel.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>goTo((sel+6+(+b.dataset.go))%6)));
+  panel.classList.remove('in');void panel.offsetWidth;panel.classList.add('in');
+}
+
+/* ---------- pointer & keys ---------- */
+stage.addEventListener('pointerdown',e=>{
+  if(e.button!==0||e.target.closest('.fs'))return;
+  drag={x:e.clientX,y:e.clientY,ax,ay,moved:false,face:e.target.closest('.face')};
+  try{stage.setPointerCapture(e.pointerId);}catch(_){}
+});
+stage.addEventListener('pointermove',e=>{
+  if(!drag)return;
+  const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)>6){drag.moved=true;setAuto(false);}
+  if(!drag.moved||mode==='net')return;
+  const lim=mode==='cube'?90:22;
+  ay=drag.ay+dx*.45;ax=Math.max(-lim,Math.min(lim,drag.ax-dy*.45));applyObj(false);
+});
+function endDrag(){
+  if(!drag)return;const d=drag;drag=null;
+  if(!d.moved&&d.face){goTo(+d.face.dataset.i);return;}
+  if(d.moved&&mode!=='net'){const f=frontFace();if(f!==sel){sel=f;highlight();renderPanel();}}
+}
+stage.addEventListener('pointerup',endDrag);
+stage.addEventListener('pointercancel',()=>{drag=null;});
+stage.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'){e.preventDefault();goTo((sel+1)%6);}
+  else if(e.key==='ArrowLeft'){e.preventDefault();goTo((sel+5)%6);}
+});
+
+/* ---------- fullscreen ---------- */
+const fsBtn=document.getElementById('fsBtn');
+if(document.fullscreenEnabled){
+  fsBtn.hidden=false;
+  fsBtn.addEventListener('click',()=>{
+    if(document.fullscreenElement){document.exitFullscreen().catch(()=>{});}
+    else{const p=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();if(p&&p.catch)p.catch(()=>{});}
+  });
+  document.addEventListener('fullscreenchange',()=>{fsBtn.textContent=document.fullscreenElement?'ออกจากเต็มจอ':'เต็มจอ';});
+}
+
+/* ---------- auto rotate ---------- */
+let last=0;
+function tick(t){
+  const dt=Math.min(50,t-(last||t));last=t;
+  if(auto&&!drag&&mode!=='net'){ay-=dt*.011;applyObj(false);}
+  requestAnimationFrame(tick);
+}
+
+/* ---------- start ---------- */
+layout();highlight();renderPanel();setAuto(auto);
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(layout,120);});
+requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
