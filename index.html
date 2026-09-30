@@ -288,6 +288,45 @@ body[data-domain="media"] .banner .b-mascot{max-height:230px}
 @media (max-width:1000px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.mgrid{grid-template-columns:1fr}body[data-domain="media"] .banner .b-mascot{height:92px}}
 
+
+.vgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.vcard{display:flex;flex-direction:column;text-align:left;border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
+.vcard:hover{transform:translateY(-4px);border-color:var(--accent)}
+.vph{position:relative;aspect-ratio:16/9;background:#0b1437;overflow:hidden}
+.vph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s,filter .3s}
+.vcard:hover .vph img{transform:scale(1.04);filter:brightness(.85)}
+.play{position:absolute;left:50%;top:50%;width:72px;height:72px;margin:-36px 0 0 -36px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.92);color:#6a3fd1;box-shadow:0 12px 30px -8px rgba(0,0,0,.55);transition:transform .25s}
+.play svg{width:30px;height:30px;margin-left:4px}
+.vcard:hover .play{transform:scale(1.1)}
+.dur{position:absolute;right:12px;bottom:12px;font-size:13px;font-weight:600;padding:3px 10px;border-radius:8px;background:rgba(0,0,0,.72);color:#fff;font-variant-numeric:tabular-nums}
+.mph.wide{aspect-ratio:16/9}
+.mph .cnt svg{width:14px;height:14px}
+/* Player */
+.player{position:fixed;inset:0;z-index:60;background:#060918;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto auto;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px calc(env(safe-area-inset-bottom,0px) + 12px);color:#eef1fb}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px}
+.pl-t{min-width:0;flex:1}.pl-t small{display:block;font-size:12.5px;color:#aab3d6}.pl-t b{display:block;font-family:var(--f-head);font-weight:500;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-actions{display:flex;gap:8px;flex:none}
+.pl-actions button,.pl-foot button{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14);color:#fff;font-size:14px}
+.pl-actions button:hover,.pl-foot button:hover{background:rgba(255,255,255,.2)}
+.pl-actions svg,.pl-foot svg{width:18px;height:18px}
+.pl-stage{min-height:0;min-width:0;display:grid;place-items:center;grid-template-columns:minmax(0,1fr)}
+.pl-stage>*{justify-self:center}
+.pl-stage video,.pl-stage img{max-width:100%;max-height:100%;width:auto;height:auto;border-radius:10px;background:#000;box-shadow:0 20px 50px -20px rgba(0,0,0,.8)}
+.pl-stage video{width:min(100%,calc((100vh - 110px)*16/9));max-height:calc(100vh - 110px);max-height:calc(100svh - 110px)}
+.pl-stage img{cursor:pointer;user-select:none;max-height:calc(100vh - 240px);max-height:calc(100svh - 240px)}
+@media (max-width:640px){.pl-stage img{max-height:calc(100svh - 200px)}}
+.pl-foot{display:flex;justify-content:center;align-items:center;gap:16px;padding-top:10px;font-variant-numeric:tabular-nums}
+.pl-foot button{padding:8px 12px}.pl-foot button:disabled{opacity:.3;cursor:default}
+.pl-foot b{color:var(--gold-hi);font-family:var(--f-head);font-weight:500}
+.pl-strip{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:thin}
+.pl-strip button{flex:none;position:relative;width:112px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;border:2px solid transparent;opacity:.6;transition:opacity .2s,border-color .2s;background:#1a2040}
+.pl-strip button.on{border-color:var(--gold);opacity:1}
+.pl-strip button:hover{opacity:1}
+.pl-strip img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-strip span{position:absolute;left:4px;bottom:3px;font-size:11px;padding:0 5px;border-radius:4px;background:rgba(0,0,0,.65);color:#fff}
+.player:fullscreen{padding:10px}
+@media (max-width:640px){.vgrid{grid-template-columns:1fr}.pl-actions span{display:none}.pl-actions button{padding:8px}.pl-t b{font-size:15px}.pl-strip button{width:84px}.play{width:58px;height:58px;margin:-29px 0 0 -29px}}
+
 /* Main */
 .main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:18px 64px}
 .main.full{grid-template-columns:minmax(0,1fr)}
@@ -527,6 +566,17 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
 
 <footer><div class="wrap"><span class="f-brand"><img src="img/logo.png" width="40" height="40" alt="" aria-hidden="true"><span><b>นายระพีพัฒน์ กลัดกันแสง</b> · ครูผู้ช่วย โรงเรียนวังหลวงพิทยาสรรพ์</span></span><span>สำนักงานเขตพื้นที่การศึกษามัธยมศึกษาหนองคาย · การประเมินครั้งที่ 3</span></div></footer>
 
+<div class="player" id="player" hidden role="dialog" aria-modal="true" aria-labelledby="pl-title">
+  <div class="pl-head"><div class="pl-t"><small id="pl-kind"></small><b id="pl-title"></b></div><div class="pl-actions"><button id="pl-full" hidden title="เต็มจอ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg><span>เต็มจอ</span></button><button id="pl-close" title="ปิด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg><span>ปิด</span></button></div></div>
+  <div class="pl-stage" id="pl-stage"></div>
+  <div class="pl-foot" id="pl-foot" hidden>
+    <button id="pl-prev" aria-label="สไลด์ก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <span id="pl-count"></span>
+    <button id="pl-next" aria-label="สไลด์ถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  </div>
+  <div class="pl-strip" id="pl-strip" hidden></div>
+</div>
+
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="ภาพหลักฐาน">
   <img id="lb-img" alt="">
   <p class="lb-cap" id="lb-cap" hidden></p>
@@ -558,7 +608,6 @@ const AWN=AW.filter(a=>a.award).length, AWP=new Set(AW.flatMap(a=>a.photos.map(p
 const MTYPE={digital:'สื่อดิจิทัลและออนไลน์',game:'เกมและกิจกรรมการเรียนรู้',work:'ผลงานนักเรียน'};
 const P=(src,w,h)=>({src,w,h});
 const MEDIA=[
- {t:'digital',kind:'วิดีโอ YouTube',subj:'หน้าที่พลเมือง',title:'วิดีโอการสอน เรื่อง หน้าที่ของเยาวชนไทย',desc:'สื่อวิดีโอการสอนสังคมศึกษาเผยแพร่ผ่าน YouTube ช่วยให้นักเรียนเห็นภาพชัดเจนและทบทวนบทเรียนได้ด้วยตนเอง',ref:[['12','6.1'],['7','1.4']],photos:[P('img/12-image8.jpg',1200,780),P('img/7-image12.jpg',863,567)]},
  {t:'digital',kind:'ห้องเรียนเสมือนจริง',subj:'ประวัติศาสตร์',title:'ห้องเรียนเสมือนจริง พิพิธภัณฑ์ประวัติศาสตร์ไทย',desc:'พิพิธภัณฑ์ 3 มิติให้นักเรียนเดินชมนิทรรศการประวัติศาสตร์ไทยผ่านหน้าจอ เรียนรู้ได้ทุกที่ทุกเวลา',ref:[['12','6.1'],['6','6.2']],photos:[P('img/12-image10.jpg',926,464),P('img/6-image11.jpg',1200,615)]},
  {t:'digital',kind:'ห้องเรียนออนไลน์',subj:'สังคมศึกษา',title:'ห้องเรียนออนไลน์ Social Studies Class',desc:'พื้นที่รวมบทเรียนและสื่อของรายวิชาสังคมศึกษาไว้ในที่เดียว ให้นักเรียนเข้าถึงเนื้อหาได้สะดวก',ref:[['6','6.2']],photos:[P('img/6-image10.jpg',1200,617)]},
  {t:'digital',kind:'อินโฟกราฟิก',subj:'เทคโนโลยี',title:'อินโฟกราฟิก เครื่องมือ AI 10 อย่าง',desc:'สื่ออินโฟกราฟิกแนะนำเครื่องมือ AI ที่นำมาใช้พัฒนางานและนวัตกรรมการเรียนรู้',ref:[['12','6.1']],photos:[P('img/12-image7.jpg',832,832)]},
@@ -569,7 +618,23 @@ const MEDIA=[
  {t:'work',kind:'หนังสั้น',subj:'สื่อสร้างสรรค์',title:'หนังสั้น "ทางลัดที่ยาที่สุด"',desc:'ผลงานถ่ายทำหนังสั้น ได้รับรางวัลชนะเลิศ ระดับจังหวัดหนองคาย',award:['ชนะเลิศ','gold'],ref:[['12','6.1']],aw:32},
 ];
 MEDIA.forEach(m=>{if(m.aw!=null)m.photos=AW[m.aw].photos});
+const ICO_PLAY='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>';
+const ICO_SLIDES='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>';
 const MEDIA_AW=[{i:0,title:'คลังสื่อดิจิทัลครูต้นแบบ (Best Practice)',lv:['Best Practice','gold']},{i:32,title:'หนังสั้น "ทางลัดที่ยาที่สุด"',lv:['ชนะเลิศ ระดับจังหวัด','gold']}];
+const VIDEOS=[
+ {id:'civic',src:'media/v-civic.mp4',poster:'media/v-civic.jpg',dur:'4:25',subj:'หน้าที่พลเมือง',title:'หน้าที่พลเมือง บทที่ 1 บทบาทของเยาวชนที่ดีต่อสังคมและประเทศชาติ',desc:'วิดีโอการสอนที่ครูผลิตเอง นำเสนอความสำคัญของเยาวชนและการปฏิบัติตนเป็นเยาวชนที่ดี ทั้งการเคารพกติกาสังคม การปฏิบัติตามกฎหมาย และการใฝ่เรียนรู้',ref:[['12','6.1'],['7','1.4']]},
+ {id:'history',src:'media/v-history.mp4',poster:'media/v-history.jpg',dur:'1:57',subj:'ประวัติศาสตร์',title:'วิธีการศึกษาประวัติศาสตร์ (สื่อบทที่ 2)',desc:'อธิบายประเภทของหลักฐานทางประวัติศาสตร์และวิธีการทางประวัติศาสตร์ 5 ขั้นตอน สอนโดยครูระพีพัฒน์ กลัดกันแสง',ref:[['12','6.1'],['7','1.4']]}
+];
+const DECKS=[
+ {id:'civic1',n:16,subj:'หน้าที่พลเมือง',title:'หน่วยการเรียนรู้ที่ 1 พลเมืองดี',sub:'สาระหน้าที่พลเมือง ม.1'},
+ {id:'law',n:44,subj:'หน้าที่พลเมือง',title:'บทที่ 3 กฎหมายคุ้มครองสิทธิส่วนบุคคล',sub:'กฎหมายคุ้มครองเด็ก สิทธิเด็ก และลิขสิทธิ์'},
+ {id:'origin',n:19,subj:'ประวัติศาสตร์',title:'แนวคิดถิ่นกำเนิดของชนชาติไทย',sub:'ประวัติศาสตร์ไทย: คนไทยมาจากที่ไหน'},
+ {id:'era',n:10,subj:'ประวัติศาสตร์',title:'การนับและการเปรียบเทียบศักราช',sub:'พุทธศักราช คริสต์ศักราช รัตนโกสินทร์ศก'},
+ {id:'holy',n:27,subj:'พระพุทธศาสนา',title:'วันสำคัญทางพระพุทธศาสนา',sub:'วิสาขบูชา มาฆบูชา อาสาฬหบูชา และวันสำคัญอื่น ๆ'},
+ {id:'sites',n:5,subj:'พระพุทธศาสนา',title:'พุทธสถานที่สำคัญในสมัยพุทธกาล',sub:'สังเวชนียสถาน 4 ตำบล'}
+];
+const slideSrc=(d,i)=>`media/${d.id}/s${String(i+1).padStart(2,'0')}.jpg`;
+const NSLIDES=DECKS.reduce((a,d)=>a+d.n,0);
 
 const TOC=[['ปก',0],['คำนำ',1],['สารบัญ',2],['ข้อมูลผู้ขอรับการประเมิน',3],['องค์ประกอบที่ 1 การปฏิบัติตน',8],['องค์ประกอบที่ 2 การปฏิบัติงาน',18],['ภาคผนวก ก คำสั่งการปฏิบัติราชการ',23],['ภาคผนวก ข เกียรติบัตร รางวัล',28],['ภาคผนวก ค รูปภาพกิจกรรม',33],['ปกหลัง',55]];
 const ICO_BOOK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>';
@@ -594,8 +659,8 @@ document.getElementById('domains').innerHTML=['self','work'].map((d,x)=>{const s
   <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('')
   +`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
   <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>สื่อดิจิทัล ห้องเรียนเสมือนจริง เกม และกิจกรรมการเรียนรู้ที่ใช้ในชั้นเรียน</p></span>
-  <span class="meta"><span><b>${MEDIA.length}</b>ชิ้นงาน</span><span><b>${MEDIA.reduce((a,m)=>a+m.photos.length,0)}</b>ภาพ</span></span></button>`
+  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>วิดีโอการสอน สไลด์ประกอบการสอน ห้องเรียนเสมือนจริง และเกมการเรียนรู้</p></span>
+  <span class="meta"><span><b>${VIDEOS.length}</b>วิดีโอ</span><span><b>${DECKS.length}</b>ชุดสไลด์</span><span><b>${MEDIA.length}</b>สื่ออื่น ๆ</span></span></button>`
   +`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 5</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
   <span class="meta"><span><b>${AWN}</b>รางวัล</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></span></button>`;
 
@@ -778,10 +843,16 @@ function openMedia(){
   document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="04"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-media.png" alt="">
     <div class="kick"><span class="g">หัวข้อที่ 4</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
     <h2><small>นวัตกรรมและสื่อที่ใช้ในชั้นเรียน</small>สื่อการจัดการเรียนรู้</h2>
-    <div class="facts"><span><b>${MEDIA.length}</b>ชิ้นงาน</span><span><b>${Object.keys(MTYPE).length}</b>ประเภท</span><span><b>${np}</b>ภาพ</span></div></div>
+    <div class="facts"><span><b>${VIDEOS.length}</b>วิดีโอการสอน</span><span><b>${DECKS.length}</b>ชุดสไลด์ (${NSLIDES} หน้า)</span><span><b>${MEDIA.length}</b>สื่อและกิจกรรมอื่น ๆ</span></div></div>
+    <div class="sec-title">วิดีโอการสอน</div>
+    <div class="vgrid">${VIDEOS.map((v,i)=>`<button class="vcard" data-vid="${i}"><span class="vph"><img src="${v.poster}" alt="" loading="lazy"><span class="play">${ICO_PLAY}</span><span class="dur">${v.dur}</span></span>
+      <span class="mtx"><span class="msubj">วิดีโอการสอน · ${v.subj}</span><h3>${v.title}</h3><p>${v.desc}</p><span class="mref">${v.ref.map(([n,no])=>`<span>แฟ้มที่ ${n} · ตัวชี้วัด ${no}</span>`).join('')}</span></span></button>`).join('')}</div>
+    <div class="sec-title">สไลด์ประกอบการสอน</div>
+    <div class="mgrid">${DECKS.map((d,i)=>`<button class="mcard" data-deck="${i}"><span class="mph wide"><img src="${slideSrc(d,0)}" alt="" loading="lazy"><span class="mkind">${d.subj}</span><span class="cnt">${ICO_SLIDES}${d.n} หน้า</span></span>
+      <span class="mtx"><span class="msubj">สไลด์ประกอบการสอน</span><h3>${d.title}</h3><p>${d.sub}</p></span></button>`).join('')}</div>
     <div class="sec-title">รางวัลด้านสื่อและนวัตกรรม</div>
     <div class="award-grid">${MEDIA_AW.map(x=>{const a=AW[x.i];return `<button class="acard" data-aw="${x.i}"><span class="medal ${x.lv[1]}">${MEDAL}</span><span><span class="lv">${x.lv[0]}</span><p><b>${x.title}</b><br>${a.cap}</p></span><img src="${a.photos[0].src}" alt="" loading="lazy"></button>`}).join('')}</div>
-    <div class="sec-title">สื่อทั้งหมด</div>
+    <div class="sec-title">สื่อและกิจกรรมการเรียนรู้อื่น ๆ</div>
     <div class="filters" role="group" aria-label="กรองตามประเภทสื่อ">
       <button data-mf="all">ทั้งหมด<small>${MEDIA.length}</small></button>
       ${Object.keys(MTYPE).map(k=>`<button data-mf="${k}">${MTYPE[k]}<small>${MEDIA.filter(m=>m.t===k).length}</small></button>`).join('')}
@@ -790,9 +861,33 @@ function openMedia(){
     <nav class="pager"><button data-nav="book"><small>← หัวข้อที่ 3</small><span>รูปเล่มรายงาน</span></button><button class="next" data-nav="awards"><small>หัวข้อที่ 5 →</small><span>รางวัลและกิจกรรม</span></button></nav></div>`;
   renderMGrid();
 }
+
+/* ---------- media player: video + slide decks ---------- */
+const pl=document.getElementById('player'),plStage=document.getElementById('pl-stage');
+let deck=null,slide=0;
+function plOpen(kind,title){document.getElementById('pl-kind').textContent=kind;document.getElementById('pl-title').textContent=title;pl.hidden=false;document.body.style.overflow='hidden';
+  const fb=document.getElementById('pl-full');fb.hidden=!(document.fullscreenEnabled&&pl.requestFullscreen);document.getElementById('pl-close').focus()}
+function plClose(){const v=plStage.querySelector('video');if(v)v.pause();plStage.innerHTML='';deck=null;pl.hidden=true;document.body.style.overflow='';if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}
+function openVideo(i){const v=VIDEOS[i];deck=null;document.getElementById('pl-foot').hidden=true;document.getElementById('pl-strip').hidden=true;
+  plStage.innerHTML=`<video src="${v.src}" poster="${v.poster}" controls playsinline preload="metadata"></video>`;plOpen('วิดีโอการสอน · '+v.subj+' · '+v.dur+' นาที',v.title);
+  const el=plStage.querySelector('video');const p=el.play();if(p&&p.catch)p.catch(()=>{})}
+function openDeck(i){deck=DECKS[i];slide=0;document.getElementById('pl-foot').hidden=false;const st=document.getElementById('pl-strip');st.hidden=false;
+  st.innerHTML=Array.from({length:deck.n},(_,k)=>`<button data-sl="${k}" aria-label="สไลด์ ${k+1}"><img src="${slideSrc(deck,k)}" alt="" loading="lazy"><span>${k+1}</span></button>`).join('');
+  plStage.innerHTML=`<img id="pl-img" alt="">`;plOpen('สไลด์ประกอบการสอน · '+deck.subj,deck.title);showSlide(0)}
+function showSlide(k){if(!deck)return;slide=Math.max(0,Math.min(deck.n-1,k));const im=document.getElementById('pl-img');im.src=slideSrc(deck,slide);im.alt=deck.title+' สไลด์ที่ '+(slide+1);
+  document.getElementById('pl-count').innerHTML=`<b>${slide+1}</b> / ${deck.n}`;document.getElementById('pl-prev').disabled=slide===0;document.getElementById('pl-next').disabled=slide===deck.n-1;
+  [slide+1,slide+2].forEach(j=>{if(j<deck.n){const p=new Image();p.src=slideSrc(deck,j)}});
+  document.querySelectorAll('#pl-strip button').forEach((b,j)=>{b.classList.toggle('on',j===slide);if(j===slide)b.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'})})}
+document.getElementById('pl-prev').onclick=()=>showSlide(slide-1);
+document.getElementById('pl-next').onclick=()=>showSlide(slide+1);
+document.getElementById('pl-close').onclick=plClose;
+document.getElementById('pl-full').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else pl.requestFullscreen().catch(()=>{})};
+plStage.addEventListener('click',e=>{if(!deck||e.target.tagName!=='IMG')return;const r=e.target.getBoundingClientRect();showSlide(slide+((e.clientX-r.left)<r.width*.35?-1:1))});
+let tx=null;plStage.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});plStage.addEventListener('touchend',e=>{if(deck&&tx!=null){const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)showSlide(slide+(dx<0?1:-1))}tx=null});
+document.addEventListener('keydown',e=>{if(pl.hidden)return;if(e.key==='Escape'){plClose();e.stopImmediatePropagation()}else if(deck&&e.key==='ArrowRight'){showSlide(slide+1);e.stopImmediatePropagation()}else if(deck&&e.key==='ArrowLeft'){showSlide(slide-1);e.stopImmediatePropagation()}},true);
 function route(h){
   h=h||(location.hash||'').slice(1)||'home';
-  killBook();lbCaps=[];if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
+  killBook();lbCaps=[];if(typeof pl!=='undefined'&&!pl.hidden)plClose();if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
   let m;
   if(h==='menu'){showPage('menu');setSel(null)}
   else if(h==='self'||h==='work'){showPage('content');showDomain(h)}
@@ -807,7 +902,10 @@ function route(h){
 function go(h){const before=location.hash;try{location.hash=h}catch(e){}if(location.hash!=='#'+h||before==='#'+h)route(h)}
 window.addEventListener('hashchange',()=>route());
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf]');if(!t)return;
+  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl]');if(!t)return;
+  if(t.dataset.sl!==undefined){showSlide(+t.dataset.sl);return}
+  if(t.dataset.vid!==undefined){openVideo(+t.dataset.vid);return}
+  if(t.dataset.deck!==undefined){openDeck(+t.dataset.deck);return}
   if(t.dataset.mf){mFilter=t.dataset.mf;renderMGrid();return}
   if(t.dataset.md!==undefined){const m=MEDIA[+t.dataset.md];lbList=m.photos.map(p=>p.src);lbCaps=m.photos.map(()=>m.title+' · '+m.kind);showLb(0);return}
   if(t.dataset.flt){awFilter=t.dataset.flt;renderAwGrid();return}
