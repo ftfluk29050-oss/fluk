@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ไทม์แมชชีนศักราช</title>
+<meta name="description" content="สื่อการเรียนรู้เรื่องการนับและการเปรียบเทียบศักราช เครื่องแปลง พ.ศ. ค.ศ. ร.ศ. จ.ศ. ม.ศ. ฮ.ศ. พร้อมไทม์ไลน์ เกมเรียงเหตุการณ์ และแบบฝึกแปลงศักราช">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: a brass time-machine console. Dial readout on top, tabs for the four activities below.
+   Dark night-sky base with brass and cyan accents; one committed look, phone-first single column. */
+:root{
+  --bg:#0f1720;
+  --panel:#182330;
+  --panel-2:#1f2e3f;
+  --line:#33475c;
+  --text:#eaf0f5;
+  --muted:#9db0c2;
+  --brass:#e0b251;
+  --brass-d:#b98a2b;
+  --cyan:#5cd0e6;
+  --ok:#5fd08a;
+  --bad:#ff7d6b;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Sarabun","Leelawadee UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 600px at 50% -10%,#1d3246 0%,var(--bg) 60%) fixed;color:var(--text);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+
+.top{display:flex;align-items:center;gap:12px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--line);background:rgba(15,23,32,.85);position:sticky;top:0;z-index:5;backdrop-filter:blur(8px)}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:14.5px;padding:6px 10px 6px 4px;border-radius:6px;white-space:nowrap}
+.back:hover{color:var(--text)}
+.back svg{width:18px;height:18px}
+.ttl{display:grid;line-height:1.25;min-width:0}
+.ttl small{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--brass)}
+.ttl b{font-family:var(--f-display);font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){.back span{display:none}}
+
+.hero{padding:22px 0 8px}
+.hero h1{font-family:var(--f-display);font-size:clamp(26px,5vw,38px);line-height:1.2;margin:0 0 6px}
+.hero h1 span{color:var(--brass)}
+.hero p{margin:0;color:var(--muted);max-width:62ch}
+
+/* tabs */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:14px 0 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);padding:8px 16px;border-radius:999px;font-family:var(--f-display);font-weight:600;font-size:15px;color:var(--muted);white-space:nowrap}
+.tabs button[aria-selected="true"]{background:var(--brass);border-color:var(--brass);color:#2a1d00}
+.pane{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:28px}
+.pane h2{font-family:var(--f-display);font-size:21px;margin:0 0 4px}
+.pane .lead{color:var(--muted);margin:0 0 16px;font-size:15px}
+
+/* converter */
+.dial{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px}
+@media (min-width:640px){.dial{grid-template-columns:auto 1fr auto;align-items:end}}
+.field{display:grid;gap:4px}
+.field label{font-size:13px;color:var(--muted)}
+.field select,.field input{background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;font-family:var(--f-mono);font-size:20px;min-width:0;width:100%}
+.field select{font-family:var(--f-body);font-size:17px}
+.field input:focus,.field select:focus{border-color:var(--brass);outline:none}
+.btn{border:1px solid var(--line);background:var(--panel-2);border-radius:10px;padding:10px 16px;font-weight:600}
+.btn:hover{border-color:var(--brass)}
+.btn.primary{background:var(--brass);border-color:var(--brass);color:#2a1d00}
+.readouts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.ro{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.ro small{display:block;color:var(--muted);font-size:12.5px}
+.ro b{display:block;font-family:var(--f-mono);font-size:23px;line-height:1.3;color:var(--brass);white-space:nowrap}
+.ro.src{border-color:var(--cyan)}
+.ro.src b{color:var(--cyan)}
+.ro.na b{white-space:normal;font-size:15px;color:var(--muted);font-family:var(--f-body);font-weight:400;padding:6px 0}
+.ro em{display:block;font-style:normal;font-size:12px;color:var(--muted)}
+.rules{margin:16px 0 0;padding:12px 16px;border-left:3px solid var(--brass);background:rgba(224,178,81,.08);border-radius:0 10px 10px 0;font-size:14.5px}
+.rules b{font-family:var(--f-mono);color:var(--brass);font-weight:600}
+.rules ul{margin:6px 0 0;padding-left:18px}
+.rules li{margin:2px 0}
+.evline{margin-top:14px;font-size:14.5px;color:var(--muted)}
+.evline b{color:var(--text)}
+
+/* timeline */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.filters button{border:1px solid var(--line);background:var(--bg);padding:5px 14px;border-radius:999px;font-size:14px;color:var(--muted)}
+.filters button[aria-pressed="true"]{border-color:var(--cyan);color:var(--cyan)}
+.tl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid var(--line)}
+.tl li{position:relative;margin:0 0 10px}
+.tl li::before{content:"";position:absolute;left:-25px;top:18px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--brass)}
+.tl li.world::before{border-color:var(--cyan)}
+.tl button{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.tl button:hover,.tl button[aria-expanded="true"]{border-color:var(--brass)}
+.tl .yr{font-family:var(--f-mono);font-weight:600;color:var(--brass)}
+.tl .world .yr{color:var(--cyan)}
+.tl .tt{font-weight:600}
+.tl .det{margin:4px 0 0;padding:10px 14px;border:1px dashed var(--line);border-radius:12px;font-size:14.5px;color:var(--muted)}
+.tl button.btn{display:inline-block;width:auto;background:var(--panel-2);padding:8px 14px;color:var(--text)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips span{font-family:var(--f-mono);font-size:12.5px;background:var(--panel-2);border-radius:6px;padding:2px 8px;color:var(--text)}
+
+/* sorting game */
+.sortlist{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:8px}
+.sortlist li{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:8px 10px}
+.sortlist .n{font-family:var(--f-mono);width:26px;height:26px;border-radius:50%;background:var(--panel-2);display:grid;place-items:center;font-size:13px}
+.sortlist .mv{display:grid;gap:4px}
+.sortlist .mv button{border:1px solid var(--line);background:var(--panel-2);width:38px;height:26px;border-radius:6px;line-height:1;font-size:13px}
+.sortlist .mv button:disabled{opacity:.3}
+.sortlist li.ok{border-color:var(--ok)}
+.sortlist li.no{border-color:var(--bad)}
+.sortlist .yrs{display:block;font-family:var(--f-mono);font-size:13px;color:var(--brass)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.msg{margin-top:12px;font-weight:600}
+.msg.ok{color:var(--ok)}.msg.no{color:var(--bad)}
+
+/* quiz */
+.scorebar{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--f-mono);font-size:14px;color:var(--muted);margin-bottom:12px}
+.scorebar b{color:var(--brass)}
+.q{font-size:20px;font-weight:600;margin:0 0 12px}
+.q .n{font-family:var(--f-mono);color:var(--cyan);white-space:nowrap}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (min-width:640px){.opts{grid-template-columns:repeat(4,1fr)}}
+.opts button{background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:14px 8px;font-family:var(--f-mono);font-size:20px;font-weight:600}
+.opts button:hover:not(:disabled){border-color:var(--brass)}
+.opts button.ok{border-color:var(--ok);background:rgba(95,208,138,.14)}
+.opts button.no{border-color:var(--bad);background:rgba(255,125,107,.12)}
+.opts button:disabled{cursor:default}
+.explain{margin-top:12px;font-size:14.5px;color:var(--muted)}
+
+/* teacher */
+.steps{counter-reset:s;list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{counter-increment:s;position:relative;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px 12px 52px}
+.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--brass);color:#2a1d00;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:14px}
+.steps b{font-family:var(--f-display)}
+.steps small{display:block;color:var(--muted);font-size:13.5px}
+.kv{display:grid;gap:10px;margin:0 0 16px}
+@media (min-width:640px){.kv{grid-template-columns:1fr 1fr}}
+.kv div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kv h3{margin:0 0 4px;font-size:15px;font-family:var(--f-display);color:var(--brass)}
+.kv p,.kv ul{margin:0;font-size:14.5px;color:var(--muted)}
+.kv ul{padding-left:18px}
+.foot{padding:0 0 32px;color:var(--muted);font-size:13.5px}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="back" href="index.html#media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>กลับแฟ้มผลงาน</span></a>
+  <div class="ttl"><small>SOCIAL STUDIES · HISTORY</small><b>ไทม์แมชชีนศักราช</b></div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>ไทม์แมชชีน<span>ศักราช</span></h1>
+    <p>เครื่องย้อนเวลาสำหรับเรียนการนับและการเปรียบเทียบศักราช ใส่ปีในศักราชใดก็ได้ แล้วเครื่องจะบอกปีเดียวกันในศักราชอื่นทั้งหมด จากนั้นฝึกต่อด้วยไทม์ไลน์ เกมเรียงเหตุการณ์ และแบบฝึกแปลงศักราช</p>
+  </section>
+
+  <div class="tabs" role="tablist" aria-label="เลือกกิจกรรม">
+    <button role="tab" id="t-conv" aria-selected="true" aria-controls="p-conv">1 เครื่องแปลงศักราช</button>
+    <button role="tab" id="t-line" aria-selected="false" aria-controls="p-line">2 ไทม์ไลน์</button>
+    <button role="tab" id="t-sort" aria-selected="false" aria-controls="p-sort">3 เกมเรียงเหตุการณ์</button>
+    <button role="tab" id="t-quiz" aria-selected="false" aria-controls="p-quiz">4 แบบฝึกแปลงศักราช</button>
+    <button role="tab" id="t-teach" aria-selected="false" aria-controls="p-teach">สำหรับครู</button>
+  </div>
+
+  <!-- 1 converter -->
+  <section class="pane" id="p-conv" role="tabpanel" aria-labelledby="t-conv">
+    <h2>เครื่องแปลงศักราช</h2>
+    <p class="lead">เลือกศักราชต้นทาง ใส่ตัวเลขปี แล้วอ่านค่าของศักราชอื่นได้ทันที</p>
+    <div class="dial">
+      <div class="field"><label for="c-era">ศักราชต้นทาง</label><select id="c-era"></select></div>
+      <div class="field"><label for="c-year">ปี</label><input id="c-year" type="number" inputmode="numeric" step="1" value="2325"></div>
+      <div class="row"><button class="btn primary" id="c-now">ปีนี้</button></div>
+    </div>
+    <div class="readouts" id="readouts" aria-live="polite"></div>
+    <div class="evline" id="c-ev"></div>
+    <div class="rules">
+      <b>ตัวช่วยจำ</b>
+      <ul>
+        <li>พ.ศ. = ค.ศ. + <b>543</b></li>
+        <li>พ.ศ. = ร.ศ. + <b>2324</b> (ร.ศ. 1 = พ.ศ. 2325 ปีสถาปนากรุงรัตนโกสินทร์)</li>
+        <li>พ.ศ. = จ.ศ. + <b>1181</b> (จ.ศ. 1 = พ.ศ. 1182)</li>
+        <li>พ.ศ. = ม.ศ. + <b>621</b> (ม.ศ. 1 = พ.ศ. 622)</li>
+        <li>ฮ.ศ. 1 = ค.ศ. <b>622</b> แต่ปีฮิจเราะห์นับตามจันทรคติ สั้นกว่าปีสุริยคติ จึงคำนวณได้เพียงค่าประมาณ</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 2 timeline -->
+  <section class="pane" id="p-line" role="tabpanel" aria-labelledby="t-line" hidden>
+    <h2>ไทม์ไลน์เหตุการณ์สำคัญ</h2>
+    <p class="lead">แตะเหตุการณ์เพื่อดูปีในศักราชต่าง ๆ และกดปุ่มส่งปีนั้นเข้าเครื่องแปลง</p>
+    <div class="filters" role="group" aria-label="กรองเหตุการณ์">
+      <button data-f="all" aria-pressed="true">ทั้งหมด</button>
+      <button data-f="th" aria-pressed="false">ประวัติศาสตร์ไทย</button>
+      <button data-f="world" aria-pressed="false">ประวัติศาสตร์สากล</button>
+    </div>
+    <ol class="tl" id="tl"></ol>
+  </section>
+
+  <!-- 3 sorting -->
+  <section class="pane" id="p-sort" role="tabpanel" aria-labelledby="t-sort" hidden>
+    <h2>เกมเรียงเหตุการณ์</h2>
+    <p class="lead">เรียงเหตุการณ์ทั้ง 6 จากเก่าที่สุดไปใหม่ที่สุด โดยกดลูกศรเลื่อนขึ้นลง ปีจะถูกซ่อนไว้จนกว่าจะตรวจคำตอบ</p>
+    <ol class="sortlist" id="sortlist"></ol>
+    <div class="row"><button class="btn primary" id="s-check">ตรวจคำตอบ</button><button class="btn" id="s-new">ชุดใหม่</button></div>
+    <div class="msg" id="s-msg" aria-live="polite"></div>
+  </section>
+
+  <!-- 4 quiz -->
+  <section class="pane" id="p-quiz" role="tabpanel" aria-labelledby="t-quiz" hidden>
+    <h2>แบบฝึกแปลงศักราช</h2>
+    <p class="lead">คำนวณในใจหรือบนกระดาษ แล้วเลือกคำตอบที่ถูก ตอบถูกติดกันเพื่อสะสมสถิติ</p>
+    <div class="scorebar"><span>ข้อที่ <b id="q-no">1</b></span><span>ถูก <b id="q-ok">0</b> / <b id="q-all">0</b></span><span>ถูกติดกัน <b id="q-streak">0</b></span><span>ดีที่สุด <b id="q-best">0</b></span></div>
+    <p class="q" id="q-text"></p>
+    <div class="opts" id="q-opts"></div>
+    <div class="explain" id="q-exp" aria-live="polite"></div>
+    <div class="row" style="margin-top:14px"><button class="btn primary" id="q-next" hidden>ข้อต่อไป</button></div>
+  </section>
+
+  <!-- teacher -->
+  <section class="pane" id="p-teach" role="tabpanel" aria-labelledby="t-teach" hidden>
+    <h2>แนวทางใช้นวัตกรรมในชั้นเรียน</h2>
+    <p class="lead">รายวิชาประวัติศาสตร์ หน่วยการเรียนรู้เรื่องเวลาและยุคสมัยทางประวัติศาสตร์ · ใช้เวลาประมาณ 50 นาที</p>
+    <div class="kv">
+      <div><h3>จุดประสงค์การเรียนรู้</h3><ul>
+        <li>อธิบายความหมายและที่มาของศักราชที่ใช้ในประวัติศาสตร์</li>
+        <li>เปรียบเทียบและแปลงศักราชได้ถูกต้อง</li>
+        <li>เรียงลำดับเหตุการณ์ตามช่วงเวลาได้</li></ul></div>
+      <div><h3>ตัวชี้วัดที่เกี่ยวข้อง</h3><ul>
+        <li>ส 4.1 ม.1/1 เทียบศักราชที่สำคัญตามปฏิทินที่แตกต่างกัน</li></ul></div>
+    </div>
+    <ol class="steps">
+      <li><b>สร้างความสนใจ (5 นาที)</b><small>ถามว่า "ถ้าศิลาจารึกเขียนว่า จ.ศ. 654 คือปีอะไรในปฏิทินของเรา" แล้วให้เดาก่อนเปิดเครื่อง</small></li>
+      <li><b>สำรวจ (10 นาที)</b><small>ให้นักเรียนจับคู่ใช้แท็บ 1 ลองใส่ปีเกิดของตนเองและปีเหตุการณ์ที่สนใจ สังเกตว่าแต่ละศักราชต่างกันกี่ปี</small></li>
+      <li><b>อธิบาย (10 นาที)</b><small>ครูสรุปที่มาของ พ.ศ. ค.ศ. ร.ศ. จ.ศ. ม.ศ. ฮ.ศ. และหลักบวกลบตัวเลขคงที่ โดยใช้กล่องตัวช่วยจำใต้เครื่องแปลง</small></li>
+      <li><b>ลงมือปฏิบัติ (15 นาที)</b><small>แบ่งกลุ่มเล่นแท็บ 3 เรียงเหตุการณ์แข่งกัน ก่อนกดตรวจให้อภิปรายเหตุผลของลำดับ แล้วตามด้วยแท็บ 4 รายบุคคล</small></li>
+      <li><b>ประเมินผล (10 นาที)</b><small>ให้นักเรียนตอบด้วยตนเอง 5 ข้อในแท็บ 4 โดยไม่ใช้เครื่องแปลง และเขียนสะท้อนคิดว่าเหตุใดนักประวัติศาสตร์ต้องรู้หลายศักราช</small></li>
+    </ol>
+    <div class="rules"><b>หมายเหตุ</b>
+      <ul>
+        <li>การแปลงทำที่ระดับ "ปี" ไม่พิจารณาวันที่ ปีสุริยคติไทยเปลี่ยนวันขึ้นปีใหม่เป็น 1 มกราคม ตั้งแต่ พ.ศ. 2484 ก่อนหน้านั้นเริ่มปีใหม่ที่ 1 เมษายน จึงอาจคลาดเคลื่อนได้ในเดือนม.ค.–มี.ค.</li>
+        <li>ร.ศ. ใช้ตั้งแต่ ร.ศ. 1 (พ.ศ. 2325) ถึง ร.ศ. 131 (พ.ศ. 2455) จึงแสดงเฉพาะช่วงที่เคยใช้งานเป็นทางการ แม้ตัวเลขจะคำนวณย้อนหลังหรือไปข้างหน้าได้</li>
+        <li>ปีของเหตุการณ์ในไทม์ไลน์ยึดตามที่ปรากฏในหนังสือเรียนทั่วไป บางเหตุการณ์มีหลักฐานเสนอปีต่างกัน ครูควรชวนนักเรียนตั้งข้อสังเกตด้วย</li>
+      </ul></div>
+  </section>
+</main>
+<div class="wrap foot">สื่อประกอบการสอนรายวิชาประวัติศาสตร์ · กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม โรงเรียนวังหลวงพิทยาสรรพ์</div>
+
+<script>
+/* ---------- era math (everything pivots on the Buddhist Era year) ---------- */
+const ERAS=[
+ {k:'be',ab:'พ.ศ.',name:'พุทธศักราช',  to:be=>be,           from:y=>y,          min:-Infinity,note:''},
+ {k:'ce',ab:'ค.ศ.',name:'คริสต์ศักราช',to:be=>be-543,       from:y=>y+543,      min:-Infinity,note:'พ.ศ. − 543'},
+ {k:'rs',ab:'ร.ศ.',name:'รัตนโกสินทร์ศก',to:be=>be-2324,    from:y=>y+2324,     min:2325,note:'พ.ศ. − 2324 · ใช้ ร.ศ. 1–131'},
+ {k:'cs',ab:'จ.ศ.',name:'จุลศักราช',   to:be=>be-1181,      from:y=>y+1181,     min:1182,note:'พ.ศ. − 1181'},
+ {k:'ms',ab:'ม.ศ.',name:'มหาศักราช',   to:be=>be-621,       from:y=>y+621,      min:622, note:'พ.ศ. − 621'},
+ {k:'hj',ab:'ฮ.ศ.',name:'ฮิจเราะห์ศักราช',to:be=>Math.round((be-543-622)*1.030684)+1,from:y=>Math.round((y-1)/1.030684)+622+543,min:1165,note:'ค่าประมาณ (ปีจันทรคติ)',approx:true}
+];
+const ERA=Object.fromEntries(ERAS.map(e=>[e.k,e]));
+const RS_MAX_BE=2455;
+function fmt(k,be){
+  const e=ERA[k];
+  if(be<e.min)return null;
+  if(k==='rs'&&be>RS_MAX_BE)return {v:e.to(be),late:true};
+  return {v:e.to(be)};
+}
+function label(k,be){ /* human string, handles BC */
+  const r=fmt(k,be);if(!r)return null;
+  if(k==='ce'&&r.v<=0)return (1-r.v)+' ปีก่อน ค.ศ.';
+  if(k==='be'&&r.v<=0)return 'พ.ศ. '+r.v;
+  return ERA[k].ab+' '+r.v+(ERA[k].approx?' (ประมาณ)':'');
+}
+
+/* ---------- event data (year = พ.ศ.) ---------- */
+const EV=[
+ {be:0,   g:'world',t:'พุทธปรินิพพาน เริ่มนับ พ.ศ.',d:'ไทยถือปีที่พระพุทธเจ้าเสด็จดับขันธปรินิพพานเป็น พ.ศ. 0 และเริ่มนับ พ.ศ. 1 ในปีถัดมา'},
+ {be:622, g:'world',t:'เริ่มมหาศักราช (ม.ศ. 1)',d:'ศักราชที่เริ่มใช้ในอินเดีย (ตามความเชื่อที่แพร่หลายว่าพระเจ้ากนิษกะทรงตั้งขึ้น) ปรากฏในจารึกสมัยอาณาจักรโบราณในดินแดนไทย'},
+ {be:1165,g:'world',t:'ฮิจเราะห์ ศาสดามุฮัมมัดอพยพสู่มะดีนะฮ์ (ฮ.ศ. 1)',d:'จุดเริ่มต้นของฮิจเราะห์ศักราชที่ชาวมุสลิมทั่วโลกใช้'},
+ {be:1182,g:'world',t:'เริ่มจุลศักราช (จ.ศ. 1)',d:'ศักราชที่ใช้แพร่หลายในพม่า ล้านนา และไทย มักพบในพระราชพงศาวดารและจารึก'},
+ {be:1792,g:'th',t:'ก่อตั้งอาณาจักรสุโขทัย',d:'พ่อขุนศรีอินทราทิตย์ทรงสถาปนากรุงสุโขทัยเป็นราชธานีตามที่ปรากฏในตำราเรียน'},
+ {be:1835,g:'th',t:'พ่อขุนรามคำแหงทรงประดิษฐ์ลายสือไทย',d:'ศิลาจารึกหลักที่ 1 ซึ่งระบุมหาศักราช 1214 เป็นปีที่ประดิษฐ์ตัวอักษรไทย'},
+ {be:1893,g:'th',t:'สถาปนากรุงศรีอยุธยา',d:'สมเด็จพระเจ้าอู่ทอง (สมเด็จพระรามาธิบดีที่ 1) ทรงสถาปนากรุงศรีอยุธยา'},
+ {be:2031,g:'world',t:'บาร์โทโลมิว ไดแอส เดินเรืออ้อมแหลมกู๊ดโฮป',d:'เปิดเส้นทางเดินเรือสู่มหาสมุทรอินเดีย นำไปสู่ยุคแห่งการสำรวจ'},
+ {be:2035,g:'world',t:'โคลัมบัสเดินทางถึงทวีปอเมริกา',d:'การเดินเรือของคริสโตเฟอร์ โคลัมบัสเปลี่ยนโลกทั้งใบ'},
+ {be:2054,g:'th',t:'โปรตุเกสเข้าสู่กรุงศรีอยุธยา',d:'โปรตุเกสยึดมะละกาได้ แล้วส่งทูตเข้ามาติดต่อ นับเป็นชาติตะวันตกแรกที่เข้ามาในอยุธยา'},
+ {be:2112,g:'th',t:'เสียกรุงศรีอยุธยาครั้งที่ 1',d:'พระเจ้าบุเรงนองยกทัพมาตีกรุงศรีอยุธยา'},
+ {be:2310,g:'th',t:'เสียกรุงศรีอยุธยาครั้งที่ 2 (สมเด็จพระเจ้าตากสินสถาปนากรุงธนบุรี)',d:'ทั้งการเสียกรุงและการกอบกู้เอกราชเกิดขึ้นในปีเดียวกัน'},
+ {be:2325,g:'th',t:'สถาปนากรุงรัตนโกสินทร์ (ร.ศ. 1)',d:'พระบาทสมเด็จพระพุทธยอดฟ้าจุฬาโลกมหาราชทรงย้ายราชธานีมาฝั่งตะวันออกของแม่น้ำเจ้าพระยา ตามที่ตำราเรียนนิยมใช้ พ.ศ. 2325 เป็นปีแรกของรัตนโกสินทรศก'},
+ {be:2398,g:'th',t:'สนธิสัญญาเบาว์ริง',d:'ไทยทำสนธิสัญญากับอังกฤษ เปิดการค้าเสรีและเปลี่ยนแปลงเศรษฐกิจไทยครั้งใหญ่'},
+ {be:2448,g:'th',t:'พระราชบัญญัติเลิกทาส',d:'รัชกาลที่ 5 ทรงเลิกทาสได้อย่างสมบูรณ์'},
+ {be:2475,g:'th',t:'เปลี่ยนแปลงการปกครอง 24 มิถุนายน',d:'เปลี่ยนจากสมบูรณาญาสิทธิราชย์เป็นระบอบประชาธิปไตยอันมีพระมหากษัตริย์ทรงเป็นประมุข'},
+ {be:2482,g:'th',t:'เปลี่ยนชื่อประเทศจากสยามเป็นไทย',d:'ประกาศใช้ชื่อประเทศไทย (Thailand)'},
+ {be:2484,g:'th',t:'เริ่มใช้ 1 มกราคมเป็นวันขึ้นปีใหม่',d:'ก่อนหน้านั้นปีใหม่ไทยทางราชการเริ่มวันที่ 1 เมษายน'},
+ {be:2488,g:'world',t:'สิ้นสุดสงครามโลกครั้งที่ 2',d:'ความขัดแย้งใหญ่ที่สุดของโลกยุติลง'},
+ {be:2512,g:'world',t:'มนุษย์ก้าวเท้าแรกบนดวงจันทร์',d:'ยานอพอลโล 11 ขององค์การนาซา'},
+ {be:2540,g:'th',t:'รัฐธรรมนูญแห่งราชอาณาจักรไทย พ.ศ. 2540',d:'ที่รู้จักกันในชื่อรัฐธรรมนูญฉบับประชาชน'}
+];
+EV.forEach(e=>{e.id='e'+e.be});
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function pick(a){return a[Math.floor(Math.random()*a.length)]}
+function beYear(){return new Date().getFullYear()+543}
+
+/* ---------- tabs ---------- */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function showTab(t){
+  tabs.forEach(b=>{const on=b===t;b.setAttribute('aria-selected',on);$('#'+b.getAttribute('aria-controls')).hidden=!on});
+  t.scrollIntoView({block:'nearest',inline:'center'});
+}
+tabs.forEach(b=>{
+  b.addEventListener('click',()=>showTab(b));
+  b.addEventListener('keydown',e=>{
+    const i=tabs.indexOf(b);let n=null;
+    if(e.key==='ArrowRight')n=tabs[(i+1)%tabs.length];
+    if(e.key==='ArrowLeft')n=tabs[(i-1+tabs.length)%tabs.length];
+    if(n){e.preventDefault();n.focus();showTab(n)}
+  });
+});
+
+/* ---------- 1 converter ---------- */
+const cEra=$('#c-era'),cYear=$('#c-year');
+cEra.innerHTML=ERAS.map(e=>`<option value="${e.k}">${e.name} (${e.ab})</option>`).join('');
+cEra.value='be';
+function renderConv(){
+  const k=cEra.value,y=parseInt(cYear.value,10);
+  const box=$('#readouts');
+  if(isNaN(y)){box.innerHTML='<div class="ro na">ใส่ตัวเลขปีเพื่อเริ่มแปลง</div>';$('#c-ev').textContent='';return}
+  const be=ERA[k].from(y);
+  box.innerHTML=ERAS.map(e=>{
+    const src=e.k===k?' src':'';
+    if(e.k==='ce'){
+      const c=e.to(be);
+      return `<div class="ro${src}"><small>${e.name}</small><b>${c<=0?(1-c)+' ปีก่อน ค.ศ.':'ค.ศ. '+c}</b><em>${e.note}</em></div>`;
+    }
+    const r=fmt(e.k,be);
+    if(!r)return `<div class="ro na${src}"><small>${e.name}</small><b>ยังไม่มีการใช้ศักราชนี้ในปีนั้น</b></div>`;
+    const late=r.late?'<em>เลิกใช้ทางการหลัง ร.ศ. 131 (พ.ศ. 2455)</em>':`<em>${e.note}</em>`;
+    return `<div class="ro${src}"><small>${e.name}</small><b>${e.ab} ${r.v}${e.approx?' ≈':''}</b>${late}</div>`;
+  }).join('');
+  const hit=EV.filter(e=>e.be===be);
+  const near=EV.slice().sort((a,b)=>Math.abs(a.be-be)-Math.abs(b.be-be))[0];
+  $('#c-ev').innerHTML=hit.length?`ปีนี้ตรงกับเหตุการณ์: <b>${esc(hit[0].t)}</b>`:(near&&Math.abs(near.be-be)<=25?`ใกล้เคียงกับ <b>${esc(near.t)}</b> (พ.ศ. ${near.be}) ห่างกัน ${Math.abs(near.be-be)} ปี`:'');
+}
+cEra.addEventListener('change',renderConv);
+cYear.addEventListener('input',renderConv);
+$('#c-now').addEventListener('click',()=>{cEra.value='ce';cYear.value=new Date().getFullYear();renderConv()});
+renderConv();
+
+/* ---------- 2 timeline ---------- */
+let tlF='all';
+function renderTL(){
+  $('#tl').innerHTML=EV.filter(e=>tlF==='all'||(tlF==='th'?e.g==='th':e.g==='world')).map(e=>{
+    const chips=['be','ce','rs','cs','ms','hj'].map(k=>label(k,e.be)).filter(Boolean).map(s=>`<span>${s}</span>`).join('');
+    return `<li class="${e.g}"><button aria-expanded="false" data-be="${e.be}"><span class="yr">พ.ศ. ${e.be}</span> <span class="tt">${esc(e.t)}</span></button>
+      <div class="det" hidden>${esc(e.d)}<div class="chips">${chips}</div><div class="row" style="margin-top:10px"><button class="btn" data-send="${e.be}">ส่งปีนี้เข้าเครื่องแปลง</button></div></div></li>`;
+  }).join('');
+}
+$('#tl').addEventListener('click',ev=>{
+  const s=ev.target.closest('[data-send]');
+  if(s){cEra.value='be';cYear.value=s.dataset.send;renderConv();showTab($('#t-conv'));window.scrollTo({top:0,behavior:'smooth'});return}
+  const b=ev.target.closest('button[data-be]');
+  if(b){const open=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',open);b.parentNode.querySelector('.det').hidden=!open}
+});
+document.querySelector('.filters').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b)return;
+  tlF=b.dataset.f;
+  document.querySelectorAll('.filters button').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  renderTL();
+});
+renderTL();
+
+/* ---------- 3 sorting game ---------- */
+let sortSet=[],checked=false;
+function newSort(){
+  /* keep years distinct by at least 20 so the order is teachable and unambiguous */
+  let set=[],pool=shuffle(EV);
+  for(const e of pool){if(set.every(x=>Math.abs(x.be-e.be)>=20))set.push(e);if(set.length===6)break}
+  do{sortSet=shuffle(set)}while(sortSet.every((e,i,a)=>!i||e.be>=a[i-1].be));
+  checked=false;$('#s-msg').textContent='';$('#s-msg').className='msg';renderSort();
+}
+function renderSort(){
+  $('#sortlist').innerHTML=sortSet.map((e,i)=>{
+    let cls='';
+    if(checked){const want=sortSet.slice().sort((a,b)=>a.be-b.be)[i];cls=want===e?' ok':' no'}
+    return `<li class="${cls.trim()}"><span class="n">${i+1}</span><span>${esc(e.t)}${checked?`<span class="yrs">พ.ศ. ${e.be} · ค.ศ. ${e.be-543}</span>`:''}</span>
+      <span class="mv"><button data-mv="${i}" data-d="-1" aria-label="เลื่อนขึ้น" ${i===0||checked?'disabled':''}>▲</button><button data-mv="${i}" data-d="1" aria-label="เลื่อนลง" ${i===sortSet.length-1||checked?'disabled':''}>▼</button></span></li>`;
+  }).join('');
+}
+$('#sortlist').addEventListener('click',ev=>{
+  const b=ev.target.closest('button[data-mv]');if(!b||checked)return;
+  const i=+b.dataset.mv,j=i+ +b.dataset.d;
+  [sortSet[i],sortSet[j]]=[sortSet[j],sortSet[i]];
+  renderSort();
+  const nb=$(`#sortlist button[data-mv="${j}"][data-d="${b.dataset.d}"]`)||$(`#sortlist button[data-mv="${j}"]:not(:disabled)`);
+  if(nb)nb.focus();
+});
+$('#s-check').addEventListener('click',()=>{
+  if(checked)return;checked=true;
+  const want=sortSet.slice().sort((a,b)=>a.be-b.be);
+  const right=sortSet.filter((e,i)=>e===want[i]).length;
+  const m=$('#s-msg');
+  m.textContent=right===6?'เยี่ยมมาก เรียงถูกทั้ง 6 เหตุการณ์':`เรียงถูก ${right} จาก 6 ตำแหน่ง ดูปีที่แสดงแล้วลองเล่นชุดใหม่อีกครั้ง`;
+  m.className='msg '+(right===6?'ok':'no');
+  renderSort();
+});
+$('#s-new').addEventListener('click',newSort);
+newSort();
+
+/* ---------- 4 quiz ---------- */
+const QK=['be','ce','rs','cs','ms'];
+let qa={ok:0,all:0,streak:0,best:0,no:0,cur:null,done:false};
+try{qa.best=+localStorage.getItem('tm-best')||0}catch(e){}
+function newQ(){
+  let from,to,be;
+  do{
+    from=pick(QK);to=pick(QK);
+    if(from===to)continue;
+    const lo=Math.max(ERA[from].min,ERA[to].min,1000);
+    const hi=from==='rs'||to==='rs'?RS_MAX_BE:2569;
+    if(lo>hi)continue;
+    be=lo+Math.floor(Math.random()*(hi-lo+1));
+    /* keep numbers in a realistic range for the two eras (no BC answers) */
+    if(ERA.ce.to(be)<=0)continue;
+    break;
+  }while(true);
+  const fv=ERA[from].to(be),ans=ERA[to].to(be);
+  const d=new Set();
+  [1,-1,10,-10,100,-100,543,-543,621,-621,1181,-1181].forEach(x=>{if(d.size<12)d.add(ans+x)});
+  const cand=shuffle([...d].filter(v=>v!==ans&&v>0&&Math.abs(v-ans)<=1200));
+  const wrongs=[];
+  const swapped=2*fv-ans; /* the classic slip: applying the offset in the wrong direction */
+  if(swapped>0&&swapped!==ans&&Math.abs(swapped-ans)<=2400)wrongs.push(swapped);
+  for(const v of cand){if(wrongs.length>=3)break;if(!wrongs.includes(v))wrongs.push(v)}
+  qa.cur={from,to,fv,ans,opts:shuffle([ans,...wrongs.slice(0,3)]),be};
+  qa.done=false;qa.no++;
+  renderQ();
+}
+function renderQ(){
+  const c=qa.cur;
+  $('#q-no').textContent=qa.no;$('#q-ok').textContent=qa.ok;$('#q-all').textContent=qa.all;$('#q-streak').textContent=qa.streak;$('#q-best').textContent=qa.best;
+  $('#q-text').innerHTML=`${ERA[c.from].name} <span class="n">${ERA[c.from].ab} ${c.fv}</span> ตรงกับ${ERA[c.to].name} (${ERA[c.to].ab}) ปีใด`;
+  $('#q-opts').innerHTML=c.opts.map(v=>`<button data-v="${v}">${ERA[c.to].ab} ${v}</button>`).join('');
+  $('#q-exp').textContent='';$('#q-next').hidden=true;
+}
+$('#q-opts').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b||qa.done)return;
+  qa.done=true;qa.all++;
+  const c=qa.cur,v=+b.dataset.v,right=v===c.ans;
+  if(right){qa.ok++;qa.streak++;if(qa.streak>qa.best){qa.best=qa.streak;try{localStorage.setItem('tm-best',qa.best)}catch(e){}}}else qa.streak=0;
+  document.querySelectorAll('#q-opts button').forEach(x=>{x.disabled=true;if(+x.dataset.v===c.ans)x.classList.add('ok');else if(x===b)x.classList.add('no')});
+  /* reasoning via พ.ศ. so the pupil sees the pivot */
+  const pv=c.from==='be'?'':` แปลงเป็น พ.ศ. ก่อน: ${ERA[c.from].ab} ${c.fv} → พ.ศ. ${c.be}.`;
+  $('#q-exp').textContent=(right?'ถูกต้อง ':'ยังไม่ถูก ')+`${ERA[c.from].ab} ${c.fv} = ${ERA[c.to].ab} ${c.ans}.`+pv;
+  $('#q-ok').textContent=qa.ok;$('#q-all').textContent=qa.all;$('#q-streak').textContent=qa.streak;$('#q-best').textContent=qa.best;
+  $('#q-next').hidden=false;$('#q-next').focus();
+});
+$('#q-next').addEventListener('click',newQ);
+newQ();
+</script>
+</body>
+</html>
