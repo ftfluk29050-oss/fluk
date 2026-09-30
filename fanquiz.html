@@ -1,0 +1,1126 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>แฟนพันธุ์แท้ พุทธประวัติ</title>
+<meta name="description" content="เกมตอบคำถามพุทธประวัติ 4 รอบ 27 ข้อ มีโหมดครูสำหรับแข่งเป็นทีม และโหมดนักเรียนที่ตรวจคะแนนอัตโนมัติ">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Srisakdi:wght@700&display=swap">
+<style>
+/* Lacquer-and-gold (ลายรดน้ำ) game board: one committed dark look so it reads well on a classroom projector.
+   Screens: home → teacher setup → teacher game → podium; home → student setup → student game → result. */
+:root{
+  --bg:#0f0a06;--bg2:#17100a;--panel:#1d150e;--panel2:#281d13;
+  --line:rgba(226,176,74,.22);--line2:rgba(226,176,74,.45);
+  --gold:#e2b04a;--gold-hi:#f8e3a0;--gold-lo:#9c6f1e;
+  --text:#f6ecd9;--muted:#bfab8b;--saffron:#ee8a3a;--ok:#3fb983;--bad:#e5553d;
+  --f-head:"Kanit","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Sarabun","Leelawadee UI",system-ui,sans-serif;
+  --f-orn:"Srisakdi","Kanit",serif;
+  color-scheme:dark;
+}
+:root:not([data-theme="light"]),:root[data-theme="dark"]{color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--text);font-family:var(--f-body);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+   radial-gradient(80% 55% at 50% -8%,rgba(226,176,74,.17),transparent 62%),
+   radial-gradient(60% 45% at 50% 108%,rgba(238,138,58,.10),transparent 60%),
+   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23e2b04a' stroke-opacity='.075' stroke-width='1'%3E%3Cpath d='M32 16c3.5 6 3.5 10 0 16-3.5-6-3.5-10 0-16zM32 48c3.5-6 3.5-10 0-16-3.5 6-3.5 10 0 16zM16 32c6-3.5 10-3.5 16 0-6 3.5-10 3.5-16 0zM48 32c-6-3.5-10-3.5-16 0 6 3.5 10 3.5 16 0z'/%3E%3Ccircle cx='32' cy='32' r='2.2'/%3E%3Cpath d='M0 0l7 7M64 0l-7 7M0 64l7-7M64 64l-7-7'/%3E%3C/g%3E%3C/svg%3E")}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+a{color:var(--gold-hi)}
+:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+.ic{width:20px;height:20px;flex:none}
+.goldtx{background:linear-gradient(180deg,#fff4c8 0%,#f1cf73 42%,#c38d2b 72%,#f3d58a 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);color:var(--text);font-family:var(--f-head);font-size:16px;font-weight:500;line-height:1.2;cursor:pointer;text-decoration:none;transition:transform .12s,background .2s,border-color .2s,opacity .2s,box-shadow .2s}
+.btn:hover{border-color:var(--gold)}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.36;cursor:not-allowed;transform:none}
+.btn.gold{background:linear-gradient(180deg,#f3cf72,#d49a32);color:#2a1a06;border-color:#f6dd98;font-weight:600;box-shadow:0 10px 24px -12px rgba(226,176,74,.75),inset 0 1px 0 rgba(255,255,255,.5)}
+.btn.ok{background:linear-gradient(180deg,#4bcb93,#2c9868);border-color:#79e0b0;color:#052012;font-weight:600}
+.btn.bad{background:linear-gradient(180deg,#ee6d55,#c23e27);border-color:#f59a88;color:#fff;font-weight:600}
+.btn.ghost{background:transparent}
+.btn.big{min-height:56px;font-size:19px;padding:12px 26px;border-radius:14px}
+.btn.sm{min-height:38px;padding:6px 12px;font-size:14.5px;border-radius:10px}
+.btn.pulse{animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(243,207,114,.6)}50%{box-shadow:0 0 0 10px rgba(243,207,114,0)}}
+.iconbtn{width:42px;height:42px;flex:none;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;padding:0;transition:background .2s,border-color .2s}
+.iconbtn:hover{border-color:var(--gold)}
+.iconbtn[aria-pressed="true"]{background:var(--gold);color:#2a1a06;border-color:var(--gold-hi)}
+.iconbtn:disabled{opacity:.35;cursor:not-allowed}
+.lnk{background:none;border:0;color:var(--gold-hi);font:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:6px 2px}
+.backlink{display:inline-flex;align-items:center;gap:6px;color:var(--muted);text-decoration:none;font-size:15px;padding:8px 12px 8px 8px;border-radius:10px;border:1px solid transparent;background:none;cursor:pointer}
+.backlink:hover{color:var(--text);border-color:var(--line)}
+
+/* ---------- home ---------- */
+.home{max-width:1100px;margin:0 auto;padding:clamp(14px,3vw,36px) 16px 40px;display:grid;gap:clamp(20px,3vw,30px)}
+.home>.backlink{justify-self:start}
+.hero{text-align:center;display:grid;justify-items:center;gap:4px}
+.wheel{display:block;filter:drop-shadow(0 8px 22px rgba(226,176,74,.35))}
+.hero .wheel{width:clamp(74px,9vw,104px);height:auto;animation:turn 40s linear infinite}
+@keyframes turn{to{transform:rotate(360deg)}}
+.kicker{font-family:var(--f-head);letter-spacing:.14em;color:var(--saffron);font-size:14.5px;margin-top:10px}
+.hero h1{margin:0;display:grid;justify-items:center;line-height:1.1}
+.h-orn{font-family:var(--f-orn);font-weight:700;font-size:clamp(50px,8.4vw,104px);padding:.06em .1em 0}
+.h-main{font-family:var(--f-head);font-weight:600;font-size:clamp(26px,3.8vw,44px);letter-spacing:.05em}
+.orn-rule{display:flex;align-items:center;gap:12px;width:min(320px,70vw);margin:10px 0 4px}
+.orn-rule::before,.orn-rule::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--gold))}
+.orn-rule::after{transform:scaleX(-1)}
+.orn-rule i{width:10px;height:10px;transform:rotate(45deg);border:1.5px solid var(--gold);background:var(--saffron)}
+.lead{max-width:660px;color:var(--muted);font-size:17px;margin:0}
+.modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.mode{text-align:left;display:grid;align-content:start;gap:10px;padding:26px 26px 22px;border-radius:22px;border:1px solid var(--line2);background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,0) 55%),var(--panel);cursor:pointer;color:inherit;font:inherit;position:relative;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s}
+.mode:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 22px 44px -26px rgba(226,176,74,.6)}
+.mode::after{content:"";position:absolute;right:-60px;bottom:-60px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(226,176,74,.14);box-shadow:0 0 0 22px rgba(226,176,74,.04),0 0 0 44px rgba(226,176,74,.03);pointer-events:none}
+.mi{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;background:rgba(226,176,74,.14);color:var(--gold-hi);border:1px solid var(--line2)}
+.mi .ic{width:30px;height:30px}
+.mode small{display:block;font-family:var(--f-head);color:var(--saffron);letter-spacing:.08em;font-size:13.5px}
+.mode .mh{display:block;margin:-4px 0 0;font-family:var(--f-head);font-weight:600;font-size:27px;line-height:1.3}
+.mode .mp{display:block;color:var(--muted);font-size:15.5px}
+.feat{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.feat span{font-size:13.5px;padding:4px 11px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+.mode .go{font-family:var(--f-head);color:var(--gold-hi);display:inline-flex;gap:6px;align-items:center;margin-top:6px;font-size:17px}
+.resume{display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between;padding:14px 18px;border-radius:16px;border:1px dashed var(--gold);background:rgba(226,176,74,.07)}
+.resume p{margin:0}
+.resume b{font-family:var(--f-head);font-weight:500}
+.rounds{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.rounds li{padding:16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid var(--line);display:grid;gap:2px;align-content:start}
+.rounds small{font-family:var(--f-head);color:var(--saffron);font-size:13px;letter-spacing:.06em}
+.rounds b{font-family:var(--f-head);font-weight:500;font-size:19px}
+.rounds span{font-size:14px;color:var(--muted)}
+.foot{text-align:center;color:var(--muted);font-size:13.5px;margin:0}
+@media (max-width:760px){.modes{grid-template-columns:1fr}.rounds{grid-template-columns:repeat(2,minmax(0,1fr))}.mode{padding:22px 20px 18px}}
+
+/* ---------- setup ---------- */
+.set{max-width:940px;margin:0 auto;padding:16px 16px 48px;display:grid;gap:16px}
+.set-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.set-h h2{margin:0;font-family:var(--f-head);font-weight:600;font-size:clamp(24px,3vw,32px)}
+.set-h .sp{flex:1}
+.card{padding:20px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:grid;gap:14px}
+.card h3{margin:0;font-family:var(--f-head);font-weight:500;font-size:19px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card h3 .sp{flex:1}
+.card .note{margin:0;color:var(--muted);font-size:14.5px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line2);border-radius:12px;overflow:hidden;background:var(--bg2)}
+.stepper button{width:44px;height:42px;border:0;background:transparent;color:var(--gold-hi);font-size:22px;cursor:pointer}
+.stepper button:disabled{opacity:.3;cursor:not-allowed}
+.stepper output{min-width:40px;text-align:center;font-family:var(--f-head);font-size:20px;font-weight:600}
+.teams-in{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.tin{display:flex;align-items:center;gap:10px;padding:4px 6px 4px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--line)}
+.tin:focus-within{border-color:var(--gold)}
+.tin i{width:14px;height:14px;border-radius:50%;background:var(--tc);flex:none;box-shadow:0 0 0 3px rgba(255,255,255,.06)}
+.tin input{flex:1;min-width:0;background:transparent;border:0;color:var(--text);font:inherit;font-size:16.5px;padding:10px 4px;outline:none}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:99px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-size:15px;color:var(--muted);transition:all .2s}
+.chip::before{content:"";width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line2);flex:none}
+.chip[aria-pressed="true"]{color:var(--text);border-color:var(--gold);background:rgba(226,176,74,.12)}
+.chip[aria-pressed="true"]::before{background:var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232a1a06' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat;border-color:var(--gold)}
+.seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+.seg button{min-width:52px;height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-family:var(--f-head);font-size:15px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#2a1a06;border-color:var(--gold-hi);font-weight:600}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.opts>div{display:grid;gap:8px;align-content:start}
+.opts label{font-family:var(--f-head);font-size:15.5px}
+.helpers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hp{padding:14px;border-radius:14px;background:var(--bg2);border:1px solid var(--line)}
+.hp b{display:flex;align-items:center;gap:8px;font-family:var(--f-head);font-weight:500;font-size:16.5px;color:var(--gold-hi)}
+.hp p{margin:4px 0 0;font-size:14px;color:var(--muted);line-height:1.55}
+.field{display:grid;gap:6px}
+.field label{font-family:var(--f-head);font-size:15.5px}
+.field label em{font-style:normal;color:var(--muted);font-size:13.5px}
+.txt{height:50px;border-radius:12px;border:1px solid var(--line2);background:var(--bg2);color:var(--text);padding:0 14px;font:inherit;font-size:17px;width:100%}
+.txt:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(226,176,74,.18)}
+.row3{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,.7fr);gap:12px}
+.err{color:#ffa593;font-size:14.5px;margin:0}
+.cta{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+@media (max-width:760px){.helpers{grid-template-columns:repeat(2,minmax(0,1fr))}.opts{grid-template-columns:1fr}.row3{grid-template-columns:1fr 1fr}.row3 .field:first-child{grid-column:1/-1}.cta .btn{flex:1}}
+
+/* ---------- teacher game ---------- */
+.tg{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:100dvh}
+.tg-top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--line);background:rgba(15,10,6,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);position:sticky;top:0;z-index:5;flex-wrap:wrap}
+.tg-round{display:grid;line-height:1.25;min-width:0}
+.tg-round small{color:var(--saffron);font-family:var(--f-head);font-size:13px;letter-spacing:.06em}
+.tg-round b{font-family:var(--f-head);font-weight:600;font-size:21px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tg-prog{padding:4px 12px;border-radius:99px;border:1px solid var(--line);font-family:var(--f-head);color:var(--muted);font-size:14.5px;white-space:nowrap}
+.sp{flex:1}
+.timer{display:flex;align-items:center;gap:2px;padding:3px 3px 3px 12px;border-radius:14px;border:1px solid var(--line2);background:var(--bg2)}
+.timer b{font-family:var(--f-head);font-size:25px;font-weight:600;font-variant-numeric:tabular-nums;min-width:64px;text-align:center;line-height:1}
+.timer button{width:36px;height:36px;border-radius:10px;border:0;background:transparent;display:grid;place-items:center;cursor:pointer}
+.timer button:hover{background:rgba(255,255,255,.07)}
+.timer.warn b{color:#ffb19d;animation:blink 1s steps(2) infinite}
+.timer.up{border-color:var(--bad);background:rgba(229,85,61,.18)}
+.timer.up b{color:#ffb19d}
+@keyframes blink{50%{opacity:.45}}
+.tg-main{display:grid;grid-template-columns:minmax(0,1fr) 312px;gap:16px;padding:16px 16px 12px;min-height:0}
+.stage{position:relative;min-height:0;border-radius:22px;border:1px solid var(--line2);background:radial-gradient(120% 90% at 50% 0%,rgba(226,176,74,.08),transparent 60%),linear-gradient(180deg,#1c140d,#130d08);padding:clamp(16px,2vw,28px);display:flex;flex-direction:column;box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 30px 60px -40px #000}
+.stage::after{content:"";position:absolute;inset:7px;border:1px solid rgba(226,176,74,.11);border-radius:16px;pointer-events:none}
+.stage-bar{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:-4px -4px 12px;position:relative;z-index:1}
+.pill{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line2);background:rgba(255,255,255,.03);cursor:pointer;font-family:var(--f-head);font-size:14.5px;color:var(--muted)}
+.pill:hover{color:var(--text);border-color:var(--gold)}
+.pill[aria-pressed="true"]{background:rgba(226,176,74,.18);color:var(--gold-hi);border-color:var(--gold)}
+.pill .ic{width:17px;height:17px}
+.ctl{display:flex;flex-direction:column;gap:10px;min-height:0;overflow:auto}
+.box{padding:14px;border-radius:16px;background:var(--panel);border:1px solid var(--line)}
+.box>small,.lbl{display:block;color:var(--muted);font-size:13.5px;margin-bottom:6px}
+.val{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}
+.val b{font-family:var(--f-head);font-weight:700;font-size:56px;line-height:.95;font-variant-numeric:tabular-nums}
+.val span{font-family:var(--f-head);color:var(--muted);padding-bottom:6px}
+.val em{flex-basis:100%;font-style:normal;font-size:13.5px;color:var(--saffron)}
+.who-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 10px;border-radius:99px;background:color-mix(in srgb,var(--tc) 24%,transparent);border:1px solid var(--tc);font-family:var(--f-head);font-size:17px}
+.who-chip i{width:12px;height:12px;border-radius:50%;background:var(--tc)}
+.who-empty{color:var(--muted);font-size:14.5px}
+.who em{display:block;font-style:normal;color:var(--saffron);font-size:13.5px;margin-top:4px}
+.who.flash{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.judge{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.judge .btn{min-height:54px;font-size:19px;white-space:nowrap}
+.helps-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.helps-h small{color:var(--muted);font-size:13.5px}
+.helps-h span{font-family:var(--f-head);font-size:14px;color:var(--gold-hi)}
+.helps-g{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.hb{display:flex;align-items:center;gap:6px;justify-content:center;min-height:42px;padding:6px 8px;border-radius:10px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-family:var(--f-head);font-size:14.5px}
+.hb:hover{border-color:var(--gold)}
+.hb:disabled{opacity:.35;cursor:not-allowed}
+.hb .ic{width:17px;height:17px;color:var(--gold-hi)}
+.passpick{margin-top:8px;display:grid;gap:6px}
+.passpick p{margin:0;font-size:13.5px;color:var(--saffron)}
+.passpick div{display:flex;flex-wrap:wrap;gap:6px}
+.passpick button{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;border:1px solid var(--tc);background:color-mix(in srgb,var(--tc) 16%,transparent);cursor:pointer;font-size:14.5px}
+.passpick button i{width:10px;height:10px;border-radius:50%;background:var(--tc)}
+.log{font-size:13.5px;color:var(--muted);display:grid;gap:2px}
+.log p{margin:0}
+.log p:last-child{color:var(--text)}
+.navq{display:grid;grid-template-columns:auto 1fr 1.35fr;gap:8px;margin-top:auto;padding-top:4px}
+.navq .btn{padding:10px 12px}
+.ctl-intro{display:grid;gap:10px;margin-top:auto}
+.board{display:flex;gap:12px;padding:4px 16px 16px;overflow-x:auto}
+.team{flex:1 1 0;min-width:176px;position:relative;border-radius:16px;background:var(--panel);border:1px solid var(--line);display:flex;flex-direction:column;transition:border-color .2s,background .25s,box-shadow .25s,opacity .25s}
+.tm-main{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:2px 10px;padding:12px 14px;border-radius:16px}
+.tm-main:focus-visible{outline:2px solid var(--gold-hi);outline-offset:-2px}
+.tm-dot{width:14px;height:14px;border-radius:50%;background:var(--tc);box-shadow:0 0 0 3px color-mix(in srgb,var(--tc) 30%,transparent)}
+.tm-name{font-family:var(--f-head);font-weight:500;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tm-score{grid-row:1/3;grid-column:3;font-family:var(--f-head);font-weight:700;font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
+.tm-help{grid-column:2;display:flex;gap:5px;align-items:center;font-size:12.5px;color:var(--muted)}
+.tm-help i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--gold)}
+.tm-help i.on{background:var(--gold)}
+.team[aria-current="true"]{border-color:var(--tc);background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 24%,var(--panel)),var(--panel));box-shadow:0 0 0 2px var(--tc),0 16px 32px -18px var(--tc)}
+.team.tried{opacity:.5}
+.team .crown{position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:24px;height:24px;color:var(--gold);filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.tm-adj{display:none;gap:6px;padding:0 12px 10px}
+body.adj .tm-adj{display:flex}
+.tm-adj button{flex:1;height:32px;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);cursor:pointer;font-family:var(--f-head);font-size:14px}
+.float{position:absolute;right:14px;top:-4px;font-family:var(--f-head);font-weight:700;color:var(--gold-hi);font-size:26px;animation:floatup 1.3s ease-out forwards;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+@keyframes floatup{from{transform:translateY(10px);opacity:0}20%{opacity:1}to{transform:translateY(-34px);opacity:0}}
+
+/* ---------- shared stage content ---------- */
+.st{flex:1;min-height:0;display:grid;gap:clamp(16px,2vw,26px);align-items:start}
+.st-a,.st-b{min-width:0;display:grid;gap:14px;align-content:start}
+.qtext{font-family:var(--f-head);font-weight:500;font-size:clamp(21px,2vw,31px);margin:0;line-height:1.4}
+.st-tiles{grid-template-columns:auto minmax(0,1fr)}
+.tbox{position:relative;border-radius:14px;overflow:hidden;background:#000;box-shadow:0 0 0 1px var(--line2),0 24px 48px -26px #000;width:min(100%,460px);margin:0 auto}
+.tbox img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.tgrid{position:absolute;inset:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);perspective:900px}
+.tile{all:unset;box-sizing:border-box;cursor:pointer;display:grid;place-items:center;position:relative;background:linear-gradient(145deg,#3b2a16,#1f1508);border:1px solid rgba(226,176,74,.34);font-family:var(--f-head);font-weight:600;font-size:clamp(30px,4vw,58px);color:var(--gold-hi);text-shadow:0 2px 0 rgba(0,0,0,.4);transition:transform .55s cubic-bezier(.3,.7,.3,1),opacity .45s .08s}
+.tile::before{content:"";position:absolute;inset:8px;border:1px solid rgba(226,176,74,.16);border-radius:6px;pointer-events:none}
+.tile:hover{background:linear-gradient(145deg,#4c3719,#281b0a)}
+.tile:focus-visible{outline:2px solid var(--gold-hi);outline-offset:-4px}
+.tile.open{transform:rotateY(90deg);opacity:0;pointer-events:none}
+.meter{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:16px}
+.meter b{color:var(--text);font-family:var(--f-head);font-size:18px}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.tiers span{display:grid;gap:0;padding:8px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.025);transition:all .3s;line-height:1.3}
+.tiers small{font-size:13px;color:var(--muted)}
+.tiers b{font-family:var(--f-head);font-weight:600;font-size:22px;color:var(--muted)}
+.tiers span.on{border-color:var(--gold);background:rgba(226,176,74,.16);box-shadow:0 0 0 1px var(--gold) inset}
+.tiers span.on b{color:var(--gold-hi)}.tiers span.on small{color:var(--text)}
+.tiers span.past{opacity:.4}.tiers span.past b{text-decoration:line-through;text-decoration-thickness:2px}
+.tiers.done span:not(.on){opacity:.35}
+.nw{white-space:nowrap}
+.hint{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:rgba(238,138,58,.12);border:1px solid rgba(238,138,58,.5);color:#ffdcbf;font-size:clamp(15.5px,1.3vw,19px);animation:pop .4s}
+.hint .ic{color:var(--saffron);margin-top:3px}
+.hint b{font-family:var(--f-head);font-weight:500;color:var(--saffron);margin-right:6px}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.ch{display:flex;align-items:center;gap:12px;text-align:left;padding:10px 14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line2);color:var(--text);font:inherit;font-size:clamp(15.5px,1.2vw,19px);line-height:1.4;min-height:58px;transition:border-color .2s,background .2s,opacity .3s,transform .12s}
+button.ch{cursor:pointer}
+button.ch:hover:not(:disabled){border-color:var(--gold);background:#31241a}
+button.ch:active:not(:disabled){transform:scale(.99)}
+button.ch:disabled{cursor:default}
+.ch .k{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(226,176,74,.16);color:var(--gold-hi);font-family:var(--f-head);font-weight:600}
+.ch.right{border-color:var(--ok);background:rgba(63,185,131,.2)}
+.ch.right .k{background:var(--ok);color:#052012}
+.ch.wrong{border-color:var(--bad);background:rgba(229,85,61,.18)}
+.ch.wrong .k{background:var(--bad);color:#fff}
+.ch.dim{opacity:.45}
+.ans{padding:14px 16px;border-radius:16px;background:linear-gradient(180deg,rgba(226,176,74,.17),rgba(226,176,74,.05));border:1px solid var(--gold);display:grid;gap:2px;animation:pop .45s cubic-bezier(.2,.9,.3,1.3)}
+.ans small{color:var(--gold);font-family:var(--f-head);letter-spacing:.08em;font-size:13.5px}
+.ans b{font-family:var(--f-head);font-weight:600;font-size:clamp(22px,2.2vw,34px);line-height:1.3;color:var(--gold-hi)}
+.ans p{margin:4px 0 0;color:var(--text);opacity:.85;font-size:15.5px;line-height:1.6}
+@keyframes pop{from{transform:scale(.94);opacity:0}}
+.st-blank{grid-template-columns:minmax(0,1fr);align-content:center;align-items:center;justify-items:center;text-align:center;width:100%;max-width:1040px;margin:0 auto}
+.st-blank .st-a{justify-items:center;width:100%}
+.st-blank .choices,.st-blank .hint{width:100%;max-width:900px;text-align:left}
+.sent{font-family:var(--f-head);font-weight:400;font-size:clamp(22px,2.7vw,42px);line-height:1.75;margin:0;text-wrap:balance}
+.slot{display:inline-block;min-width:4.6em;border-bottom:3px dashed var(--gold);margin:0 .15em;padding:0 .3em;line-height:1.35;color:transparent;transition:background .4s,border-color .4s}
+.slot .slot-a{display:none}
+.slot.filled{border-bottom-style:solid;color:var(--gold-hi);background:rgba(226,176,74,.13);border-radius:8px 8px 0 0;font-weight:500}
+.slot.filled .slot-a{display:inline;animation:pop .5s}
+.st-clues,.st-audio{grid-template-columns:minmax(0,1fr) clamp(220px,25vw,330px)}
+.clues{display:grid;gap:12px}
+.clue{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:auto 1fr;align-items:center;gap:16px;padding:12px 18px;border-radius:16px;background:var(--panel2);border:1px solid var(--line2);min-height:70px;transition:border-color .2s,background .2s}
+.clue:hover{border-color:var(--gold)}
+.clue:focus-visible{outline:2px solid var(--gold-hi)}
+.clue .cn{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-head);font-weight:700;font-size:22px;background:linear-gradient(180deg,#f3cf72,#c48a28);color:#2a1a06}
+.clue .ct{display:none;font-size:clamp(17px,1.6vw,25px);font-family:var(--f-head);font-weight:400;line-height:1.4}
+.clue .cq{color:var(--muted);font-size:15px}
+.clue.open{cursor:default;border-color:var(--gold);background:linear-gradient(90deg,rgba(226,176,74,.12),var(--panel2))}
+.clue.open .ct{display:block;animation:pop .4s}
+.clue.open .cq{display:none}
+.clue.lock{cursor:default;opacity:.55}
+.frame{position:relative;margin:0 auto;width:100%;max-width:330px;border-radius:999px 999px 18px 18px;overflow:hidden;aspect-ratio:4/5;border:2px solid var(--gold);box-shadow:0 0 0 6px rgba(226,176,74,.1),0 30px 50px -30px #000;background:radial-gradient(80% 60% at 50% 32%,#3b2b17,#140d07)}
+.frame .fq{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--f-orn);font-size:clamp(96px,10vw,150px);color:var(--gold);transition:opacity .4s}
+.frame .fq span{margin-top:8%}
+.frame img{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .7s}
+.frame .bg{object-fit:cover;filter:blur(16px) brightness(.5);transform:scale(1.2)}
+.frame .fg{object-fit:contain}
+.frame.rev img{opacity:1}
+.frame.rev .fq{opacity:0}
+.player{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:18px;padding:18px;border-radius:20px;background:var(--panel2);border:1px solid var(--line2)}
+.pbtn{width:84px;height:84px;border-radius:50%;border:0;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#f8dd92,#d49a32 60%,#9c6f1e);color:#2a1a06;cursor:pointer;box-shadow:0 12px 30px -12px rgba(226,176,74,.85)}
+.pbtn .ic{width:36px;height:36px}
+.bars{display:flex;align-items:flex-end;gap:4px;height:46px}
+.bars i{flex:1;background:linear-gradient(180deg,var(--gold-hi),var(--gold));border-radius:3px;height:18%;opacity:.45;transition:opacity .3s}
+.player.playing .bars i{animation:eq .9s ease-in-out infinite alternate;opacity:1}
+.bars i:nth-child(3n){animation-delay:-.3s!important}.bars i:nth-child(3n+1){animation-delay:-.6s!important}.bars i:nth-child(4n){animation-duration:.7s!important}.bars i:nth-child(5n){animation-duration:1.15s!important}
+@keyframes eq{from{height:12%}to{height:100%}}
+.aprog{height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:10px;cursor:pointer}
+.aprog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--saffron),var(--gold))}
+.atime{font-family:var(--f-head);font-size:14px;color:var(--muted);display:flex;justify-content:space-between;margin-top:4px}
+.intro{margin:auto;text-align:center;display:grid;justify-items:center;gap:10px;max-width:780px;padding:12px}
+.intro-no{font-family:var(--f-head);letter-spacing:.22em;color:var(--saffron);font-size:18px}
+.intro h2{margin:0;font-family:var(--f-orn);font-weight:700;font-size:clamp(50px,7vw,100px);line-height:1.15;padding:0 .1em}
+.intro .tagline{font-family:var(--f-head);letter-spacing:.32em;font-size:14px;padding:4px 16px;border:1px solid var(--gold);border-radius:99px;color:var(--gold-hi)}
+.intro p{font-size:clamp(17px,1.6vw,23px);margin:4px 0 0}
+.intro-rule{display:inline-flex;gap:10px;align-items:center;padding:12px 18px;border-radius:14px;background:rgba(226,176,74,.1);border:1px solid var(--line2);color:var(--gold-hi);font-size:clamp(15.5px,1.3vw,19px);text-align:left}
+.intro-meta{color:var(--muted)}
+.intro .btn{margin-top:8px}
+
+@media (min-width:1000px) and (min-height:600px){
+  .tg{height:100dvh;min-height:0}
+  .stage{overflow:hidden}
+  .tg .st{grid-template-rows:minmax(0,1fr)}
+  .tg .st-a,.tg .st-b{max-height:100%;overflow:auto;scrollbar-width:thin}
+  .tg .st-tiles .st-a{height:100%;overflow:visible;display:flex;align-items:flex-start}
+  .tg .st-tiles .tbox{height:100%;width:auto;max-width:min(46vw,620px)}
+  .tg .frame{max-height:calc(100% - 10px)}
+  .tg .clue{min-height:58px;padding:8px 16px}
+  .tg .clue .cn{width:40px;height:40px;font-size:20px}
+  .tg .clues{gap:10px}
+  .tg .ch{min-height:50px;padding:8px 12px}
+  .tg .tiers span{padding:5px 12px}
+  .tg .tiers b{font-size:20px}
+}
+@media (max-width:999px){
+  .tg-main{grid-template-columns:1fr}
+  .navq{margin-top:0}
+}
+@media (max-width:820px){
+  .st-tiles,.st-clues,.st-audio{grid-template-columns:minmax(0,1fr)}
+  .st-clues .st-b,.st-audio .st-b{order:-1}
+  .frame{max-width:min(190px,52vw)}
+  .frame .fq{font-size:84px}
+  .choices{grid-template-columns:minmax(0,1fr)}
+  .tg-round b{font-size:18px}
+  .player{grid-template-columns:auto minmax(0,1fr);padding:14px;gap:14px}
+  .pbtn{width:68px;height:68px}
+}
+
+/* ---------- student game ---------- */
+.sg{max-width:1120px;margin:0 auto;padding:0 16px 130px;display:grid;gap:12px}
+.sg-top{display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:5;padding:10px 0 12px;background:linear-gradient(var(--bg) 78%,rgba(15,10,6,0))}
+.sg-meta{display:grid;line-height:1.25;min-width:0;flex:0 1 auto}
+.sg-meta small,.sg-meta b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sg-meta small{color:var(--saffron);font-family:var(--f-head);font-size:12.5px;letter-spacing:.06em}
+.sg-meta b{font-family:var(--f-head);font-weight:500;font-size:17px;white-space:nowrap}
+.sprog{flex:1;display:grid;gap:4px;min-width:60px}
+.sprog .bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.sprog .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--saffron),var(--gold));transition:width .4s}
+.sprog span{font-size:12.5px;color:var(--muted);text-align:right}
+.sscore{display:grid;justify-items:end;line-height:1.1;flex:none}
+.sscore small{font-size:12.5px;color:var(--muted)}
+.sscore b{font-family:var(--f-head);font-weight:700;font-size:26px;color:var(--gold-hi);font-variant-numeric:tabular-nums}
+.sg .stage{min-height:min(560px,calc(100dvh - 210px))}
+.sg .st-tiles .tbox{height:min(40dvh,460px);width:auto;max-width:100%}
+.fb{position:fixed;left:0;right:0;bottom:0;z-index:6;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:rgba(22,15,9,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-top:1px solid var(--line2);transform:translateY(110%);transition:transform .35s cubic-bezier(.2,.8,.3,1)}
+.fb.show{transform:none}
+.fb-in{max-width:1088px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.fb-ic{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;flex:none}
+.fb.ok .fb-ic{background:var(--ok);color:#052012}
+.fb.bad .fb-ic{background:var(--bad);color:#fff}
+.fb-ic .ic{width:26px;height:26px}
+.fb-t{display:grid;line-height:1.35;min-width:0;flex:1}
+.fb-t b{font-family:var(--f-head);font-weight:600;font-size:20px}
+.fb.ok .fb-t b{color:#86e8bb}
+.fb.bad .fb-t b{color:#ffb1a0}
+.fb-t span{font-size:14.5px;color:var(--muted)}
+.fb .btn{flex:none}
+@media (max-width:560px){.fb-in{flex-wrap:wrap}.fb .btn{width:100%}.sg-meta b{font-size:15px}.sscore b{font-size:22px}}
+
+/* ---------- result + podium ---------- */
+.res{max-width:1000px;margin:0 auto;padding:16px 16px 56px;display:grid;gap:16px}
+.res-top{display:grid;grid-template-columns:auto minmax(0,1fr);gap:26px;align-items:center;padding:26px;border-radius:22px;background:var(--panel);border:1px solid var(--line2);position:relative;overflow:hidden}
+.ring{--p:0;width:176px;height:176px;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--p)*1%),rgba(255,255,255,.08) 0);display:grid;place-items:center;position:relative;flex:none}
+.ring::before{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--panel)}
+.ring div{position:relative;display:grid;justify-items:center;line-height:1.05}
+.ring b{font-family:var(--f-head);font-weight:700;font-size:46px;font-variant-numeric:tabular-nums}
+.ring small{color:var(--muted);font-size:14px;margin-top:4px}
+.res-t{display:grid;gap:6px;min-width:0}
+.res-t small{font-family:var(--f-head);color:var(--saffron);letter-spacing:.08em}
+.badge-title{margin:0;font-family:var(--f-orn);font-weight:700;font-size:clamp(38px,5vw,58px);line-height:1.15}
+.res-t p{margin:0;color:var(--muted)}
+.res-t .who2{color:var(--text);font-family:var(--f-head);font-size:19px}
+.res-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.rbars{display:grid;gap:12px}
+.rb{display:grid;grid-template-columns:170px minmax(0,1fr) 84px;gap:12px;align-items:center;font-size:15.5px}
+.rb .bar{height:10px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.rb .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--saffron),var(--gold))}
+.rb b{font-family:var(--f-head);text-align:right;font-variant-numeric:tabular-nums}
+.review{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.review li{display:grid;gap:2px;padding:12px 14px;border-radius:12px;background:var(--bg2);border:1px solid var(--line)}
+.review li small{color:var(--saffron);font-family:var(--f-head);font-size:12.5px}
+.review li span{font-size:15px}
+.review .you{color:#ffb1a0}
+.review .cor{color:#86e8bb}
+.lb-wrap{overflow-x:auto}
+.lb{width:100%;border-collapse:collapse;font-size:15px;min-width:520px}
+.lb th,.lb td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.lb th{font-family:var(--f-head);font-weight:500;color:var(--muted);font-size:14px}
+.lb td.num,.lb th.num{text-align:right;font-variant-numeric:tabular-nums}
+.lb tr.me td{background:rgba(226,176,74,.13)}
+.lb .rk{font-family:var(--f-head);font-weight:600;color:var(--gold-hi)}
+.empty{color:var(--muted);margin:0}
+@media (max-width:640px){.res-top{grid-template-columns:1fr;justify-items:center;text-align:center;padding:22px 18px}.res-act{justify-content:center}.rb{grid-template-columns:1fr 70px}.rb .bar{grid-column:1/-1;grid-row:2}}
+.tend{max-width:1040px;margin:0 auto;padding:20px 16px 56px;display:grid;gap:22px;justify-items:center;text-align:center}
+.tend h2{margin:0;font-family:var(--f-orn);font-weight:700;font-size:clamp(44px,6vw,76px);line-height:1.15}
+.tend .sub{margin:-8px 0 0;color:var(--muted)}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:clamp(8px,1.6vw,16px);width:100%;max-width:820px;margin-top:10px}
+.pod{flex:1;max-width:250px;display:grid;justify-items:center;gap:6px;min-width:0}
+.pod .crown2{width:40px;height:40px;color:var(--gold)}
+.pod .pn{font-family:var(--f-head);font-size:clamp(16px,2vw,22px);font-weight:500;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pod .ps{font-family:var(--f-head);font-weight:700;font-size:clamp(30px,4vw,48px);line-height:1;color:var(--gold-hi)}
+.pod .blk{width:100%;border-radius:16px 16px 0 0;background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 55%,#2a1d12),#1d150e 90%);border:1px solid var(--line2);border-bottom:0;display:grid;place-items:start center;padding-top:12px;font-family:var(--f-head);font-weight:700;font-size:clamp(34px,4vw,50px);color:rgba(255,255,255,.9);transform-origin:bottom;animation:rise .8s cubic-bezier(.2,.8,.3,1) both}
+.pod.p1 .blk{height:clamp(150px,22vh,210px);animation-delay:.5s}
+.pod.p2 .blk{height:clamp(110px,16vh,150px);animation-delay:.25s}
+.pod.p3 .blk{height:clamp(80px,11vh,110px)}
+@keyframes rise{from{transform:scaleY(0)}}
+.rest{list-style:none;margin:0;padding:0;display:grid;gap:8px;width:100%;max-width:560px}
+.rest li{display:flex;align-items:center;gap:12px;padding:10px 16px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.rest li i{width:12px;height:12px;border-radius:50%;background:var(--tc)}
+.rest li b{font-family:var(--f-head);margin-left:auto}
+.tend .acts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<!-- HOME -->
+<main id="scr-home" class="scr home">
+  <a class="backlink" href="index.html#media"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>กลับแฟ้มผลงาน</a>
+  <header class="hero">
+    <span id="heroWheel"></span>
+    <div class="kicker">สื่อการเรียนรู้ · พระพุทธศาสนา</div>
+    <h1><span class="h-orn goldtx">แฟนพันธุ์แท้</span><span class="h-main">พุทธประวัติ</span></h1>
+    <div class="orn-rule"><i></i></div>
+    <p class="lead">เกมตอบคำถาม 4 รอบ 27 ข้อ ทบทวนพุทธประวัติ พระสาวก ชาวพุทธตัวอย่าง และชาดก เล่นเป็นทีมหน้าห้องเรียนหรือให้นักเรียนเล่นเองก็ได้</p>
+  </header>
+  <div id="resume" class="resume" hidden></div>
+  <div class="modes">
+    <button class="mode" id="goT" type="button">
+      <span class="mi" data-ic="users"></span>
+      <small>สำหรับครู · ฉายขึ้นจอ</small>
+      <span class="mh">แข่งเป็นทีมหน้าห้อง</span>
+      <span class="mp">แบ่ง 2–6 ทีม ครูเปิดคำถามทีละข้อ กดให้คะแนนเมื่อทีมตอบถูก ระบบรวมคะแนนและจัดอันดับให้</span>
+      <span class="feat"><span>ตัวช่วย 4 แบบ ทีมละ 2 ครั้ง</span><span>จับเวลาต่อข้อ</span><span>ย้อนกลับได้เมื่อกดผิด</span></span>
+      <span class="go">ตั้งค่าเกม <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+    </button>
+    <button class="mode" id="goS" type="button">
+      <span class="mi" data-ic="user"></span>
+      <small>สำหรับนักเรียน · คอมหรือมือถือ</small>
+      <span class="mh">เล่นเองทีละคน</span>
+      <span class="mp">ตอบแบบเลือกตอบ 4 ตัวเลือก ระบบตรวจคำตอบและคิดคะแนนให้ทันที ยิ่งตอบเร็วในรอบภาพปริศนายิ่งได้คะแนนมาก</span>
+      <span class="feat"><span>ตรวจคะแนนอัตโนมัติ</span><span>เฉลยพร้อมคำอธิบาย</span><span>ตารางอันดับ</span></span>
+      <span class="go">เริ่มเล่น <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></span>
+    </button>
+  </div>
+  <ol class="rounds" id="homeRounds"></ol>
+  <p class="foot">จัดทำโดย ครูระพีพัฒน์ กลัดกันแสง · กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม · โรงเรียนวังหลวงพิทยาสรรพ์</p>
+</main>
+
+<!-- TEACHER SETUP -->
+<section id="scr-tset" class="scr set" hidden>
+  <div class="set-h"><button class="backlink" data-go="home" type="button"><span data-ic="back"></span>หน้าแรก</button><span class="sp"></span></div>
+  <div class="set-h"><h2>ตั้งค่าเกม · แข่งเป็นทีม</h2></div>
+  <div class="card">
+    <h3>จำนวนทีม <span class="sp"></span>
+      <span class="stepper"><button type="button" id="tMinus" aria-label="ลดจำนวนทีม">−</button><output id="tCount">4</output><button type="button" id="tPlus" aria-label="เพิ่มจำนวนทีม">+</button></span></h3>
+    <div class="teams-in" id="tNames"></div>
+    <p class="note">แก้ชื่อทีมได้ตามต้องการ</p>
+  </div>
+  <div class="card">
+    <h3>รอบที่จะเล่น</h3>
+    <div class="chips" id="tRounds"></div>
+  </div>
+  <div class="card opts">
+    <div><label>จับเวลาต่อข้อ</label><div class="seg" id="tTimer"></div></div>
+    <div><label>ตัวช่วยต่อทีม</label><div class="seg" id="tHelpsN"></div></div>
+  </div>
+  <div class="card">
+    <h3>ตัวช่วย</h3>
+    <div class="helpers" id="helpCards"></div>
+  </div>
+  <p class="err" id="tErr" hidden></p>
+  <div class="cta"><button class="btn gold big" id="tStart" type="button">เริ่มเกม</button></div>
+</section>
+
+<!-- TEACHER GAME -->
+<section id="scr-tgame" class="scr tg" hidden>
+  <header class="tg-top">
+    <button class="iconbtn" id="tgExit" type="button" aria-label="ออกไปหน้าแรก (บันทึกเกมไว้)" title="ออก (บันทึกเกมไว้)"><span data-ic="home"></span></button>
+    <div class="tg-round" id="tgRound"></div>
+    <span class="tg-prog" id="tgProg"></span>
+    <span class="sp"></span>
+    <div class="timer" id="timer">
+      <b id="tmTxt">0:30</b>
+      <button type="button" id="tmPlay" aria-label="เริ่ม/หยุดจับเวลา" title="เริ่ม/หยุดเวลา (Space)"></button>
+      <button type="button" id="tmReset" aria-label="เริ่มเวลาใหม่" title="เริ่มเวลาใหม่"><span data-ic="reset"></span></button>
+    </div>
+    <button class="iconbtn" id="tgUndo" type="button" aria-label="ย้อนกลับการกดล่าสุด" title="ย้อนกลับการกดล่าสุด"><span data-ic="undo"></span></button>
+    <button class="iconbtn" id="tgAdj" type="button" aria-pressed="false" aria-label="ปรับคะแนนเอง" title="ปรับคะแนนเอง"><span data-ic="edit"></span></button>
+    <button class="iconbtn" id="tgSum" type="button" aria-label="ดูสรุปคะแนน" title="ดูสรุปคะแนน"><span data-ic="trophy"></span></button>
+    <button class="iconbtn sndbtn" type="button" aria-label="เปิด/ปิดเสียงประกอบ" title="เสียงประกอบ"></button>
+    <button class="iconbtn" id="tgFull" type="button" aria-label="เต็มจอ" title="เต็มจอ (F)"><span data-ic="full"></span></button>
+  </header>
+  <div class="tg-main">
+    <div class="stage" id="tgStage"></div>
+    <aside class="ctl" id="tgCtl">
+      <div class="ctl-intro" id="cIntro">
+        <div class="box"><small>ลำดับการเล่น</small><div id="cIntroTxt" style="font-size:15px"></div></div>
+        <button class="btn gold big" data-act="next" type="button">เริ่มรอบนี้ <span data-ic="next"></span></button>
+        <button class="btn ghost sm" data-act="prev" type="button"><span data-ic="back"></span> ย้อนกลับ</button>
+      </div>
+      <div id="cQ" style="display:contents">
+        <div class="box"><small>มูลค่าข้อนี้</small><div class="val"><b id="cVal">30</b><span>คะแนน</span><em id="cValNote"></em></div></div>
+        <div class="box who" id="cWhoBox"><small>ทีมที่กำลังตอบ</small><div id="cWho"></div></div>
+        <div class="judge"><button class="btn ok" data-act="right" type="button" id="bRight"></button><button class="btn bad" data-act="wrong" type="button" id="bWrong"><span data-ic="x"></span> ผิด</button></div>
+        <div class="box">
+          <div class="helps-h"><small>ตัวช่วยของทีมนี้</small><span id="cHelpLeft"></span></div>
+          <div class="helps-g">
+            <button class="hb" data-help="skip" type="button"><span data-ic="skip"></span>ข้ามข้อนี้</button>
+            <button class="hb" data-help="pass" type="button"><span data-ic="pass"></span>โยนให้เพื่อน</button>
+            <button class="hb" data-help="give" type="button"><span data-ic="flag"></span>ยอมแพ้</button>
+            <button class="hb" data-help="hint" type="button"><span data-ic="bulb"></span>คำใบ้</button>
+          </div>
+          <div class="passpick" id="passPick" hidden><p>เลือกทีมที่จะโยนให้ตอบ</p><div></div></div>
+        </div>
+        <div class="log" id="cLog" aria-live="polite"></div>
+        <div class="navq"><button class="btn ghost" data-act="prev" type="button" aria-label="ข้อก่อนหน้า"><span data-ic="back"></span></button><button class="btn" data-act="reveal" type="button" id="bReveal"><span data-ic="eye"></span> เฉลย</button><button class="btn gold" data-act="next" type="button" id="bNext">ข้อถัดไป <span data-ic="next"></span></button></div>
+      </div>
+    </aside>
+  </div>
+  <div class="board" id="board"></div>
+</section>
+
+<!-- TEACHER END -->
+<section id="scr-tend" class="scr tend" hidden>
+  <div class="kicker">สรุปผลการแข่งขัน</div>
+  <h2 class="goldtx">แฟนพันธุ์แท้ตัวจริง</h2>
+  <p class="sub" id="tendSub"></p>
+  <div class="podium" id="podium"></div>
+  <ol class="rest" id="rest"></ol>
+  <div class="acts">
+    <button class="btn" id="tendBack" type="button"><span data-ic="back"></span> กลับไปที่เกม</button>
+    <button class="btn gold" id="tendAgain" type="button"><span data-ic="reset"></span> เล่นใหม่ด้วยทีมเดิม</button>
+    <button class="btn ghost" id="tendSetup" type="button">ตั้งค่าทีมใหม่</button>
+    <button class="btn ghost" data-go="home" type="button"><span data-ic="home"></span> หน้าแรก</button>
+  </div>
+</section>
+
+<!-- STUDENT SETUP -->
+<section id="scr-sset" class="scr set" hidden>
+  <div class="set-h"><button class="backlink" data-go="home" type="button"><span data-ic="back"></span>หน้าแรก</button></div>
+  <div class="set-h"><h2>เล่นเองทีละคน</h2></div>
+  <form class="card" id="sForm" novalidate>
+    <h3>ข้อมูลผู้เล่น</h3>
+    <div class="row3">
+      <div class="field"><label for="sName">ชื่อ–นามสกุล</label><input class="txt" id="sName" autocomplete="name" maxlength="60" required></div>
+      <div class="field"><label for="sCls">ชั้น/ห้อง <em>เช่น ม.1/2</em></label><input class="txt" id="sCls" maxlength="12"></div>
+      <div class="field"><label for="sNo">เลขที่</label><input class="txt" id="sNo" inputmode="numeric" maxlength="3"></div>
+    </div>
+    <p class="err" id="sErr" hidden>กรุณากรอกชื่อก่อนเริ่มเล่น</p>
+    <h3 style="margin-top:4px">รอบที่จะเล่น</h3>
+    <div class="chips" id="sRounds"></div>
+    <p class="note" id="sMax"></p>
+    <div class="cta"><button class="btn gold big" type="submit">เริ่มเล่น <span data-ic="next"></span></button></div>
+  </form>
+  <div class="card">
+    <h3><span data-ic="trophy"></span> ตารางอันดับ (เครื่องนี้) <span class="sp"></span><button class="btn sm ghost" type="button" id="sBoardBtn">ดูทั้งหมด</button></h3>
+    <div id="sBoardMini"></div>
+  </div>
+</section>
+
+<!-- STUDENT GAME -->
+<section id="scr-sgame" class="scr sg" hidden>
+  <header class="sg-top">
+    <button class="iconbtn" id="sgExit" type="button" aria-label="ออกจากเกม" title="ออกจากเกม"><span data-ic="x"></span></button>
+    <div class="sg-meta" id="sgMeta"></div>
+    <div class="sprog"><div class="bar"><i id="sgBar"></i></div><span id="sgCount"></span></div>
+    <div class="sscore"><small>คะแนน</small><b id="sgScore">0</b></div>
+    <button class="iconbtn sndbtn" type="button" aria-label="เปิด/ปิดเสียงประกอบ" title="เสียงประกอบ"></button>
+  </header>
+  <div class="stage" id="sgStage"></div>
+  <div class="fb" id="fb" aria-live="polite"><div class="fb-in"><span class="fb-ic" id="fbIc"></span><div class="fb-t"><b id="fbT"></b><span id="fbS"></span></div><button class="btn gold big" id="fbNext" type="button">ข้อต่อไป <span data-ic="next"></span></button></div></div>
+</section>
+
+<!-- STUDENT RESULT -->
+<section id="scr-send" class="scr res" hidden>
+  <div class="set-h"><button class="backlink" data-go="home" type="button"><span data-ic="back"></span>หน้าแรก</button></div>
+  <div class="res-top">
+    <div class="ring" id="rRing"><div><b id="rPct">0%</b><small id="rScore"></small></div></div>
+    <div class="res-t">
+      <small>ผลการเล่น · แฟนพันธุ์แท้ พุทธประวัติ</small>
+      <h2 class="badge-title goldtx" id="rTitle"></h2>
+      <p class="who2" id="rWho"></p>
+      <p id="rMeta"></p>
+      <div class="res-act">
+        <button class="btn gold" id="rCopy" type="button"><span data-ic="copy"></span> คัดลอกผลส่งครู</button>
+        <button class="btn" id="rAgain" type="button"><span data-ic="reset"></span> เล่นอีกครั้ง</button>
+      </div>
+    </div>
+  </div>
+  <div class="card"><h3>คะแนนแต่ละรอบ</h3><div class="rbars" id="rBars"></div></div>
+  <div class="card" id="rRevCard"><h3>ข้อที่ตอบผิด · ทบทวนอีกครั้ง</h3><ul class="review" id="rReview"></ul></div>
+  <div class="card" id="lbCard">
+    <h3><span data-ic="trophy"></span> ตารางอันดับ (เครื่องนี้) <span class="sp"></span>
+      <button class="btn sm ghost" type="button" id="lbCsv"><span data-ic="dl"></span> ดาวน์โหลด CSV</button>
+      <button class="btn sm ghost" type="button" id="lbClear"><span data-ic="trash"></span> ล้างตาราง</button></h3>
+    <div class="lb-wrap" id="lbWrap"></div>
+    <p class="note">คะแนนจะบันทึกไว้ในเบราว์เซอร์ของเครื่องที่เล่นเท่านั้น หากนักเรียนเล่นคนละเครื่อง ให้กด "คัดลอกผลส่งครู" แล้วส่งให้ครูทางไลน์หรือช่องทางของห้อง</p>
+  </div>
+</section>
+
+<script>
+(function(){
+'use strict';
+/* ================= data ================= */
+const ROUNDS=[
+{id:'r1',no:'รอบที่ 1',name:'ภาพปริศนา',type:'tiles',
+ desc:'ภาพถูกปิดไว้ด้วยป้ายตัวเลข 9 ช่อง เปิดทีละช่องแล้วทายว่าเป็นพุทธประวัติตอนใด',
+ rule:'ตอบถูกเมื่อเปิด 1–3 ช่อง ได้ 30 คะแนน · 4–6 ช่อง 20 คะแนน · 7–9 ช่อง 10 คะแนน',
+ srule:'ภาพจะค่อย ๆ เปิดเองทีละช่อง ยิ่งตอบเร็วยิ่งได้คะแนนมาก (30 / 20 / 10)',
+ short:'เปิดน้อยช่อง ได้มาก 30 / 20 / 10',
+ q:'จากภาพ เป็นพุทธประวัติตอนใด',
+ qs:[
+  {img:'media/fan/r1-1.jpg',w:528,h:601,a:'พุทธเจ้าผจญมาร',ch:['พุทธเจ้าผจญมาร','ตรัสรู้','ลอยถาดทวนกระแสน้ำ','เสด็จออกผนวช'],hint:'มีพระแม่ธรณีบีบมวยผมอยู่ในภาพ',note:'พระพุทธรูปปางมารวิชัย (ปางชนะมาร) มาจากเหตุการณ์ตอนนี้'},
+  {img:'media/fan/r1-2.jpg',w:444,h:456,a:'บำเพ็ญทุกกรกิริยา',ch:['บำเพ็ญทุกกรกิริยา','รับข้าวมธุปายาสจากนางสุชาดา','ศึกษากับอาฬารดาบส','ปรินิพพาน'],hint:'พระวรกายซูบผอมจนเห็นซี่โครง',note:'ทรงทรมานพระวรกายอย่างหนักจนซูบผอม แต่พบว่าไม่ใช่ทางพ้นทุกข์ จึงทรงเลิกและหันมาดำเนินทางสายกลาง'},
+  {img:'media/fan/r1-3.jpg',w:519,h:597,a:'ตรัสรู้',ch:['ตรัสรู้','พุทธเจ้าผจญมาร','เสด็จออกผนวช','แสดงปฐมเทศนา'],hint:'เกิดขึ้นใต้ต้นพระศรีมหาโพธิ์ ในคืนวันเพ็ญเดือน 6',note:'ตรัสรู้ใต้ต้นพระศรีมหาโพธิ์ ในวันเพ็ญเดือน 6 ตรงกับวันวิสาขบูชา'},
+  {img:'media/fan/r1-4.jpg',w:595,h:585,a:'แสดงปฐมเทศนาโปรดปัญจวัคคีย์',ch:['แสดงปฐมเทศนาโปรดปัญจวัคคีย์','แต่งตั้งพระอัครสาวก','แสดงอาทิตตปริยายสูตรโปรดชฎิล','โปรดพระเจ้าพิมพิสาร'],hint:'เกิดขึ้นที่ป่าอิสิปตนมฤคทายวัน สังเกตกวางในภาพ',note:'ทรงแสดงธัมมจักกัปปวัตตนสูตรที่ป่าอิสิปตนมฤคทายวัน ในวันเพ็ญเดือน 8 ตรงกับวันอาสาฬหบูชา'},
+  {img:'media/fan/r1-5.jpg',w:445,h:466,a:'แต่งตั้งพระสารีบุตรและพระโมคคัลลานะเป็นอัครสาวก',ch:['แต่งตั้งพระสารีบุตรและพระโมคคัลลานะเป็นอัครสาวก','แสดงปฐมเทศนาโปรดปัญจวัคคีย์','ส่งพระอรหันต์ 60 รูปออกเผยแผ่ศาสนา','โปรดยสกุมารและสหาย'],hint:'เป็นการยกย่องพระสาวกเบื้องขวาและเบื้องซ้าย',note:'พระสารีบุตรเป็นอัครสาวกเบื้องขวา พระโมคคัลลานะเป็นอัครสาวกเบื้องซ้าย'}
+ ]},
+{id:'r2',no:'รอบที่ 2',name:'ช่องว่างว้าวุ่น',type:'blank',
+ desc:'เติมคำในช่องว่างให้ข้อความเกี่ยวกับพุทธประวัติถูกต้องสมบูรณ์',
+ rule:'ตอบถูกข้อละ 10 คะแนน',srule:'ตอบถูกข้อละ 10 คะแนน',short:'ตอบถูกข้อละ 10',
+ q:'เติมคำในช่องว่าง',
+ qs:[
+  {pre:'ระหว่างที่พระมหาสัตว์ทรงนั่งสมาธิ ได้มีพญามารชื่อว่า',post:'มาตามผจญพระองค์ พร้อมด้วยเหล่าเสนามาร',a:'วสวัตดี',ch:['วสวัตดี','อาฬวกยักษ์','องคุลิมาล','เทวทัต'],hint:'พญามารตนนี้ขี่ช้างคีรีเมขล์'},
+  {pre:'',post:'ผุดขึ้นจากพื้นดิน บีบมวยผมบันดาลให้มีกระแสน้ำหลากมาท่วมเหล่าพญามารจนพ่ายแพ้ไป',a:'พระแม่ธรณี',ch:['พระแม่ธรณี','พระแม่คงคา','พระอินทร์','ท้าวมหาพรหม'],hint:'เทพีผู้ดูแลผืนแผ่นดิน'},
+  {pre:'เมื่อทรงผนวชแล้ว {พระสิทธัตถะโคตมะ}ได้ทรงค้นคว้าทางพ้นทุกข์อยู่เป็นเวลา',post:'ปี',a:'6',ch:['6','3','7','12'],hint:'ครึ่งหนึ่งของ 12'},
+  {pre:'{พระสิทธัตถะโคตมะ}ทรงไปศึกษาเล่าเรียนและฝึกปฏิบัติโยคะกับอาจารย์ที่มีชื่อเสียง คือ',post:'',a:'อาฬารดาบส และอุททกดาบส',ch:['อาฬารดาบส และอุททกดาบส','อสิตดาบส และโกณฑัญญะ','สัญชัยเวลัฏฐบุตร และพระอัสสชิ','อุรุเวลกัสสปะ และคยากัสสปะ'],hint:'ดาบส 2 ท่านที่สอนสมาบัติ 7 และสมาบัติ 8'},
+  {pre:'{พระสิทธัตถะโคตมะ}ทรงหาวิธีการดับทุกข์ โดยการเปลือยกายตากฝน กินโคมัย ยืนเขย่งเท้า เรียกว่า',post:'',a:'บำเพ็ญตบะ',ch:['บำเพ็ญตบะ','ถือธุดงควัตร','เจริญวิปัสสนา','ดำเนินทางสายกลาง'],hint:'วิธีทรมานกายของนักบวชสมัยนั้น เชื่อว่าความเพียรอย่างแรงกล้าจะเผากิเลสได้'},
+  {pre:'หลังจากนั้นทรงบำเพ็ญ{ทุกกรกิริยา} โดยการ',post:'',a:'กัดฟัน กลั้นลมหายใจ และอดอาหาร',ch:['กัดฟัน กลั้นลมหายใจ และอดอาหาร','นั่งสมาธิ เดินจงกรม และสวดมนต์','ยืนขาเดียว ตากแดด และนอนบนหนาม','บิณฑบาต ฉันมื้อเดียว และถือศีล'],hint:'3 วิธีที่ทำให้พระวรกายซูบผอมอย่างมาก'},
+  {pre:'พระสิทธัตถะทรงค้นพบทางสายใหม่ เรียกว่า',post:'',a:'ทางสายกลาง หรือมัชฌิมาปฏิปทา',ch:['ทางสายกลาง หรือมัชฌิมาปฏิปทา','อริยสัจ 4','ไตรลักษณ์','กามสุขัลลิกานุโยค'],hint:'ไม่ตึงเกินไป ไม่หย่อนเกินไป เหมือนสายพิณที่ขึงพอดี'},
+  {pre:'เมื่อทรงเลิกบำเพ็ญ{ทุกกรกิริยา} ได้เสด็จไปยังตำบล{อุรุเวลาเสนานิคม} ทรงรับ',post:'จากนางสุชาดา',a:'ข้าวมธุปายาส',ch:['ข้าวมธุปายาส','หญ้าคา 8 กำ','ข้าวสัตตุผงและสัตตุก้อน','ผลไม้ป่า'],hint:'ข้าวที่หุงด้วยน้ำนมโค ถวายมาในถาดทองคำ'},
+  {pre:'สิ่งที่พระพุทธเจ้าทรงตรัสรู้ เรียกว่า',post:'',a:'อริยสัจ 4',ch:['อริยสัจ 4','ไตรสิกขา','พรหมวิหาร 4','ไตรลักษณ์'],hint:'ความจริงอันประเสริฐ มี 4 ประการ'},
+  {pre:'กลุ่มเป้าหมายแรกที่พระพุทธเจ้าเสด็จไปตรัสสอนหลังจากตรัสรู้ คือ',post:'',a:'ปัญจวัคคีย์',ch:['ปัญจวัคคีย์','ยสกุมารและสหาย','ชฎิล 3 พี่น้อง','พระเจ้าพิมพิสาร'],hint:'นักบวช 5 รูปที่เคยคอยอุปัฏฐากพระองค์ช่วงบำเพ็ญทุกกรกิริยา'},
+  {pre:'พระพุทธเจ้าตรัสสอน',post:'ทำให้{โกณฑัญญะ} หัวหน้า{ปัญจวัคคีย์} ทูลขอบวชเป็นพระสงฆ์รูปแรก',a:'ธัมมจักกัปปวัตตนสูตร',ch:['ธัมมจักกัปปวัตตนสูตร','อนัตตลักขณสูตร','อาทิตตปริยายสูตร','โอวาทปาฏิโมกข์'],hint:'พระสูตรแรก ชื่อมีความหมายว่า การหมุนวงล้อแห่งธรรม'},
+  {pre:'ทรงประทานอุปสมบทให้',post:'จนมีพระอรหันต์ครบ 60 รูป จึงแยกย้ายกันไปเผยแผ่ศาสนา',a:'ยสกุมารและสหาย',ch:['ยสกุมารและสหาย','ปัญจวัคคีย์','ชฎิล 3 พี่น้อง','พระราหุลและพระนันทะ'],hint:'บุตรเศรษฐีเมืองพาราณสีผู้เบื่อหน่ายชีวิตฆราวาส พร้อมเพื่อน ๆ'},
+  {pre:'ทรงแสดง{อาทิตตปริยายสูตร}แก่',post:'',a:'ชฎิล 3 พี่น้อง',ch:['ชฎิล 3 พี่น้อง','ปัญจวัคคีย์','ยสกุมารและสหาย','ภัททวัคคีย์ 30 คน'],hint:'นักบวชบูชาไฟ ผู้มุ่นผมเป็นชฎา'},
+  {pre:'พระสารีบุตร มีชื่อเดิมว่า',post:'เป็นพระอัครสาวกเบื้องขวาในทางมีปัญญามาก',a:'อุปติสสมาณพ',ch:['อุปติสสมาณพ','โกลิตมาณพ','อชิตมาณพ','สุทัตตมาณพ'],hint:'ชื่อเดิมมาจากชื่อหมู่บ้านอุปติสสะที่ท่านเกิด'},
+  {pre:'พระโมคคัลลานะ มีชื่อเดิมว่า{โกลิตมาณพ} เป็นพระอัครสาวกเบื้องซ้ายในทาง',post:'',a:'มีฤทธิ์มาก',ch:['มีฤทธิ์มาก','มีปัญญามาก','ทรงจำพระวินัย','เป็นพหูสูต'],hint:'เคยใช้ความสามารถพิเศษไปเยือนเทวโลกและนรก'}
+ ]},
+{id:'r3',no:'รอบที่ 3',name:'คุณสมบัติ',type:'clues',
+ desc:'ทายว่าบุคคลนี้คือใคร จากคุณสมบัติ 3 ข้อที่ค่อย ๆ เปิดทีละข้อ',
+ rule:'ตอบถูกหลังเปิดข้อมูล 1 ข้อ ได้ 30 คะแนน · 2 ข้อ 20 คะแนน · 3 ข้อ 10 คะแนน',
+ srule:'เริ่มด้วยข้อมูล 1 ข้อ ขอข้อมูลเพิ่มได้ แต่คะแนนจะลดลง (30 / 20 / 10)',
+ short:'ใช้ข้อมูลน้อย ได้มาก 30 / 20 / 10',
+ q:'จากคุณสมบัติ บุคคลนี้คือใคร',
+ qs:[
+  {clues:['มีเพื่อนรักชื่อ โกลิตะ','เป็นผู้มีปัญญาหลักแหลม','เป็นพระอัครสาวกเบื้องขวา'],img:'media/fan/r3-1.jpg',a:'พระสารีบุตร',ch:['พระสารีบุตร','พระโมคคัลลานะ','พระอานนท์','พระมหากัสสปะ'],hint:'มารดาของท่านชื่อนางสารี',note:'เป็นเอตทัคคะด้านผู้มีปัญญามาก ได้ฟังธรรมจากพระอัสสชิจนบรรลุโสดาบัน'},
+  {clues:['เป็นศิษย์ของ{สัญชัยเวลัฏฐบุตร}','เป็นพระอัครสาวกเบื้องซ้าย','เป็นผู้มีความใฝ่รู้อย่างยิ่ง'],img:'media/fan/r3-2.jpg',a:'พระโมคคัลลานะ',ch:['พระโมคคัลลานะ','พระสารีบุตร','พระอัสสชิ','พระอุบาลี'],hint:'มารดาของท่านชื่อนางโมคคัลลี',note:'เป็นเอตทัคคะด้านผู้มีฤทธิ์มาก และเป็นสหายรักของพระสารีบุตรตั้งแต่ยังเป็นฆราวาส'},
+  {clues:['เป็นหญิงค่อม','เคยยักยอกเงินซื้อดอกไม้','เป็นผู้ที่เอาใจใส่ในหน้าที่ที่ได้รับมอบหมาย'],img:'media/fan/r3-3.jpg',a:'นางขุชชุตตรา',ch:['นางขุชชุตตรา','นางวิสาขา','นางสุชาดา','พระนางสามาวดี'],hint:'เป็นหญิงรับใช้ของพระนางสามาวดี',note:'ได้ฟังธรรมจนบรรลุโสดาบัน แล้วนำธรรมะมาแสดงแก่พระนางสามาวดี ได้รับยกย่องว่าเป็นผู้เป็นพหูสูต'},
+  {clues:['เป็นกษัตริย์แคว้นมคธ','สร้างวัดแห่งแรกในพระพุทธศาสนา','เป็นผู้มั่นคงในพระรัตนตรัย'],img:'media/fan/r3-4.jpg',a:'พระเจ้าพิมพิสาร',ch:['พระเจ้าพิมพิสาร','พระเจ้าปเสนทิโกศล','พระเจ้าอชาตศัตรู','พระเจ้าสุทโธทนะ'],hint:'เป็นพระราชบิดาของพระเจ้าอชาตศัตรู',note:'ถวายพระราชอุทยานเวฬุวันให้เป็นวัดเวฬุวันมหาวิหาร วัดแห่งแรกในพระพุทธศาสนา'},
+  {clues:['มีพระนามเดิมว่า {พระองค์เจ้ามนุษยนาคมานพ}','เป็นผู้เปิดสอบนักธรรมในสนามหลวง','เป็นผู้มีความอ่อนน้อมถ่อมตน'],img:'media/fan/r3-5.jpg',a:'สมเด็จพระมหาสมณเจ้า กรมพระยาวชิรญาณวโรรส',ch:['สมเด็จพระมหาสมณเจ้า กรมพระยาวชิรญาณวโรรส','สมเด็จพระพุฒาจารย์ (โต พรหมรังสี)','ท่านพุทธทาสภิกขุ','สมเด็จพระญาณสังวร สมเด็จพระสังฆราช'],hint:'เป็นพระราชโอรสในรัชกาลที่ 4',note:'สมเด็จพระสังฆราชพระองค์ที่ 10 แห่งกรุงรัตนโกสินทร์ ทรงวางรากฐานการศึกษานักธรรมของคณะสงฆ์ไทย'}
+ ]},
+{id:'sf',no:'รอบพิเศษ',tag:'SUPER FAN',name:'ฟังเสียง ทายชาดก',type:'audio',
+ desc:'ฟังเสียงเล่าเรื่องแล้วทายว่าเป็นชาดกเรื่องใด',
+ rule:'ตอบถูกข้อละ 50 คะแนน',srule:'กดฟังเสียงแล้วเลือกคำตอบ ตอบถูกข้อละ 50 คะแนน',short:'ตอบถูกข้อละ 50',
+ q:'เสียงที่ได้ยินคือชาดกเรื่องใด',
+ qs:[
+  {audio:'media/fan/sf-1.mp3',img:'media/fan/sf-1.jpg',a:'มิตตวินทุกชาดก',ch:['มิตตวินทุกชาดก','ราโชวาทชาดก','มโหสถชาดก','สุวรรณสามชาดก'],hint:'เรื่องของชายผู้ไม่เชื่อฟังคำห้ามของมารดา ออกเรือไปแสวงหาทรัพย์',note:'ข้อคิด: ความโลภและการไม่เชื่อฟังคำสอนของพ่อแม่ นำความทุกข์มาสู่ตนเอง'},
+  {audio:'media/fan/sf-2.mp3',img:'media/fan/sf-2.jpg',a:'ราโชวาทชาดก',ch:['ราโชวาทชาดก','มิตตวินทุกชาดก','มหาชนกชาดก','ติตติรชาดก'],hint:'พระราชาปลอมพระองค์ออกไปฟังความเห็นเรื่องการปกครอง แล้วได้พบฤๅษี',note:'ข้อคิด: ผู้ปกครองที่ตั้งอยู่ในธรรม ย่อมทำให้บ้านเมืองสงบสุขร่มเย็น'}
+ ]}
+];
+const PTS={r1:30,r2:10,r3:30,sf:50};
+const maxOf=on=>ROUNDS.filter(R=>on.includes(R.id)).reduce((s,R)=>s+PTS[R.id]*R.qs.length,0);
+const TEAM_NAMES=['ทีมดอกบัว','ทีมธรรมจักร','ทีมโพธิ์ทอง','ทีมประทีป','ทีมระฆัง','ทีมเจดีย์'];
+const TEAM_COLORS=['#f08a3c','#3fb983','#4fa8e8','#e8739f','#a585f0','#d8c24a'];
+const HELPS=[
+ {k:'skip',n:'ข้ามข้อนี้',d:'ครูเฉลยคำตอบข้อนั้นทันที และไม่มีทีมใดได้คะแนน'},
+ {k:'pass',n:'โยนให้เพื่อน',d:'โยนคำถามให้ทีมอื่นตอบแทน ถ้าทีมที่รับตอบถูก ทีมนั้นได้คะแนน'},
+ {k:'give',n:'ยอมแพ้',d:'ทีมนี้หยุดตอบข้อนั้น แล้วเปิดให้ทีมอื่นแย่งตอบ'},
+ {k:'hint',n:'คำใบ้',d:'แสดงคำใบ้ของข้อนั้นบนจอ ให้ทุกทีมเห็น'}
+];
+
+/* ================= utils ================= */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const nw=s=>esc(s).replace(/\{([^}]+)\}/g,'<span class="nw">$1</span>');
+const plain=s=>String(s).replace(/[{}]/g,'');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+function seeded(seed){let s=seed>>>0||1;return()=>{s^=s<<13;s>>>=0;s^=s>>17;s^=s<<5;s>>>=0;return s/4294967296}}
+function seededShuffle(a,seed){const r=seeded(seed*2654435761);a=a.slice();for(let i=a.length-1;i>0;i--){const j=r()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a}
+const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const I={
+ back:'<path d="M15 18l-6-6 6-6"/>',next:'<path d="M9 18l6-6-6-6"/>',
+ play:'<path d="M8 5.2v13.6a.8.8 0 0 0 1.2.7l10.6-6.8a.8.8 0 0 0 0-1.4L9.2 4.5A.8.8 0 0 0 8 5.2z" fill="currentColor" stroke="none"/>',
+ pause:'<rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/>',
+ reset:'<path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3"/><path d="M3.5 4v5h5"/>',
+ vol:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/>',
+ mute:'<path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/>',
+ full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+ undo:'<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+ edit:'<path d="M4 20h4L19.5 8.5a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14.5 7.5l3 3"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ skip:'<path d="M5 5.5l9 6.5-9 6.5z"/><path d="M18 5v14"/>',
+ pass:'<path d="M4 17c3.5-7 8.5-9.5 15-9.5"/><path d="M15 3.5l4 4-4 4"/>',
+ flag:'<path d="M5 21V4"/><path d="M5 4h12l-2.5 4.5L17 13H5"/>',
+ bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
+ crown:'<path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5z" fill="currentColor" stroke="currentColor" stroke-width="1"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.6a3.5 3.5 0 0 1 0 6.8M17.5 14.2A6.5 6.5 0 0 1 21.5 20"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0z"/><path d="M8 6H4.5v1A3.5 3.5 0 0 0 8 10.5M16 6h3.5v1a3.5 3.5 0 0 1-3.5 3.5M12 13v4M8 21h8M9 17h6"/>',
+ copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+ dl:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+ eye:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ home:'<path d="M3.5 11L12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/>',
+ list:'<path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01"/>'
+};
+const ic=(k,c)=>`<svg class="ic${c?' '+c:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[k]||''}</svg>`;
+let wheelN=0;
+function wheel(){const id='wg'+(++wheelN);let sp='',kn='';for(let k=0;k<8;k++){sp+=`<line x1="0" y1="-12" x2="0" y2="-38" transform="rotate(${k*45})"/>`;kn+=`<circle cx="0" cy="-45" r="4.2" transform="rotate(${k*45})"/>`}
+ return `<svg class="wheel" viewBox="-52 -52 104 104" width="104" height="104" aria-hidden="true"><defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="-50" x2="0" y2="50"><stop offset="0" stop-color="#fff0bd"/><stop offset=".5" stop-color="#e2b04a"/><stop offset="1" stop-color="#a0701f"/></linearGradient></defs><g fill="none" stroke="url(#${id})" stroke-width="4" stroke-linecap="round"><circle r="38"/><circle r="12"/>${sp}</g><g fill="url(#${id})">${kn}<circle r="4.5"/></g></svg>`}
+function paintIcons(root){$$('[data-ic]',root).forEach(el=>{if(el.dataset.done)return;el.innerHTML=ic(el.dataset.ic);el.dataset.done=1})}
+
+/* ================= sound ================= */
+let AC=null,muted=store.get('fanquiz.mute',false);
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function tone(f,t0,d,type,g){const a=ac();if(!a||muted)return;const o=a.createOscillator(),v=a.createGain(),t=a.currentTime+t0;o.type=type||'sine';o.frequency.setValueAtTime(f,t);v.gain.setValueAtTime(0.0001,t);v.gain.linearRampToValueAtTime(g||.16,t+.012);v.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(v);v.connect(a.destination);o.start(t);o.stop(t+d+.05)}
+const SFX={
+ ok(){tone(659,0,.28,'triangle',.17);tone(880,.11,.32,'triangle',.16);tone(1319,.22,.55,'sine',.12)},
+ bad(){tone(196,0,.42,'sawtooth',.08);tone(147,.08,.5,'square',.05)},
+ tick(){tone(1100,0,.07,'square',.04)},
+ gong(){tone(174,0,2.2,'sine',.26);tone(349,0,1.5,'sine',.08);tone(523,.01,1,'sine',.05)},
+ pop(){tone(560,0,.09,'triangle',.08)},
+ reveal(){tone(523,0,.2,'sine',.1);tone(784,.08,.4,'sine',.1)},
+ fan(){[523,659,784,1047,1319].forEach((f,i)=>tone(f,i*.12,.6,'triangle',.13))}
+};
+function syncSnd(){$$('.sndbtn').forEach(b=>{b.innerHTML=ic(muted?'mute':'vol');b.setAttribute('aria-pressed',String(!muted))})}
+document.addEventListener('click',e=>{const b=e.target.closest('.sndbtn');if(!b)return;muted=!muted;store.set('fanquiz.mute',muted);syncSnd();if(!muted)SFX.pop()});
+
+/* ================= confetti ================= */
+const fx=$('#fx'),fxc=fx.getContext('2d');let parts=[],fxRun=false;
+function confetti(x,y,n,spread){if(reduceMotion)return;const W=innerWidth,H=innerHeight,dpr=Math.min(2,devicePixelRatio||1);if(fx.width!==W*dpr){fx.width=W*dpr;fx.height=H*dpr}
+ const cols=['#f8e3a0','#e2b04a','#ee8a3a','#3fb983','#e8739f','#ffffff'];
+ for(let i=0;i<n;i++){const a=(spread?Math.random()*Math.PI*2:-Math.PI/2+(Math.random()-.5)*1.6),v=(spread?4:9)+Math.random()*(spread?6:8);
+  parts.push({x:x*dpr,y:y*dpr,vx:Math.cos(a)*v*dpr,vy:Math.sin(a)*v*dpr,r:(3+Math.random()*4)*dpr,c:cols[i%cols.length],rot:Math.random()*6,vr:(Math.random()-.5)*.3,life:0,max:90+Math.random()*60})}
+ if(!fxRun){fxRun=true;requestAnimationFrame(fxStep)}}
+function fxStep(){fxc.clearRect(0,0,fx.width,fx.height);parts=parts.filter(p=>p.life<p.max);
+ for(const p of parts){p.life++;p.vy+=.22*(fx.height/innerHeight);p.vx*=.985;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;fxc.save();fxc.globalAlpha=Math.max(0,1-p.life/p.max);fxc.translate(p.x,p.y);fxc.rotate(p.rot);fxc.fillStyle=p.c;fxc.fillRect(-p.r,-p.r*.45,p.r*2,p.r*.9);fxc.restore()}
+ if(parts.length)requestAnimationFrame(fxStep);else{fxRun=false;fxc.clearRect(0,0,fx.width,fx.height)}}
+function burstFrom(el,n){const r=el.getBoundingClientRect();confetti(r.left+r.width/2,r.top+r.height/2,n||40,true)}
+
+/* ================= screens ================= */
+let curScr='scr-home';
+function show(id){curScr=id;$$('.scr').forEach(s=>s.hidden=s.id!==id);window.scrollTo(0,0);if(id!=='scr-tgame'){timerStop();}if(id!=='scr-sgame'&&id!=='scr-tgame')stopAudio()}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(!g)return;if(g.dataset.go==='home')goHome()});
+function goHome(){sStopAuto();show('scr-home');renderResume()}
+
+/* ================= shared stage ================= */
+const LET='กขคง';
+function introHTML(R,mode){
+ return `<div class="intro"><div class="intro-no">${R.no}</div>${R.tag?`<span class="tagline">${R.tag}</span>`:''}<h2 class="goldtx">${R.name}</h2><p>${R.desc}</p>
+ <div class="intro-rule">${ic('trophy')}<span>${mode==='t'?R.rule:R.srule}</span></div><div class="intro-meta">จำนวน ${R.qs.length} ข้อ</div>
+ ${mode==='s'?`<button class="btn gold big" data-sact="begin" type="button">เริ่มรอบนี้ ${ic('next')}</button>`:''}</div>`}
+function choicesHTML(q,order,mode){
+ const tag=mode==='s'?'button':'div';
+ return `<div class="choices"${mode==='t'?' hidden':''}>${order.map((oi,j)=>`<${tag} class="ch" data-ch="${j}" data-oi="${oi}"${tag==='button'?' type="button"':''}><span class="k">${LET[j]}</span><span>${esc(q.ch[oi])}</span></${tag}>`).join('')}</div>`}
+const tiersHTML=l=>`<div class="tiers" aria-label="คะแนนตามลำดับ">${l.map((x,i)=>`<span data-tier="${i}"><small>${x}</small><b>${[30,20,10][i]}</b></span>`).join('')}</div>`;
+const hintHTML=(q,mode)=>mode==='t'?`<div class="hint" hidden>${ic('bulb')}<span><b>คำใบ้</b>${esc(q.hint)}</span></div>`:'';
+const ansHTML=q=>`<div class="ans" hidden><small>เฉลย</small><b>${esc(q.a)}</b>${q.note?`<p>${esc(q.note)}</p>`:''}</div>`;
+const frameHTML=q=>`<figure class="frame"><div class="fq"><span>?</span></div><img class="bg" src="${q.img}" alt="" loading="lazy"><img class="fg" src="${q.img}" alt="${esc(q.a)}" loading="lazy"></figure>`;
+function stageHTML(R,q,mode,order){
+ let bar='';
+ if(mode==='t'){bar=`<div class="stage-bar">${R.type==='tiles'?`<button class="pill" data-sact="openall" type="button">${ic('eye')} เปิดภาพทั้งหมด</button>`:''}${R.type==='clues'?`<button class="pill" data-sact="more" type="button">${ic('list')} เปิดข้อมูลถัดไป</button>`:''}<button class="pill" data-sact="chs" type="button" aria-pressed="false">ตัวเลือก ก ข ค ง</button></div>`}
+ const ch=choicesHTML(q,order,mode),hn=hintHTML(q,mode);
+ if(R.type==='tiles'){let t='';for(let n=1;n<=9;n++)t+=`<button class="tile" data-tile="${n}" type="button" aria-label="เปิดช่อง ${n}"><span>${n}</span></button>`;
+  return bar+`<div class="st st-tiles"><div class="st-a"><div class="tbox" style="aspect-ratio:${q.w}/${q.h}"><img src="${q.img}" alt="ภาพปริศนา" draggable="false"><div class="tgrid">${t}</div></div></div>
+  <div class="st-b"><p class="qtext">${esc(R.q)}</p><div class="meter"><span>เปิดแล้ว <b class="m-open">0</b>/9 ช่อง</span></div>${tiersHTML(['1–3 ช่อง','4–6 ช่อง','7–9 ช่อง'])}${hn}${ch}${ansHTML(q)}</div></div>`}
+ if(R.type==='blank'){
+  return bar+`<div class="st st-blank"><div class="st-a"><p class="sent">${nw(q.pre)} <span class="slot"><span class="slot-a">${esc(q.a)}</span><span class="sr">ช่องว่าง</span></span> ${nw(q.post)}</p>${hn}${ch}</div></div>`}
+ if(R.type==='clues'){
+  const cl=q.clues.map((c,i)=>`<button class="clue" data-clue="${i}" type="button"><span class="cn">${i+1}</span><span class="ct">${nw(c)}</span><span class="cq">${mode==='t'?'แตะเพื่อเปิดข้อมูล':'ขอข้อมูลเพิ่มเพื่อเปิด'}</span></button>`).join('');
+  return bar+`<div class="st st-clues"><div class="st-a"><p class="qtext">${esc(R.q)}</p><div class="clues">${cl}</div>${tiersHTML(['ข้อมูล 1 ข้อ','2 ข้อ','3 ข้อ'])}${mode==='s'?`<div><button class="btn sm" data-sact="more" type="button">${ic('list')} ขอข้อมูลเพิ่ม <span class="more-n"></span></button></div>`:''}${hn}${ch}</div>
+  <div class="st-b">${frameHTML(q)}${ansHTML(q)}</div></div>`}
+ if(R.type==='audio'){let b='';for(let i=0;i<22;i++)b+='<i></i>';
+  return bar+`<div class="st st-audio"><div class="st-a"><p class="qtext">${esc(R.q)}</p>
+  <div class="player"><button class="pbtn" data-sact="play" type="button" aria-label="เล่นเสียง">${ic('play')}</button><div><div class="bars">${b}</div><div class="aprog" data-sact="seek"><i></i></div><div class="atime"><span class="a-cur">0:00</span><span class="a-dur">1:03</span></div></div><audio preload="metadata" src="${q.audio}"></audio></div>
+  ${hn}${ch}</div><div class="st-b">${frameHTML(q)}${ansHTML(q)}</div></div>`}
+ return ''}
+function syncStage(stage,R,st,mode){
+ const rev=st.rev;
+ if(R.type==='tiles'){$$('.tile',stage).forEach(t=>{const o=rev||st.open.includes(+t.dataset.tile);t.classList.toggle('open',o);t.tabIndex=o?-1:0});const m=$('.m-open',stage);if(m)m.textContent=rev?9:st.open.length;
+ }
+ if(R.type==='clues'){$$('.clue',stage).forEach((c,i)=>{const o=rev||i<st.clues;c.classList.toggle('open',o);c.classList.toggle('lock',mode==='s'&&!o)});
+  const mb=$('[data-sact="more"]',stage);if(mb){mb.disabled=rev||st.clues>=3;const n=$('.more-n',mb);if(n)n.textContent=st.clues<3&&!rev?`(เหลือ ${clueVal(st.clues+1)} คะแนน)`:''}}
+ if(R.type==='blank'){const s=$('.slot',stage);s&&s.classList.toggle('filled',rev)}
+ const tiers=$('.tiers',stage);if(tiers){const k=R.type==='tiles'?(st.open.length<=3?0:st.open.length<=6?1:2):Math.max(0,Math.min(2,st.clues-1));const noWin=rev&&(mode==='t'?!st.award:st.gain===0);
+  $$('[data-tier]',tiers).forEach(t=>{const i=+t.dataset.tier;t.classList.toggle('on',i===k&&!noWin);t.classList.toggle('past',i<k)});tiers.classList.toggle('done',rev)}
+ const fr=$('.frame',stage);if(fr)fr.classList.toggle('rev',rev);
+ const an=$('.ans',stage);if(an)an.hidden=!rev;
+ const h=$('.hint',stage);if(h)h.hidden=!st.hint;
+ const chs=$('.choices',stage);
+ if(chs){if(mode==='t')chs.hidden=!st.chs;
+  $$('.ch',chs).forEach(c=>{const right=c.dataset.oi==='0',picked=st.pick!=null&&+c.dataset.ch===st.pick;c.classList.toggle('right',rev&&right);c.classList.toggle('wrong',rev&&picked&&!right);c.classList.toggle('dim',rev&&!right&&!picked);if(c.tagName==='BUTTON')c.disabled=rev})}
+ const tb=$('[data-sact="chs"]',stage);if(tb)tb.setAttribute('aria-pressed',String(!!st.chs));
+ const oa=$('[data-sact="openall"]',stage);if(oa)oa.disabled=rev||st.open.length>=9;
+}
+const tileVal=k=>k<=3?30:k<=6?20:10;
+const clueVal=k=>k<=1?30:k===2?20:10;
+function qVal(R,st){if(R.type==='tiles')return tileVal(st.open.length);if(R.type==='clues')return clueVal(Math.max(1,st.clues));return PTS[R.id]}
+
+/* audio */
+let curAudio=null;
+function stopAudio(){if(curAudio){try{curAudio.pause()}catch(e){}}curAudio=null}
+function bindAudio(stage){const au=$('audio',stage);if(!au)return;curAudio=au;const pl=$('.player',stage),btn=$('.pbtn',stage),bar=$('.aprog i',stage),cur=$('.a-cur',stage),dur=$('.a-dur',stage);
+ const upd=()=>{const d=au.duration||63;bar.style.width=(au.currentTime/d*100)+'%';cur.textContent=fmt(au.currentTime);dur.textContent=fmt(d)};
+ au.addEventListener('timeupdate',upd);au.addEventListener('loadedmetadata',upd);
+ au.addEventListener('play',()=>{pl.classList.add('playing');btn.innerHTML=ic('pause');btn.setAttribute('aria-label','หยุดเสียง')});
+ const off=()=>{pl.classList.remove('playing');btn.innerHTML=ic('play');btn.setAttribute('aria-label','เล่นเสียง')};
+ au.addEventListener('pause',off);au.addEventListener('ended',()=>{off();au.currentTime=0;upd()})}
+function audioAct(stage,kind,e){const au=$('audio',stage);if(!au)return;if(kind==='play'){if(au.paused){const p=au.play();p&&p.catch(()=>{})}else au.pause()}
+ if(kind==='seek'&&e){const r=e.target.closest('.aprog').getBoundingClientRect();const d=au.duration||63;au.currentTime=Math.max(0,Math.min(d,(e.clientX-r.left)/r.width*d))}}
+
+/* ================= HOME ================= */
+$('#heroWheel').innerHTML=wheel();
+$('#homeRounds').innerHTML=ROUNDS.map(R=>`<li><small>${R.no}${R.tag?' · '+R.tag:''}</small><b>${R.name}</b><span>${R.qs.length} ข้อ · ${R.short}</span></li>`).join('');
+$('#goT').onclick=()=>openTSetup();
+$('#goS').onclick=()=>openSSetup();
+const TKEY='fanquiz.teacher.v1';
+function renderResume(){const s=store.get(TKEY,null),el=$('#resume');if(!s||!s.teams||s.finished){el.hidden=true;return}
+ const steps=stepsOf(s.on),S=steps[Math.min(s.step,steps.length-1)]||{};const R=ROUNDS[S.ri];
+ const where=S.t==='q'?`${R.no} ข้อ ${S.qi+1}`:S.t==='intro'?`เริ่ม${R.no}`:'สรุปผล';
+ el.innerHTML=`<p>${ic('users')} <b>มีเกมแข่งเป็นทีมที่เล่นค้างไว้</b> · ${esc(where)} · ${s.teams.map(t=>`${esc(t.name)} ${t.score}`).join(' / ')}</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn gold sm" id="rsGo" type="button">เล่นต่อ</button><button class="btn ghost sm" id="rsDrop" type="button">ทิ้งเกมนี้</button></div>`;
+ el.hidden=false;$('#rsGo').onclick=()=>{T=s;undoStack=[];buildBoard();renderT()};
+ $('#rsDrop').onclick=()=>{store.del(TKEY);el.hidden=true}}
+
+/* ================= TEACHER SETUP ================= */
+const SETKEY='fanquiz.setup.v1';
+let cfg=Object.assign({n:4,names:TEAM_NAMES.slice(),on:ROUNDS.map(R=>R.id),timer:30,helps:2},store.get(SETKEY,{}));
+function openTSetup(){show('scr-tset');renderTSetup()}
+function renderTSetup(){
+ $('#tCount').textContent=cfg.n;$('#tMinus').disabled=cfg.n<=2;$('#tPlus').disabled=cfg.n>=6;
+ $('#tNames').innerHTML=Array.from({length:cfg.n},(_,i)=>`<label class="tin" style="--tc:${TEAM_COLORS[i]}"><i></i><span class="sr">ชื่อทีมที่ ${i+1}</span><input maxlength="24" data-ti="${i}" value="${esc(cfg.names[i]||TEAM_NAMES[i])}"></label>`).join('');
+ $('#tRounds').innerHTML=ROUNDS.map(R=>`<button class="chip" type="button" data-r="${R.id}" aria-pressed="${cfg.on.includes(R.id)}">${R.no} · ${R.name}</button>`).join('');
+ $('#tTimer').innerHTML=[0,15,20,30,45,60].map(v=>`<button type="button" data-v="${v}" aria-pressed="${cfg.timer===v}">${v?v+' วิ':'ไม่จับเวลา'}</button>`).join('');
+ $('#tHelpsN').innerHTML=[0,1,2,3].map(v=>`<button type="button" data-v="${v}" aria-pressed="${cfg.helps===v}">${v} ครั้ง</button>`).join('');
+ $('#helpCards').innerHTML=HELPS.map(h=>`<div class="hp"><b>${ic(h.k==='skip'?'skip':h.k==='pass'?'pass':h.k==='give'?'flag':'bulb')}${h.n}</b><p>${h.d}</p></div>`).join('');
+}
+$('#tMinus').onclick=()=>{cfg.n=Math.max(2,cfg.n-1);renderTSetup()};
+$('#tPlus').onclick=()=>{cfg.n=Math.min(6,cfg.n+1);renderTSetup()};
+$('#tNames').addEventListener('input',e=>{const i=e.target.dataset.ti;if(i!=null)cfg.names[+i]=e.target.value});
+$('#tRounds').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;const id=b.dataset.r;cfg.on=cfg.on.includes(id)?cfg.on.filter(x=>x!==id):ROUNDS.map(R=>R.id).filter(x=>x===id||cfg.on.includes(x));renderTSetup()});
+$('#tTimer').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;cfg.timer=+b.dataset.v;renderTSetup()});
+$('#tHelpsN').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;cfg.helps=+b.dataset.v;renderTSetup()});
+$('#tStart').onclick=()=>{
+ const err=$('#tErr');if(!cfg.on.length){err.textContent='เลือกอย่างน้อย 1 รอบ';err.hidden=false;return}err.hidden=true;
+ store.set(SETKEY,cfg);
+ T={teams:Array.from({length:cfg.n},(_,i)=>({name:(cfg.names[i]||'').trim()||TEAM_NAMES[i],color:TEAM_COLORS[i],score:0,helps:cfg.helps})),on:cfg.on.slice(),timer:cfg.timer,helpsN:cfg.helps,step:0,qs:{},sel:null,finished:false};
+ undoStack=[];ac();buildBoard();renderT()};
+
+/* ================= TEACHER GAME ================= */
+let T=null,undoStack=[];
+function stepsOf(on){const s=[];ROUNDS.forEach((R,ri)=>{if(!on.includes(R.id))return;s.push({t:'intro',ri});R.qs.forEach((q,qi)=>s.push({t:'q',ri,qi}))});s.push({t:'end'});return s}
+const tCur=()=>{const s=stepsOf(T.on);return s[Math.min(T.step,s.length-1)]};
+function qst(ri,qi){const k=ri+'-'+qi;return T.qs[k]||(T.qs[k]={open:[],clues:0,rev:false,award:null,tried:[],hint:false,chs:false,log:[],passTo:null})}
+function tSave(){store.set(TKEY,T)}
+function snap(){undoStack.push(JSON.stringify(T));if(undoStack.length>80)undoStack.shift();$('#tgUndo').disabled=false}
+function tUndo(){const s=undoStack.pop();$('#tgUndo').disabled=!undoStack.length;if(!s)return;const before=T.step;T=JSON.parse(s);tSave();if(T.step!==before)renderT();else{syncT(true)}}
+function renderT(){
+ const steps=stepsOf(T.on);if(T.step>=steps.length)T.step=steps.length-1;const S=steps[T.step];
+ if(S.t==='end'){T.finished=true;tSave();showTEnd(false);return}
+ T.finished=false;
+ if(curScr!=='scr-tgame')show('scr-tgame');
+ stopAudio();timerReset();$('#passPick').hidden=true;
+ const R=ROUNDS[S.ri],stage=$('#tgStage');
+ $('#tgRound').innerHTML=`<small>${R.no}${R.tag?' · '+R.tag:''}</small><b>${R.name}</b>`;
+ $('#tgProg').textContent=S.t==='intro'?`${R.qs.length} ข้อ`:`ข้อ ${S.qi+1} / ${R.qs.length}`;
+ if(S.t==='intro'){stage.innerHTML=introHTML(R,'t');T.sel=null}
+ else{const q=R.qs[S.qi];stage.innerHTML=stageHTML(R,q,'t',seededShuffle([0,1,2,3],S.ri*97+S.qi*13+7));bindAudio(stage);const st=qst(S.ri,S.qi);if(st.award)T.sel=st.award.t;else if(st.passTo!=null)T.sel=st.passTo;else T.sel=null}
+ $('#cIntro').hidden=S.t!=='intro';$('#cQ').hidden=S.t==='intro';
+ if(S.t==='intro'){const idx=ROUNDS.filter(x=>T.on.includes(x.id));$('#cIntroTxt').innerHTML=idx.map(x=>`<div style="${x===R?'color:var(--gold-hi);font-weight:500':'color:var(--muted)'}">${x===R?'▸ ':''}${x.no} · ${x.name}</div>`).join('')}
+ $('#tgUndo').disabled=!undoStack.length;
+ syncT();tSave();
+}
+function syncT(full){
+ const S=tCur();updBoard();if(!S||S.t!=='q')return;
+ const R=ROUNDS[S.ri],st=qst(S.ri,S.qi),stage=$('#tgStage');
+ syncStage(stage,R,st,'t');
+ const done=st.rev||!!st.award,v=st.award?st.award.v:qVal(R,st);
+ $('#cVal').textContent=st.award?'+'+v:v;
+ $('#cValNote').textContent=st.award?`${T.teams[st.award.t].name} ได้คะแนนข้อนี้`:(R.type==='tiles'?`เปิดภาพแล้ว ${st.open.length}/9 ช่อง`:R.type==='clues'?`เปิดข้อมูลแล้ว ${st.clues}/3 ข้อ`:'');
+ const tm=T.sel!=null?T.teams[T.sel]:null;
+ $('#cWho').innerHTML=tm?`<span class="who-chip" style="--tc:${tm.color}"><i></i>${esc(tm.name)}</span>${st.passTo===T.sel&&!st.award?'<em>รับคำถามที่เพื่อนโยนมา</em>':''}${st.tried.includes(T.sel)&&!st.award?'<em>ทีมนี้ตอบข้อนี้ไปแล้ว</em>':''}`:'<span class="who-empty">แตะชื่อทีมด้านล่างเพื่อเลือกทีมที่ตอบ</span>';
+ const bR=$('#bRight');bR.innerHTML=`${ic('check')} ถูก +${qVal(R,st)}`;bR.disabled=done;$('#bWrong').disabled=done;
+ $('#cHelpLeft').textContent=tm?`เหลือ ${tm.helps}/${T.helpsN} ครั้ง`:'';
+ $$('.hb').forEach(b=>{b.disabled=!tm||tm.helps<=0||done||(b.dataset.help==='hint'&&st.hint)||(b.dataset.help==='pass'&&T.teams.length<2)});
+ $('#cLog').innerHTML=st.log.slice(-3).map(l=>`<p>${esc(l)}</p>`).join('');
+ $('#bReveal').disabled=st.rev;
+ $('#bNext').classList.toggle('pulse',done);
+ const steps=stepsOf(T.on);$('#bNext').innerHTML=T.step>=steps.length-2?`ดูผลสรุป ${ic('trophy')}`:`ข้อถัดไป ${ic('next')}`;
+ if(full)$('#passPick').hidden=true;
+}
+function buildBoard(){
+ $('#board').innerHTML=T.teams.map((t,i)=>`<div class="team" data-team="${i}" style="--tc:${t.color}"><button class="tm-main" type="button" data-sel="${i}"><span class="tm-dot"></span><span class="tm-name">${esc(t.name)}</span><span class="tm-score" data-v="${t.score}">${t.score}</span><span class="tm-help" title="ตัวช่วยคงเหลือ"></span></button><div class="tm-adj"><button type="button" data-adj="-10" data-t="${i}">−10</button><button type="button" data-adj="-5" data-t="${i}">−5</button><button type="button" data-adj="5" data-t="${i}">+5</button><button type="button" data-adj="10" data-t="${i}">+10</button></div></div>`).join('')}
+function updBoard(){
+ const S=tCur(),st=S&&S.t==='q'?qst(S.ri,S.qi):null,top=Math.max(...T.teams.map(t=>t.score));
+ $$('#board .team').forEach((el,i)=>{const t=T.teams[i];el.setAttribute('aria-current',String(T.sel===i));el.classList.toggle('tried',!!st&&st.tried.includes(i)&&T.sel!==i&&!st.award);
+  const sc=$('.tm-score',el);animNum(sc,t.score);
+  $('.tm-help',el).innerHTML=Array.from({length:T.helpsN},(_,k)=>`<i class="${k<t.helps?'on':''}"></i>`).join('')+(T.helpsN?'<span>ตัวช่วย</span>':'');
+  let cr=$('.crown',el);if(top>0&&t.score===top){if(!cr){el.insertAdjacentHTML('afterbegin',ic('crown','crown'))}}else if(cr)cr.remove()})}
+function animNum(el,to){const from=+el.dataset.v;if(from===to){el.textContent=to;return}el.dataset.v=to;if(reduceMotion){el.textContent=to;return}const t0=performance.now();
+ const step=n=>{const p=Math.min(1,(n-t0)/600),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+function floatPts(i,txt){const el=$(`#board .team[data-team="${i}"]`);if(!el)return;const f=document.createElement('span');f.className='float';f.textContent=txt;el.appendChild(f);setTimeout(()=>f.remove(),1400)}
+$('#board').addEventListener('click',e=>{
+ const a=e.target.closest('[data-adj]');if(a){snap();const i=+a.dataset.t,d=+a.dataset.adj;T.teams[i].score+=d;floatPts(i,(d>0?'+':'')+d);syncT();tSave();return}
+ const s=e.target.closest('[data-sel]');if(!s)return;const i=+s.dataset.sel;const S=tCur();if(S.t!=='q')return;const st=qst(S.ri,S.qi);if(st.award)return;
+ T.sel=T.sel===i?null:i;$('#passPick').hidden=true;SFX.pop();syncT();tSave()});
+function addLog(st,t){st.log.push(t);if(st.log.length>12)st.log.shift()}
+function flashWho(){const w=$('#cWhoBox');w.classList.remove('flash');void w.offsetWidth;w.classList.add('flash')}
+function tAct(act){
+ const S=tCur();
+ if(act==='next'){T.step++;T.sel=null;renderT();return}
+ if(act==='prev'){if(T.step>0){T.step--;renderT()}return}
+ if(S.t!=='q')return;
+ const R=ROUNDS[S.ri],st=qst(S.ri,S.qi);
+ if(act==='reveal'){if(st.rev)return;snap();st.rev=true;addLog(st,'ครูเฉลยคำตอบ');SFX.reveal();timerStop();syncT();tSave();return}
+ if(act==='right'||act==='wrong'){
+  if(T.sel==null){flashWho();return}if(st.award||st.rev)return;
+  const tm=T.teams[T.sel];snap();
+  if(act==='right'){const v=qVal(R,st);tm.score+=v;st.award={t:T.sel,v};st.rev=true;addLog(st,`${tm.name} ตอบถูก +${v} คะแนน`);SFX.ok();timerStop();floatPts(T.sel,'+'+v);
+   const el=$(`#board .team[data-team="${T.sel}"]`);el&&burstFrom(el,46)}
+  else{if(!st.tried.includes(T.sel))st.tried.push(T.sel);addLog(st,`${tm.name} ตอบผิด · เลือกทีมอื่นตอบต่อ หรือกดเฉลย`);SFX.bad();T.sel=null}
+  syncT();tSave();return}
+}
+$('#tgCtl').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b){tAct(b.dataset.act);return}
+ const h=e.target.closest('[data-help]');if(h){tHelp(h.dataset.help);return}
+ const p=e.target.closest('[data-pass]');if(p){tPass(+p.dataset.pass)}});
+function tHelp(h){
+ const S=tCur();if(S.t!=='q')return;if(T.sel==null){flashWho();return}
+ const st=qst(S.ri,S.qi),tm=T.teams[T.sel];if(tm.helps<=0||st.rev||st.award)return;
+ if(h==='pass'){const pp=$('#passPick');if(!pp.hidden){pp.hidden=true;return}
+  $('div',pp).innerHTML=T.teams.map((t,i)=>i===T.sel?'':`<button type="button" data-pass="${i}" style="--tc:${t.color}"><i></i>${esc(t.name)}</button>`).join('');pp.hidden=false;return}
+ snap();tm.helps--;
+ if(h==='skip'){st.rev=true;addLog(st,`${tm.name} ใช้ “ข้ามข้อนี้” · ครูเฉลย ไม่มีทีมได้คะแนน`);SFX.reveal();timerStop()}
+ if(h==='give'){if(!st.tried.includes(T.sel))st.tried.push(T.sel);addLog(st,`${tm.name} ใช้ “ยอมแพ้” · เปิดให้ทีมอื่นแย่งตอบ`);T.sel=null;SFX.pop()}
+ if(h==='hint'){st.hint=true;addLog(st,`${tm.name} ใช้ “คำใบ้”`);SFX.pop()}
+ syncT();tSave()}
+function tPass(to){const S=tCur();if(S.t!=='q')return;const st=qst(S.ri,S.qi),from=T.teams[T.sel];if(!from||from.helps<=0)return;
+ snap();from.helps--;st.passTo=to;if(!st.tried.includes(T.sel))st.tried.push(T.sel);addLog(st,`${from.name} ใช้ “โยนให้เพื่อน” → ${T.teams[to].name} ตอบ`);T.sel=to;$('#passPick').hidden=true;SFX.pop();timerReset();syncT();tSave()}
+$('#tgStage').addEventListener('click',e=>{
+ const S=tCur();if(!S||S.t!=='q')return;const R=ROUNDS[S.ri],st=qst(S.ri,S.qi),stage=$('#tgStage');
+ const tile=e.target.closest('[data-tile]'),clue=e.target.closest('[data-clue]'),sa=e.target.closest('[data-sact]');
+ if(tile){const n=+tile.dataset.tile;if(st.rev||st.open.includes(n))return;snap();st.open.push(n);SFX.pop()}
+ else if(clue&&clue.classList.contains('open'))return;
+ else if(clue||(sa&&sa.dataset.sact==='more')){if(st.rev||st.clues>=3)return;snap();st.clues++;SFX.pop()}
+ else if(sa){const k=sa.dataset.sact;
+  if(k==='openall'){if(st.rev)return;snap();st.open=[1,2,3,4,5,6,7,8,9]}
+  else if(k==='chs'){st.chs=!st.chs}
+  else if(k==='play'||k==='seek'){audioAct(stage,k,e);return}
+  else return}
+ else return;
+ syncT();tSave()});
+$('#tgExit').onclick=()=>{tSave();goHome()};
+$('#tgUndo').onclick=tUndo;
+$('#tgAdj').onclick=e=>{const on=document.body.classList.toggle('adj');e.currentTarget.setAttribute('aria-pressed',String(on))};
+$('#tgSum').onclick=()=>showTEnd(true);
+$('#tgFull').onclick=toggleFull;
+function toggleFull(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(()=>{})}catch(e){}}
+
+/* timer */
+const tmr={left:0,run:false,id:0};
+function timerReset(){clearInterval(tmr.id);tmr.run=false;tmr.left=T?T.timer:0;updTimer()}
+function timerStop(){clearInterval(tmr.id);tmr.run=false;updTimer()}
+function timerToggle(){if(!T||!T.timer)return;if(tmr.run){timerStop();return}if(tmr.left<=0)tmr.left=T.timer;tmr.run=true;ac();
+ tmr.id=setInterval(()=>{tmr.left--;if(tmr.left<=5&&tmr.left>0)SFX.tick();if(tmr.left<=0){clearInterval(tmr.id);tmr.run=false;SFX.gong()}updTimer()},1000);updTimer()}
+function updTimer(){const el=$('#timer');if(!T||!T.timer){el.hidden=true;return}el.hidden=false;$('#tmTxt').textContent=fmt(tmr.left);
+ el.classList.toggle('warn',tmr.run&&tmr.left<=5&&tmr.left>0);el.classList.toggle('up',tmr.left<=0);
+ $('#tmPlay').innerHTML=ic(tmr.run?'pause':'play')}
+$('#tmPlay').onclick=timerToggle;$('#tmReset').onclick=timerReset;
+
+document.addEventListener('keydown',e=>{
+ if(curScr!=='scr-tgame'||e.ctrlKey||e.metaKey||e.altKey)return;if(e.target.closest('input,textarea,select'))return;
+ const S=tCur();const k=e.key;
+ if(k==='ArrowRight'){e.preventDefault();tAct('next')}
+ else if(k==='ArrowLeft'){e.preventDefault();tAct('prev')}
+ else if(k===' '){e.preventDefault();timerToggle()}
+ else if(k==='f'||k==='F'){toggleFull()}
+ else if(S&&S.t==='q'){const R=ROUNDS[S.ri];
+  if(/^[1-9]$/.test(k)&&R.type==='tiles'){const t=$(`#tgStage [data-tile="${k}"]`);t&&t.click()}
+  else if((k==='c'||k==='C')&&R.type==='clues'){const b=$('#tgStage [data-sact="more"]');b&&b.click()}
+  else if((k==='p'||k==='P')&&R.type==='audio'){audioAct($('#tgStage'),'play')}
+  else if(k==='r'||k==='R'){tAct('reveal')}}});
+
+/* podium */
+function showTEnd(peek){
+ show('scr-tend');stopAudio();
+ const ranked=T.teams.map((t,i)=>({...t,i})).sort((a,b)=>b.score-a.score);
+ let rank=0,last=null;ranked.forEach((t,k)=>{if(t.score!==last){rank=k+1;last=t.score}t.rank=rank});
+ const top=ranked.slice(0,3),order=top.length===3?[top[1],top[0],top[2]]:top.length===2?[top[1],top[0]]:top;
+ $('#podium').innerHTML=order.map(t=>`<div class="pod p${Math.min(3,t.rank)}" style="--tc:${t.color}">${t.rank===1?ic('crown','crown2'):''}<div class="pn">${esc(t.name)}</div><div class="ps">${t.score}</div><div class="blk">${t.rank}</div></div>`).join('');
+ $('#rest').innerHTML=ranked.slice(3).map(t=>`<li style="--tc:${t.color}"><span>อันดับ ${t.rank}</span><i></i>${esc(t.name)}<b>${t.score} คะแนน</b></li>`).join('');
+ const lead=ranked.filter(t=>t.rank===1);
+ $('#tendSub').textContent=peek&&!T.finished?'คะแนนระหว่างเกม (ยังเล่นไม่จบ)':(lead.length>1?`เสมอกันที่ ${lead[0].score} คะแนน: ${lead.map(t=>t.name).join(' และ ')}`:`${lead[0].name} ชนะด้วยคะแนน ${lead[0].score} คะแนน`);
+ $('#tendBack').hidden=false;$('#tendBack').innerHTML=`${ic('back')} ${T.finished?'กลับไปข้อสุดท้าย':'กลับไปที่เกม'}`;
+ if(!peek){SFX.fan();setTimeout(()=>{confetti(innerWidth/2,innerHeight*.45,160,true);setTimeout(()=>confetti(innerWidth*.25,innerHeight*.6,80,false),350);setTimeout(()=>confetti(innerWidth*.75,innerHeight*.6,80,false),650)},500)}}
+$('#tendBack').onclick=()=>{if(T.finished){T.step=Math.max(0,stepsOf(T.on).length-2);T.finished=false}renderT()};
+$('#tendAgain').onclick=()=>{T.teams.forEach(t=>{t.score=0;t.helps=T.helpsN});T.step=0;T.qs={};T.sel=null;T.finished=false;undoStack=[];buildBoard();renderT()};
+$('#tendSetup').onclick=()=>{store.del(TKEY);openTSetup()};
+
+/* ================= STUDENT ================= */
+const BKEY='fanquiz.board.v1';
+let sOn=ROUNDS.map(R=>R.id),SG=null,SS=null,sAuto=0,sAuto2=0,lastEntry=null;
+function openSSetup(){show('scr-sset');renderSSetup();setTimeout(()=>{try{$('#sName').focus({preventScroll:true})}catch(e){}},50)}
+function renderSSetup(){
+ $('#sRounds').innerHTML=ROUNDS.map(R=>`<button class="chip" type="button" data-r="${R.id}" aria-pressed="${sOn.includes(R.id)}">${R.no} · ${R.name}</button>`).join('');
+ const n=ROUNDS.filter(R=>sOn.includes(R.id)).reduce((s,R)=>s+R.qs.length,0);
+ $('#sMax').textContent=sOn.length?`${n} ข้อ · คะแนนเต็ม ${maxOf(sOn)} คะแนน`:'เลือกอย่างน้อย 1 รอบ';
+ $('#sBoardMini').innerHTML=boardHTML(5)}
+$('#sRounds').addEventListener('click',e=>{const b=e.target.closest('[data-r]');if(!b)return;const id=b.dataset.r;sOn=sOn.includes(id)?sOn.filter(x=>x!==id):ROUNDS.map(R=>R.id).filter(x=>x===id||sOn.includes(x));renderSSetup()});
+$('#sBoardBtn').onclick=()=>{lastEntry=null;showResultBoardOnly()};
+$('#sForm').addEventListener('submit',e=>{e.preventDefault();
+ const name=$('#sName').value.trim();if(!name){$('#sErr').hidden=false;$('#sName').focus();return}$('#sErr').hidden=true;if(!sOn.length)return;
+ ac();const items=[];ROUNDS.forEach((R,ri)=>{if(!sOn.includes(R.id))return;items.push({t:'intro',ri});R.qs.forEach((q,qi)=>items.push({t:'q',ri,qi,order:shuffle([0,1,2,3])}))});
+ SG={name,cls:$('#sCls').value.trim(),no:$('#sNo').value.trim(),on:sOn.slice(),items,i:0,score:0,ans:[],t0:Date.now(),total:items.filter(x=>x.t==='q').length};
+ show('scr-sgame');sRender()});
+function sStopAuto(){clearInterval(sAuto);clearTimeout(sAuto2);sAuto=0;sAuto2=0}
+function sRender(){
+ sStopAuto();stopAudio();$('#fb').classList.remove('show','ok','bad');
+ const it=SG.items[SG.i];if(!it){sFinish();return}
+ const R=ROUNDS[it.ri],stage=$('#sgStage');
+ $('#sgMeta').innerHTML=`<small>${R.no}${R.tag?' · '+R.tag:''}</small><b>${R.name}</b>`;
+ const done=SG.ans.length;$('#sgBar').style.width=(done/SG.total*100)+'%';$('#sgCount').textContent=`${done}/${SG.total} ข้อ`;
+ $('#sgScore').textContent=SG.score;
+ if(it.t==='intro'){stage.innerHTML=introHTML(R,'s');SS=null;window.scrollTo(0,0);return}
+ const q=R.qs[it.qi];
+ stage.innerHTML=stageHTML(R,q,'s',it.order);bindAudio(stage);
+ SS={open:[],clues:R.type==='clues'?1:0,rev:false,hint:false,chs:true,pick:null};
+ syncStage(stage,R,SS,'s');window.scrollTo(0,0);
+ if(R.type==='tiles'){const seq=shuffle([1,2,3,4,5,6,7,8,9]);sAuto2=setTimeout(()=>{const f=()=>{if(!SS||SS.rev)return sStopAuto();const n=seq.find(x=>!SS.open.includes(x));if(n==null)return sStopAuto();SS.open.push(n);SFX.pop();syncStage(stage,R,SS,'s')};f();sAuto=setInterval(f,2600)},900)}
+ if(R.type==='clues'){sClueTimer(stage,R)}
+}
+function sClueTimer(stage,R){clearTimeout(sAuto2);sAuto2=setTimeout(()=>{if(!SS||SS.rev||SS.clues>=3)return;SS.clues++;SFX.pop();syncStage(stage,R,SS,'s');sClueTimer(stage,R)},14000)}
+$('#sgStage').addEventListener('click',e=>{
+ const it=SG&&SG.items[SG.i];if(!it)return;const stage=$('#sgStage'),R=ROUNDS[it.ri];
+ const sa=e.target.closest('[data-sact]');
+ if(it.t==='intro'){if(sa&&sa.dataset.sact==='begin'){SG.i++;sRender()}return}
+ if(!SS)return;
+ const tile=e.target.closest('[data-tile]'),ch=e.target.closest('[data-ch]');
+ if(ch&&ch.tagName==='BUTTON'){sAnswer(+ch.dataset.ch);return}
+ if(tile){const n=+tile.dataset.tile;if(SS.rev||SS.open.includes(n))return;SS.open.push(n);SFX.pop();syncStage(stage,R,SS,'s');return}
+ if(sa){const k=sa.dataset.sact;if(k==='more'){if(SS.rev||SS.clues>=3)return;SS.clues++;SFX.pop();syncStage(stage,R,SS,'s');sClueTimer(stage,R)}
+  else if(k==='play'||k==='seek')audioAct(stage,k,e)}});
+function sAnswer(j){
+ if(!SS||SS.rev)return;sStopAuto();const it=SG.items[SG.i],R=ROUNDS[it.ri],q=R.qs[it.qi],stage=$('#sgStage');
+ const ok=it.order[j]===0,v=ok?qVal(R,SS):0;SS.pick=j;SS.gain=v;SS.rev=true;
+ SG.score+=v;SG.ans.push({ri:it.ri,qi:it.qi,ok,v,pick:q.ch[it.order[j]]});
+ syncStage(stage,R,SS,'s');
+ $('#sgScore').textContent=SG.score;$('#sgBar').style.width=(SG.ans.length/SG.total*100)+'%';$('#sgCount').textContent=`${SG.ans.length}/${SG.total} ข้อ`;
+ const fb=$('#fb');fb.classList.remove('ok','bad');fb.classList.add(ok?'ok':'bad','show');
+ $('#fbIc').innerHTML=ic(ok?'check':'x');
+ $('#fbT').textContent=ok?`ถูกต้อง! +${v} คะแนน`:'ยังไม่ถูก';
+ $('#fbS').textContent=ok?(q.note||`คำตอบ: ${q.a}`):`คำตอบที่ถูกคือ “${q.a}”`;
+ const last=SG.i>=SG.items.length-1;$('#fbNext').innerHTML=last?`ดูผลคะแนน ${ic('trophy')}`:`ข้อต่อไป ${ic('next')}`;
+ if(ok){SFX.ok();const b=$(`.ch[data-ch="${j}"]`,stage);b&&burstFrom(b,30)}else SFX.bad();
+ setTimeout(()=>{try{$('#fbNext').focus({preventScroll:true})}catch(e){}},60)}
+$('#fbNext').onclick=()=>{SG.i++;sRender()};
+$('#sgExit').onclick=()=>{sStopAuto();stopAudio();openSSetup()};
+document.addEventListener('keydown',e=>{if(curScr!=='scr-sgame'||e.ctrlKey||e.metaKey||e.altKey)return;if(e.target.closest('input,textarea'))return;
+ const it=SG&&SG.items[SG.i];if(!it)return;
+ if(it.t==='q'&&SS&&!SS.rev){const m={'1':0,'2':1,'3':2,'4':3,'ก':0,'ข':1,'ค':2,'ง':3}[e.key];if(m!=null){e.preventDefault();sAnswer(m)}}
+ else if(e.key==='Enter'&&SS&&SS.rev&&e.target.id!=='fbNext'){e.preventDefault();$('#fbNext').click()}});
+
+function titleFor(p){return p>=85?'แฟนพันธุ์แท้ตัวจริง':p>=65?'ศิษย์เอกพุทธประวัติ':p>=40?'ผู้ใฝ่รู้':'ผู้เริ่มต้นศึกษา'}
+function sFinish(){
+ const max=maxOf(SG.on),pct=max?Math.round(SG.score/max*100):0,dur=Math.round((Date.now()-SG.t0)/1000);
+ const entry={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),name:SG.name,cls:SG.cls,no:SG.no,score:SG.score,max,pct,dur,at:Date.now()};
+ const b=store.get(BKEY,[]);b.push(entry);store.set(BKEY,b.slice(-300));lastEntry=entry.id;
+ show('scr-send');$('#rRevCard').hidden=false;$('.res-top').hidden=false;$('#rBars').closest('.card').hidden=false;
+ $('#rRing').style.setProperty('--p',0);$('#rPct').textContent='0%';
+ const t0=performance.now();const an=n=>{const p=Math.min(1,(n-t0)/1100),e=1-Math.pow(1-p,3);$('#rRing').style.setProperty('--p',pct*e);$('#rPct').textContent=Math.round(pct*e)+'%';if(p<1)requestAnimationFrame(an)};requestAnimationFrame(an);
+ $('#rScore').textContent=`${SG.score} / ${max}`;
+ $('#rTitle').textContent=titleFor(pct);
+ $('#rWho').textContent=[SG.name,SG.cls&&('ชั้น '+SG.cls),SG.no&&('เลขที่ '+SG.no)].filter(Boolean).join(' · ');
+ const okN=SG.ans.filter(a=>a.ok).length;$('#rMeta').textContent=`ตอบถูก ${okN} จาก ${SG.ans.length} ข้อ · ใช้เวลา ${fmt(dur)} นาที`;
+ $('#rBars').innerHTML=ROUNDS.map((R,ri)=>{if(!SG.on.includes(R.id))return'';const got=SG.ans.filter(a=>a.ri===ri).reduce((s,a)=>s+a.v,0),mx=PTS[R.id]*R.qs.length;
+  return `<div class="rb"><span>${R.no} · ${R.name}</span><div class="bar"><i style="width:${mx?got/mx*100:0}%"></i></div><b>${got}/${mx}</b></div>`}).join('');
+ const wrong=SG.ans.filter(a=>!a.ok);
+ $('#rReview').innerHTML=wrong.length?wrong.map(a=>{const R=ROUNDS[a.ri],q=R.qs[a.qi];const qt=plain(R.type==='blank'?`${q.pre} ____ ${q.post}`:R.type==='clues'?q.clues.join(' · '):R.q);
+  return `<li><small>${R.no} · ${R.name} ข้อ ${a.qi+1}</small><span>${esc(qt)}</span><span class="you">คุณตอบ: ${esc(a.pick)}</span><span class="cor">คำตอบที่ถูก: ${esc(q.a)}</span></li>`}).join(''):'<li><span>ตอบถูกทุกข้อ ยอดเยี่ยมมาก!</span></li>';
+ renderBoard();
+ SFX.fan();if(pct>=65)setTimeout(()=>confetti(innerWidth/2,innerHeight*.3,140,true),400);
+ window._lastResult={...entry,rounds:$$('#rBars .rb').map(r=>r.textContent)};
+}
+function showResultBoardOnly(){show('scr-send');$('.res-top').hidden=true;$('#rRevCard').hidden=true;$('#rBars').closest('.card').hidden=true;renderBoard()}
+function sortedBoard(){return store.get(BKEY,[]).slice().sort((a,b)=>b.pct-a.pct||b.score-a.score||a.dur-b.dur)}
+function boardHTML(limit){const b=sortedBoard();if(!b.length)return '<p class="empty">ยังไม่มีผู้เล่นในเครื่องนี้</p>';
+ const rows=(limit?b.slice(0,limit):b).map((r,i)=>`<tr class="${r.id===lastEntry?'me':''}"><td class="rk">${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.cls||'-')}</td><td class="num">${esc(r.no||'-')}</td><td class="num"><b>${r.score}</b>/${r.max}</td><td class="num">${r.pct}%</td><td class="num">${fmt(r.dur)}</td></tr>`).join('');
+ return `<div class="lb-wrap"><table class="lb"><thead><tr><th>#</th><th>ชื่อ</th><th>ชั้น</th><th class="num">เลขที่</th><th class="num">คะแนน</th><th class="num">ร้อยละ</th><th class="num">เวลา</th></tr></thead><tbody>${rows}</tbody></table></div>`}
+function renderBoard(){$('#lbWrap').innerHTML=boardHTML(0);const clr=$('#lbClear');clr.dataset.arm='';clr.innerHTML=`${ic('trash')} ล้างตาราง`}
+$('#lbClear').onclick=e=>{const b=e.currentTarget;if(b.dataset.arm){store.del(BKEY);lastEntry=null;renderBoard();return}b.dataset.arm='1';b.innerHTML=`${ic('trash')} กดอีกครั้งเพื่อยืนยัน`;setTimeout(()=>{if(b.dataset.arm){b.dataset.arm='';b.innerHTML=`${ic('trash')} ล้างตาราง`}},3500)};
+$('#lbCsv').onclick=()=>{const b=sortedBoard();const q=v=>`"${String(v==null?'':v).replace(/"/g,'""')}"`;
+ const rows=[['อันดับ','ชื่อ','ชั้น','เลขที่','คะแนน','คะแนนเต็ม','ร้อยละ','เวลา (นาที:วินาที)','วันที่เล่น'].map(q).join(',')].concat(b.map((r,i)=>[i+1,r.name,r.cls,r.no,r.score,r.max,r.pct,fmt(r.dur),new Date(r.at).toLocaleString('th-TH')].map(q).join(',')));
+ const blob=new Blob(['﻿'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='คะแนน-แฟนพันธุ์แท้พุทธประวัติ.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)};
+$('#rCopy').onclick=async e=>{const b=e.currentTarget,r=window._lastResult;if(!r)return;
+ const lines=['ผลคะแนน แฟนพันธุ์แท้ พุทธประวัติ',`ชื่อ: ${r.name}`+(r.cls?` | ชั้น: ${r.cls}`:'')+(r.no?` | เลขที่: ${r.no}`:''),`คะแนน: ${r.score}/${r.max} (${r.pct}%) · ${titleFor(r.pct)}`].concat(
+  ROUNDS.map((R,ri)=>{if(!SG.on.includes(R.id))return null;const got=SG.ans.filter(a=>a.ri===ri).reduce((s,a)=>s+a.v,0);return `${R.no} ${R.name}: ${got}/${PTS[R.id]*R.qs.length}`}).filter(Boolean),[`ใช้เวลา ${fmt(r.dur)} นาที · ${new Date(r.at).toLocaleString('th-TH')}`]);
+ const txt=lines.join('\n');let ok=false;
+ try{await navigator.clipboard.writeText(txt);ok=true}catch(err){try{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();ok=document.execCommand('copy');ta.remove()}catch(e2){}}
+ b.innerHTML=ok?`${ic('check')} คัดลอกแล้ว`:`${ic('x')} คัดลอกไม่ได้`;setTimeout(()=>{b.innerHTML=`${ic('copy')} คัดลอกผลส่งครู`},2200)};
+$('#rAgain').onclick=()=>{openSSetup();$('#sName').value=SG?SG.name:'';$('#sCls').value=SG?SG.cls:'';$('#sNo').value=SG?SG.no:''};
+
+/* ================= boot ================= */
+paintIcons(document);syncSnd();renderResume();
+window.FQ={ROUNDS,get T(){return T},get SG(){return SG},get SS(){return SS}};
+})();
+</script>
+</body>
+</html>

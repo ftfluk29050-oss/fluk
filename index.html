@@ -333,6 +333,8 @@ body[data-domain="media"] .banner .b-mascot{max-height:230px}
 .xph{position:relative;min-height:260px;background:#2a1c10;overflow:hidden}
 .xph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
 .xcard:hover .xph img{transform:scale(1.04)}
+.xc2{margin-top:16px}
+.x3d.xgame{background:linear-gradient(135deg,#9c6f1e,#f3cf72);color:#2a1a06}
 .x3d{position:absolute;left:14px;top:14px;font-family:var(--f-head);font-weight:700;font-size:15px;padding:4px 12px;border-radius:8px;background:linear-gradient(135deg,#6a3fd1,#a07bff);color:#fff;box-shadow:0 8px 18px -8px rgba(0,0,0,.6)}
 .xtx{padding:24px 26px;display:grid;gap:8px;align-content:center}
 .xtx h3{font-size:24px;font-weight:600;line-height:1.35}
@@ -933,13 +935,18 @@ function openMedia(){
   document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="04"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-media.png" alt="">
     <div class="kick"><span class="g">หัวข้อที่ 4</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
     <h2><small>นวัตกรรมและสื่อที่ใช้ในชั้นเรียน</small>สื่อการจัดการเรียนรู้</h2>
-    <div class="facts"><span><b>${VIDEOS.length}</b>วิดีโอการสอน</span><span><b>${DECKS.length}</b>ชุดสไลด์ (${NSLIDES} หน้า)</span><span><b>${MEDIA.length}</b>สื่อและกิจกรรมอื่น ๆ</span></div></div>
-    <div class="sec-title">สื่อเชิงโต้ตอบ 3 มิติ</div>
+    <div class="facts"><span><b>2</b>สื่อเชิงโต้ตอบและเกม</span><span><b>${VIDEOS.length}</b>วิดีโอการสอน</span><span><b>${DECKS.length}</b>ชุดสไลด์ (${NSLIDES} หน้า)</span><span><b>${MEDIA.length}</b>สื่อและกิจกรรมอื่น ๆ</span></div></div>
+    <div class="sec-title">สื่อเชิงโต้ตอบและเกมการเรียนรู้</div>
     <a class="xcard" href="aod.html"><span class="xph"><img src="media/aod-poster.jpg" alt="" loading="lazy"><span class="x3d">3D</span></span>
       <span class="xtx"><span class="msubj">สื่อเชิงโต้ตอบ · ประวัติศาสตร์สากล</span><h3>ยุคแห่งการสำรวจ (Age of Discovery)</h3>
       <p>แผนที่เดินเรือโบราณแบบ 3 มิติ นักเรียนบังคับเรือคาราเวลได้เอง และดูการเดินทางจริงของนักสำรวจ 5 เส้นทาง ตั้งแต่บาร์โทโลมิว ไดแอส จนถึงมาเจลลัน รวมถึงการเดินทางของโปรตุเกสสู่กรุงศรีอยุธยา พร้อมแบบทดสอบท้ายเส้นทาง</p>
       <span class="xfeat"><span>5 เส้นทางการสำรวจ</span><span>แบบทดสอบ 15 ข้อ</span><span>ใช้ได้ทั้งคอมและมือถือ</span></span>
       <span class="xgo">เปิดสื่อ ${ICO_PLAY}</span></span></a>
+    <a class="xcard xc2" href="fanquiz.html"><span class="xph"><img src="media/fanquiz-poster.jpg" alt="" loading="lazy"><span class="x3d xgame">เกม</span></span>
+      <span class="xtx"><span class="msubj">เกมตอบคำถาม · พระพุทธศาสนา</span><h3>แฟนพันธุ์แท้ พุทธประวัติ</h3>
+      <p>เกมตอบคำถาม 4 รอบ ได้แก่ ภาพปริศนา ช่องว่างว้าวุ่น คุณสมบัติ และฟังเสียงทายชาดก ครูใช้แข่งเป็นทีมหน้าห้องพร้อมระบบคิดคะแนนและตัวช่วย หรือให้นักเรียนเล่นเองแล้วระบบตรวจคะแนนให้ทันที</p>
+      <span class="xfeat"><span>27 ข้อ · 4 รอบ</span><span>โหมดครู: แข่ง 2–6 ทีม</span><span>โหมดนักเรียน: ตรวจคะแนนอัตโนมัติ</span></span>
+      <span class="xgo">เปิดเกม ${ICO_PLAY}</span></span></a>
     <div class="sec-title">วิดีโอการสอน</div>
     <div class="vgrid">${VIDEOS.map((v,i)=>`<button class="vcard" data-vid="${i}"><span class="vph"><img src="${v.poster}" alt="" loading="lazy"><span class="play">${ICO_PLAY}</span><span class="dur">${v.dur}</span></span>
       <span class="mtx"><span class="msubj">วิดีโอการสอน · ${v.subj}</span><h3>${v.title}</h3><p>${v.desc}</p><span class="mref">${v.ref.map(([n,no])=>`<span>แฟ้มที่ ${n} · ตัวชี้วัด ${no}</span>`).join('')}</span></span></button>`).join('')}</div>
