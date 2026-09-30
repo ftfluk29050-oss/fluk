@@ -574,6 +574,115 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
 }
 @media (max-width:370px){.seg button{padding:6px 8px;font-size:12px}.logo{width:38px;height:38px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ===== Modern polish: layered depth, glass, spring easing, staggered entrances (overrides only; home map + scroll transition untouched) ===== */
+:root{
+  --ease:cubic-bezier(.22,1,.36,1);
+  --r-md:18px; --r-lg:24px;
+  --shadow:0 1px 1px rgba(15,21,48,.04),0 2px 6px rgba(15,21,48,.04),0 14px 34px -16px rgba(15,21,48,.24);
+  --shadow-hi:0 2px 4px rgba(15,21,48,.06),0 26px 50px -20px rgba(15,21,48,.36);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--shadow-hi:0 2px 4px rgba(0,0,0,.4),0 28px 54px -20px rgba(0,0,0,.78)}}
+:root[data-theme="dark"]{--shadow-hi:0 2px 4px rgba(0,0,0,.4),0 28px 54px -20px rgba(0,0,0,.78)}
+::selection{background:color-mix(in srgb,var(--gold) 45%,transparent);color:inherit}
+*{scrollbar-width:thin;scrollbar-color:color-mix(in srgb,var(--muted) 40%,transparent) transparent}
+@keyframes rise{from{opacity:0;transform:translateY(26px) scale(.98)}}
+@keyframes rise-view{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+
+/* Top bar: deeper glass with a gold hairline */
+.top{background:linear-gradient(180deg,rgba(11,20,55,.94),rgba(11,20,55,.8));backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);border-bottom-color:transparent;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 12px 30px -20px rgba(0,0,0,.7)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,rgba(243,221,154,.6),transparent);pointer-events:none}
+.seg{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.seg button{transition:background .25s var(--ease),color .25s,box-shadow .25s}
+.seg button:hover{background:rgba(255,255,255,.1);color:#fff}
+.seg button[aria-selected="true"]{box-shadow:0 6px 16px -6px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.28)}
+
+/* Menu: aurora ground, staggered rise-in, coloured lift */
+.menu-page{background:radial-gradient(50% 42% at 14% 0%,color-mix(in srgb,var(--self) 13%,transparent),transparent 70%),radial-gradient(46% 42% at 90% 6%,color-mix(in srgb,var(--gold) 18%,transparent),transparent 70%),radial-gradient(50% 40% at 62% 100%,color-mix(in srgb,var(--work) 8%,transparent),transparent 70%),var(--bg)}
+.menu-head .chip.solid{box-shadow:0 8px 20px -10px var(--gold)}
+.dcard{--dc:var(--accent);border-radius:var(--r-lg);border-color:color-mix(in srgb,var(--line) 70%,transparent);transition:transform .5s var(--ease),box-shadow .5s var(--ease),border-color .3s}
+.dcard[data-d="self"]{--dc:var(--self)}.dcard[data-d="work"]{--dc:var(--work)}.dcard[data-d="book"]{--dc:var(--gold)}.dcard[data-d="media"]{--dc:#7d55e6}.dcard[data-d="awards"]{--dc:#1fae84}
+.dcard .stagebg{border-radius:var(--r-lg) var(--r-lg) 0 0}
+.dcard .meta{border-top:0;padding-top:0;gap:6px 5px}
+.dcard .meta span{display:inline-flex;align-items:baseline;gap:2px;padding:2px 10px;border-radius:999px;background:var(--surface-2)}
+.dcard .meta b{font-size:15px;margin-right:3px}
+.dcard .meta span{font-size:12.5px}
+.domains .dcard,.fgrid .fcard,.mgrid .mcard,.vgrid .vcard,.award-grid .acard,.agrid .icard{animation:rise .7s var(--ease) backwards}
+.domains .dcard:nth-child(2),.fgrid .fcard:nth-child(2),.mgrid .mcard:nth-child(2),.vgrid .vcard:nth-child(2),.award-grid .acard:nth-child(2),.agrid .icard:nth-child(2){animation-delay:.07s}
+.domains .dcard:nth-child(3),.fgrid .fcard:nth-child(3),.mgrid .mcard:nth-child(3),.award-grid .acard:nth-child(3),.agrid .icard:nth-child(3){animation-delay:.14s}
+.domains .dcard:nth-child(4),.fgrid .fcard:nth-child(4),.mgrid .mcard:nth-child(4),.award-grid .acard:nth-child(4),.agrid .icard:nth-child(4){animation-delay:.21s}
+.domains .dcard:nth-child(5),.fgrid .fcard:nth-child(5),.mgrid .mcard:nth-child(5),.award-grid .acard:nth-child(5),.agrid .icard:nth-child(5){animation-delay:.28s}
+.fgrid .fcard:nth-child(n+6),.mgrid .mcard:nth-child(n+6),.award-grid .acard:nth-child(n+6),.agrid .icard:nth-child(n+6){animation-delay:.32s}
+
+/* Shared card motion */
+.fcard,.icard,.mcard,.vcard,.acard,.xcard,.pager button{transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .25s}
+.fcard{border-radius:var(--r-md)}
+.fcard img{border-radius:10px;box-shadow:0 8px 18px -8px rgba(15,21,48,.45);transition:transform .45s var(--ease)}
+.fcard .go{transition:background .25s,color .25s,transform .4s var(--ease)}
+.icard .ph img,.mph img,.vph img,.xph img,.gallery img{transition:transform .7s var(--ease),filter .3s}
+.mkind{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
+/* Hero banners: glass chips + stat tiles */
+.banner{border-radius:var(--r-lg);box-shadow:var(--shadow-hi),inset 0 0 0 1px rgba(255,255,255,.1)}
+.banner .kick span{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.banner .facts{gap:10px}
+.banner .facts span{display:inline-flex;align-items:baseline;gap:2px;padding:8px 16px 8px 14px;border-radius:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.banner .facts b{font-size:24px}
+
+/* Side index + indicator accordion */
+.flist button{border-radius:14px;transition:background .2s,color .2s,border-color .2s,transform .35s var(--ease),box-shadow .35s var(--ease)}
+.flist button[aria-current="true"]{box-shadow:var(--shadow),inset 3px 0 0 var(--accent)}
+.ind{position:relative;border-radius:var(--r-md);transition:box-shadow .4s var(--ease),border-color .25s}
+.ind::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--grad);opacity:0;transition:opacity .3s;z-index:1}
+.ind.open::before{opacity:1}
+.ind:hover{border-color:color-mix(in srgb,var(--accent) 35%,var(--line))}
+.ind.open{box-shadow:var(--shadow-hi);border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.ind-toggle:hover{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+.no{box-shadow:0 10px 20px -10px var(--grad-sh),inset 0 1px 0 rgba(255,255,255,.35)}
+.chev{transition:transform .45s var(--ease),background .2s,color .2s}
+.gallery button{border-radius:14px;transition:box-shadow .35s var(--ease),transform .35s var(--ease)}
+.caption{border-radius:14px}
+
+/* Pills & buttons */
+.jump a,.jump button,.toc button,.filters button,.allbtn{transition:border-color .2s,color .2s,background .2s,transform .3s var(--ease),box-shadow .3s var(--ease)}
+.filters button[aria-pressed="true"]{box-shadow:0 8px 18px -8px var(--grad-sh)}
+.enter{transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.enter svg,.xgo svg{transition:transform .35s var(--ease)}
+.xgo{box-shadow:0 12px 24px -12px var(--grad-sh);transition:transform .4s var(--ease),box-shadow .4s var(--ease)}
+.crumbs .back{transition:transform .3s var(--ease),border-color .2s}
+.pager button{border-radius:var(--r-md)}
+.stage{box-shadow:var(--shadow-hi)}
+.lb{background:rgba(6,9,24,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.lb img{box-shadow:0 30px 80px -24px rgba(0,0,0,.85)}
+footer{background:linear-gradient(180deg,#0b1437,#070d27)}
+
+@media (max-width:640px){
+  .banner .facts{gap:6px}
+  .banner .facts span{padding:4px 11px 4px 10px;border-radius:12px;font-size:12.5px}
+  .banner .facts b{font-size:18px}
+}
+
+/* Hover lifts: pointer devices only. The base cards use `animation: fade … both`, whose held final `transform:none`
+   overrides :hover transforms, so those cards get `backwards` fill above and their lift now actually works. */
+@media (hover:hover){
+  .dcard:hover{transform:translateY(-9px);box-shadow:var(--shadow-hi),0 0 0 1px color-mix(in srgb,var(--dc) 40%,transparent);border-color:color-mix(in srgb,var(--dc) 55%,var(--line))}
+  .fcard:hover,.icard:hover,.acard:hover{transform:translateY(-4px);box-shadow:var(--shadow-hi)}
+  .mcard:hover,.vcard:hover,.xcard:hover{transform:translateY(-6px);box-shadow:var(--shadow-hi)}
+  .fcard:hover img{transform:scale(1.05) rotate(-1.5deg)}
+  .fcard:hover .go{transform:translateX(4px)}
+  .pager button:hover{transform:translateY(-3px);box-shadow:var(--shadow-hi)}
+  .gallery button:hover{transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(15,21,48,.55)}
+  .jump a:hover,.jump button:hover,.toc button:hover,.filters button:hover,.allbtn:hover{transform:translateY(-1px);box-shadow:0 8px 16px -10px rgba(15,21,48,.4)}
+  .enter:hover,.xgo:hover{transform:translateY(-3px);box-shadow:0 20px 32px -14px rgba(11,20,55,.7)}
+  .enter:hover svg,.xgo:hover svg{transform:translateX(4px)}
+  .crumbs .back:hover{transform:translateX(-3px)}
+  .flist button:hover{transform:translateX(3px)}
+}
+
+/* Scroll-linked reveal for indicator cards (progressive enhancement) */
+@supports (animation-timeline:view()){
+  .ind{animation:rise-view linear both;animation-timeline:view();animation-range:entry 0% entry 40%}
+}
 </style>
 </head>
 <body>
