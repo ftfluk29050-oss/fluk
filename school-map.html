@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>แผนที่โรงเรียนวังหลวงพิทยาสรรพ์</title>
+<meta name="description" content="โมเดล 3 มิติโรงเรียนวังหลวงพิทยาสรรพ์ สำหรับฝึกการจัดทำแผนที่ ทิศ มาตราส่วน สัญลักษณ์ และเส้นกริด">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: a surveyor's drafting table. The live 3D viewport is framed like a map sheet on the left,
+   the lesson notebook sits on the right (under the map on phones). Single committed paper-and-ink look. */
+:root{
+  --paper:#f2eee3;
+  --sheet:#fbf9f3;
+  --ink:#1d2930;
+  --ink-2:#56626a;
+  --rule:#d2c8b1;
+  --survey:#b3401d;
+  --water:#2b6e8e;
+  --sky:#d8e7ee;
+  --ok:#2f7a4a;
+  --f-display:"Chakra Petch","IBM Plex Sans Thai",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans Thai","Sarabun","Leelawadee UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15.5px;line-height:1.6;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--survey);outline-offset:2px}
+.app{min-height:100%;display:grid;grid-template-rows:auto minmax(0,1fr)}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1.5px solid var(--ink);background:var(--sheet)}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--ink-2);text-decoration:none;font-size:14.5px;padding:6px 10px 6px 4px;border-radius:6px;white-space:nowrap}
+.back:hover{color:var(--ink);background:rgba(29,41,48,.06)}
+.back svg{width:18px;height:18px}
+.ttl{display:grid;line-height:1.25;min-width:0}
+.ttl small{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;color:var(--survey);text-transform:uppercase}
+.ttl b{font-family:var(--f-display);font-weight:700;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){.back span{display:none}.ttl b{font-size:17px}}
+
+/* work area */
+.work{display:grid;grid-template-columns:minmax(0,1fr) 370px;min-height:0}
+.vp{position:relative;min-height:420px;overflow:hidden;background:linear-gradient(180deg,#c9dde8 0%,#e4eef1 55%,#eef0e6 100%);touch-action:none;user-select:none;-webkit-user-select:none}
+.vp.map{background:var(--paper)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+.vp.measuring #gl{cursor:crosshair}
+.layer{position:absolute;inset:0;pointer-events:none}
+#msvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+
+/* pins */
+.pin{position:absolute;left:0;top:0;pointer-events:auto;border:0;cursor:pointer;white-space:nowrap;transform-origin:50% 100%;
+  font-family:var(--f-display);font-weight:600;font-size:12.5px;line-height:1;padding:4px 7px;border-radius:4px;background:var(--sheet);color:var(--ink);box-shadow:0 0 0 1.5px var(--ink),0 3px 8px -3px rgba(0,0,0,.4)}
+.pin::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-5px;border:5px solid transparent;border-top-color:var(--ink);border-bottom:0}
+.pin.feat{background:var(--ink);color:var(--sheet);font-weight:500}
+.pin.feat::after{border-top-color:var(--ink)}
+.pin.house{font-size:11.5px;background:#f6e3c2}
+.vp.map .pin{transform-origin:50% 50%;padding:3px 6px;font-size:11.5px}
+.vp.map .pin::after{display:none}
+.pin:hover,.pin[aria-expanded="true"]{background:var(--survey);color:#fff;box-shadow:0 0 0 1.5px var(--survey),0 3px 8px -3px rgba(0,0,0,.4)}
+.pin:hover::after,.pin[aria-expanded="true"]::after{border-top-color:var(--survey)}
+.vp.nolabels .pin{display:none}
+.glab{position:absolute;left:0;top:0;font-family:var(--f-mono);font-size:12px;font-weight:500;color:var(--ink);background:rgba(251,249,243,.9);padding:1px 5px;border-radius:3px;transform:translate(-50%,-50%);white-space:nowrap}
+
+/* map sheet furniture */
+.frame{position:absolute;inset:12px;border:1.5px solid var(--ink);outline:1px solid var(--ink);outline-offset:4px;pointer-events:none}
+.cart{position:absolute;left:24px;top:24px;max-width:min(330px,calc(100% - 150px));padding:10px 14px 11px;background:var(--sheet);border:1.5px solid var(--ink);box-shadow:4px 4px 0 rgba(29,41,48,.14)}
+.cart small{display:block;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;color:var(--survey)}
+.cart b{display:block;font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.25}
+.cart span{display:block;font-size:12.5px;color:var(--ink-2)}
+.vp:not(.map) .frame,.vp:not(.map) .cart,.vp:not(.map) .source{display:none}
+.source{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-size:11.5px;color:var(--ink-2);background:rgba(251,249,243,.9);padding:2px 8px;white-space:nowrap}
+
+/* view switch */
+.seg{position:absolute;left:50%;top:14px;transform:translateX(-50%);display:flex;padding:3px;background:var(--sheet);border:1.5px solid var(--ink);border-radius:8px;z-index:3;box-shadow:0 6px 16px -10px rgba(0,0,0,.5)}
+.vp.map .seg{top:30px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:5px;cursor:pointer;font-family:var(--f-display);font-weight:600;font-size:14.5px;color:var(--ink-2);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+
+/* compass + tools */
+.side{position:absolute;right:14px;top:14px;display:grid;justify-items:center;gap:10px;z-index:3}
+.vp.map .side{right:28px;top:30px}
+.compass{width:64px;height:64px;display:grid;place-items:center;border-radius:50%;background:var(--sheet);box-shadow:0 0 0 1.5px var(--ink),0 6px 14px -8px rgba(0,0,0,.5)}
+.compass svg{width:56px;height:56px;transition:transform .08s linear}
+.tools{display:grid;gap:6px}
+.tool{width:44px;height:44px;border-radius:8px;border:1.5px solid var(--ink);background:var(--sheet);display:grid;place-items:center;cursor:pointer;position:relative}
+.tool svg{width:21px;height:21px}
+.tool[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.tool .tt{position:absolute;right:52px;top:50%;transform:translateY(-50%);background:var(--ink);color:var(--sheet);font-size:12.5px;padding:3px 8px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+.tool:hover .tt,.tool:focus-visible .tt{opacity:1}
+
+/* scale bar */
+.scale{position:absolute;left:14px;bottom:14px;padding:8px 10px 7px;background:rgba(251,249,243,.94);border:1.5px solid var(--ink);z-index:2;max-width:calc(100% - 28px)}
+.vp.map .scale{left:28px;bottom:30px}
+.sbar{display:flex;height:8px;border:1.2px solid var(--ink)}
+.sbar i{flex:1}
+.sbar i:nth-child(odd){background:var(--ink)}
+.snums{position:relative;height:16px;font-family:var(--f-mono);font-size:11px;margin-top:2px}
+.snums span{position:absolute;top:0;transform:translateX(-50%)}
+.sratio{font-family:var(--f-mono);font-size:12px;font-weight:500;margin-top:2px}
+.sratio em{font-style:normal;font-family:var(--f-body);font-size:11px;color:var(--ink-2);margin-left:4px}
+.snote{font-size:12px;line-height:1.45;color:var(--ink-2);max-width:230px}
+
+/* legend */
+.legend{position:absolute;right:14px;bottom:14px;background:rgba(251,249,243,.96);border:1.5px solid var(--ink);z-index:2;max-width:230px}
+.vp.map .legend{right:28px;bottom:30px}
+.legend summary{cursor:pointer;list-style:none;padding:6px 10px;font-family:var(--f-display);font-weight:600;font-size:13.5px;display:flex;align-items:center;gap:6px}
+.legend summary::-webkit-details-marker{display:none}
+.legend summary::after{content:"▾";margin-left:auto;font-size:11px}
+.legend[open] summary::after{content:"▴"}
+.legend ul{list-style:none;margin:0;padding:2px 10px 9px;display:grid;gap:4px;font-size:12.5px}
+.legend li{display:flex;align-items:center;gap:8px}
+.sw{flex:none;width:22px;height:14px;border:1px solid rgba(29,41,48,.55)}
+.sw.line{height:5px;border:0;border-top:1px solid #9a8f7a;border-bottom:1px solid #9a8f7a}
+.sw.ring{border-radius:7px;border:3px solid #df8f6c;background:#c9dfa9}
+.sw.sym{border:0;display:grid;place-items:center;font-size:13px;line-height:1}
+
+/* measure readout + tooltip */
+.readout{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:4;background:var(--ink);color:var(--sheet);padding:9px 14px;border-radius:8px;font-size:13.5px;line-height:1.5;text-align:center;max-width:min(470px,calc(100% - 28px));box-shadow:0 10px 24px -12px rgba(0,0,0,.6)}
+.vp.map .readout{bottom:62px}
+.readout b{font-family:var(--f-mono);font-weight:500;font-size:15px;color:#ffd9c9}
+.tip{position:absolute;z-index:5;min-width:190px;max-width:250px;background:var(--sheet);border:1.5px solid var(--ink);box-shadow:4px 4px 0 rgba(29,41,48,.15);padding:9px 12px;font-size:13px;line-height:1.5;pointer-events:none}
+.tip b{display:block;font-family:var(--f-display);font-size:15.5px}
+.tip dl{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;margin:4px 0 0}
+.tip dt{color:var(--ink-2)}
+.tip dd{margin:0;font-family:var(--f-mono);font-size:12.5px}
+
+/* loading */
+.loading{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:10px;background:rgba(242,238,227,.9);z-index:9;text-align:center;padding-inline:16px}
+.loading b{font-family:var(--f-display);font-size:18px}
+.bar{width:220px;height:6px;border:1.2px solid var(--ink);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--survey);transition:width .2s}
+.loading p{margin:0;color:var(--ink-2);font-size:13.5px;max-width:40ch}
+
+/* highlight a map element from the lesson */
+.hl{animation:hl 1.1s ease-in-out 2}
+@keyframes hl{50%{box-shadow:0 0 0 5px var(--survey)}}
+
+/* notebook */
+.nb{border-left:1.5px solid var(--ink);background:var(--sheet);overflow:auto;min-height:0}
+.nb-in{padding:18px 18px 28px;display:grid;gap:14px}
+.nb h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:21px;line-height:1.3;text-wrap:balance}
+.nb .lead{margin:0;color:var(--ink-2);font-size:14.5px}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:st}
+.step{border:1.5px solid var(--rule);border-radius:8px;background:#fff;counter-increment:st}
+.step[aria-current="true"]{border-color:var(--ink);box-shadow:3px 3px 0 rgba(29,41,48,.12)}
+.step>button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px}
+.step>button:focus-visible{outline:2px solid var(--survey);outline-offset:-2px;border-radius:8px}
+.step>button::before{content:counter(st);flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-mono);font-size:13px;font-weight:500;border:1.5px solid var(--ink)}
+.step[aria-current="true"]>button::before{background:var(--ink);color:var(--sheet)}
+.step>button b{font-family:var(--f-display);font-weight:600;font-size:16px;line-height:1.3}
+.step .body{padding:0 14px 13px 48px;font-size:14.5px;display:grid;gap:8px}
+.step .body p{margin:0}
+.step:not([aria-current="true"]) .body{display:none}
+.formula{padding:8px 10px;border:1.5px dashed var(--ink);border-radius:6px;background:var(--paper);font-size:13.5px}
+.formula b{font-family:var(--f-mono);font-weight:500}
+.els{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.els button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;gap:8px;align-items:baseline;width:100%;padding:5px 8px;border-radius:5px;border:1px solid var(--rule);background:var(--paper)}
+.els button:hover,.els button:focus-visible{border-color:var(--survey)}
+.els b{font-weight:600}
+.els span{font-size:13px;color:var(--ink-2)}
+.hint{font-size:13px;color:var(--ink-2)}
+.quiz{display:grid;gap:12px;margin-top:2px}
+.qq{display:grid;gap:6px;padding-top:10px;border-top:1px dashed var(--rule)}
+.qq p{margin:0;font-weight:500}
+.qq p small{font-family:var(--f-mono);color:var(--survey);margin-right:4px}
+.qch{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.qch button{border:1.5px solid var(--rule);background:#fff;border-radius:6px;padding:6px 8px;cursor:pointer;font-size:13.5px;text-align:left;line-height:1.35}
+.qch button:hover:not(:disabled){border-color:var(--ink)}
+.qch button.right{border-color:var(--ok);background:#e3f1e6;color:#1d5231;font-weight:600}
+.qch button.wrong{border-color:var(--survey);background:#f8e3dc;color:#7c2a12}
+.qch button:disabled{cursor:default}
+.why{font-size:13px;color:var(--ink-2);margin:0}
+.score{font-family:var(--f-display);font-weight:600}
+.credit{font-size:12.5px;color:var(--ink-2);border-top:1px solid var(--rule);padding-top:10px}
+
+@media (max-width:900px){
+  .work{grid-template-columns:1fr}
+  .vp{height:64svh;min-height:380px}
+  .nb{border-left:0;border-top:1.5px solid var(--ink);overflow:visible}
+  .cart{max-width:calc(100% - 130px);padding:7px 10px}
+  .cart b{font-size:15px}
+  .cart span{display:none}
+  .seg{top:auto;bottom:14px}
+  .vp.map .seg{top:auto;bottom:30px}
+  .scale{bottom:64px}.vp.map .scale{bottom:74px}
+  .legend{bottom:64px}.vp.map .legend{bottom:74px}
+  .readout{bottom:64px}.vp.map .readout{bottom:118px}
+  .source{display:none!important}
+  .tool .tt{display:none}
+  .snote .long{display:none}
+  .snote{font-size:11.5px}
+}
+@media (min-width:901px){html,body{overflow:hidden}.app{height:100%}}
+@media (prefers-reduced-motion:reduce){.hl{animation:none;box-shadow:0 0 0 4px var(--survey)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <a class="back" href="index.html#media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>กลับแฟ้มผลงาน</span></a>
+    <div class="ttl"><small>Geography · การจัดทำแผนที่</small><b>แผนที่โรงเรียนวังหลวงพิทยาสรรพ์</b></div>
+  </header>
+
+  <main class="work">
+    <section class="vp" id="vp" aria-label="โมเดล 3 มิติโรงเรียนวังหลวงพิทยาสรรพ์">
+      <canvas id="gl"></canvas>
+      <svg id="msvg" aria-hidden="true"></svg>
+      <div class="layer" id="glabels" aria-hidden="true"></div>
+      <div class="layer" id="pins"></div>
+      <div class="frame" data-mel="frame"></div>
+      <div class="cart" data-mel="title"><small>MAP · SCHOOL SITE</small><b>แผนที่โรงเรียนวังหลวงพิทยาสรรพ์</b><span>แสดงอาคาร สนาม สระน้ำ และเส้นทางภายในโรงเรียน</span></div>
+      <div class="source" data-mel="source">ที่มา: โมเดล 3 มิติโรงเรียนวังหลวงพิทยาสรรพ์ · จัดทำ พ.ศ. 2569 · ทิศเหนือตามผังพื้นของโมเดล</div>
+
+      <div class="seg" role="group" aria-label="มุมมอง">
+        <button type="button" data-view="3d" aria-pressed="true">3 มิติ</button>
+        <button type="button" data-view="map" aria-pressed="false">แผนที่ (มองจากด้านบน)</button>
+      </div>
+
+      <div class="side">
+        <div class="compass" data-mel="north" title="ทิศเหนือ"><svg id="rose" viewBox="-32 -32 64 64" aria-label="ลูกศรทิศเหนือ" role="img">
+          <circle r="27" fill="none" stroke="#1d2930" stroke-width="1"/>
+          <path d="M0-24 L7 4 L0 0 Z" fill="#1d2930"/><path d="M0-24 L-7 4 L0 0 Z" fill="#fbf9f3" stroke="#1d2930" stroke-width="1"/>
+          <path d="M0 22 L5 4 L0 7 L-5 4 Z" fill="#fbf9f3" stroke="#1d2930" stroke-width="1"/>
+          <text x="0" y="-26.5" text-anchor="middle" font-family="Chakra Petch,sans-serif" font-weight="700" font-size="9" fill="#b3401d">N</text>
+        </svg></div>
+        <div class="tools">
+          <button class="tool" id="tLabels" type="button" aria-pressed="true" aria-label="ป้ายชื่ออาคาร"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg><span class="tt">ป้ายชื่ออาคาร</span></button>
+          <button class="tool" id="tSym" type="button" aria-pressed="false" aria-label="แสดงเป็นสัญลักษณ์แผนที่"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg><span class="tt">สัญลักษณ์แผนที่</span></button>
+          <button class="tool" id="tGrid" type="button" aria-pressed="false" aria-label="เส้นกริด"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 4h16v16H4zM9.3 4v16M14.7 4v16M4 9.3h16M4 14.7h16"/></svg><span class="tt">เส้นกริด</span></button>
+          <button class="tool" id="tMeasure" type="button" aria-pressed="false" aria-label="วัดระยะและทิศ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span class="tt">วัดระยะและทิศ</span></button>
+          <button class="tool" id="tReset" type="button" aria-label="กลับมุมมองเริ่มต้น"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 12a8.5 8.5 0 1 0 2.8-6.3"/><path d="M3.5 4v5h5"/></svg><span class="tt">มุมมองเริ่มต้น</span></button>
+        </div>
+      </div>
+
+      <div class="scale" data-mel="scale" id="scale"></div>
+      <details class="legend" data-mel="legend" id="legend" open hidden>
+        <summary>คำอธิบายสัญลักษณ์</summary>
+        <ul>
+          <li><span class="sw" style="background:#c7613f"></span>อาคาร</li>
+          <li><span class="sw" style="background:#e3a95e"></span>บ้านพัก</li>
+          <li><span class="sw" style="background:#e6dcc8"></span>ทางเดินมีหลังคา</li>
+          <li><span class="sw line" style="background:#fff"></span>ถนนและทางเดิน</li>
+          <li><span class="sw" style="background:#8e9292"></span>ถนนลาดยาง</li>
+          <li><span class="sw ring"></span>ลู่วิ่งและสนามฟุตบอล</li>
+          <li><span class="sw" style="background:#a9b6e3"></span>ลานกีฬา</li>
+          <li><span class="sw" style="background:#8cbfd8"></span>สระน้ำ</li>
+          <li><span class="sw" style="background:#e3e9cf"></span>สนามหญ้าในโรงเรียน</li>
+          <li><span class="sw sym" style="color:#b3401d">▲</span>ประตูโรงเรียน</li>
+          <li><span class="sw sym" style="color:#2b6e8e">◉</span>หอถังน้ำ</li>
+        </ul>
+      </details>
+      <div class="readout" id="readout" aria-live="polite" hidden></div>
+      <div class="tip" id="tip" hidden></div>
+      <div class="loading" id="loading"><b>กำลังโหลดโมเดลโรงเรียน…</b><div class="bar"><i id="lbar"></i></div><p id="lmsg">ไฟล์ขนาดประมาณ 3 MB</p></div>
+    </section>
+
+    <aside class="nb" aria-label="บทเรียน">
+      <div class="nb-in">
+        <div>
+          <h2>จากโรงเรียนจริง สู่แผนที่</h2>
+          <p class="lead">ทำตามทีละขั้น แตะหัวข้อเพื่อเปลี่ยนมุมมองของโมเดลให้ตรงกับบทเรียน</p>
+        </div>
+        <ol class="steps" id="steps">
+          <li class="step" data-step="1"><button type="button"><b>สำรวจโรงเรียนแบบ 3 มิติ</b></button>
+            <div class="body"><p>ลากเพื่อหมุน ใช้ล้อเมาส์หรือสองนิ้วเพื่อซูม สังเกตรูปทรง ความสูง และตำแหน่งของอาคาร</p><p class="hint">ตัวอักษรบนป้ายคือรหัสอาคาร แตะป้ายเพื่อดูขนาดและความสูงของอาคาร</p></div></li>
+          <li class="step" data-step="2"><button type="button"><b>มองจากด้านบนในแนวดิ่ง</b></button>
+            <div class="body"><p>แผนที่คือภาพที่มองลงมาจากด้านบนตรง ๆ ทุกจุดพร้อมกัน ผนังอาคารจึงหายไป เหลือเพียงรูปร่างหลังคาและพื้นที่ที่อาคารตั้งอยู่</p><p class="hint">ดูตอนภาพเปลี่ยนเป็นแผนที่ อาคารที่อยู่ขอบภาพจะหยุดเอียงทันที เพราะแผนที่มองทุกจุดจากด้านบนเท่ากัน</p></div></li>
+          <li class="step" data-step="3"><button type="button"><b>ย่อส่วนด้วยมาตราส่วน</b></button>
+            <div class="body"><p>แผนที่ย่อขนาดจากของจริงในอัตราเดียวกันทั้งแผ่น มาตราส่วนบอกว่าระยะบนแผนที่เท่ากับระยะจริงเท่าไร</p>
+              <div class="formula">มาตราส่วน <b>1 : 2,000</b> หมายถึง ระยะ <b>1 ซม.</b> บนแผนที่ เท่ากับ <b>2,000 ซม.</b> หรือ <b>20 เมตร</b> บนพื้นจริง<br>ระยะจริง = ระยะบนแผนที่ × 2,000</div>
+              <p class="hint">ลองซูมเข้าออก แล้วดูแถบมาตราส่วนที่มุมซ้ายล่างเปลี่ยนตาม ในมุมมอง 3 มิติ สิ่งที่อยู่ใกล้ดูใหญ่กว่าสิ่งที่อยู่ไกล จึงใช้มาตราส่วนเดียวทั้งภาพไม่ได้</p></div></li>
+          <li class="step" data-step="4"><button type="button"><b>ใช้สัญลักษณ์แทนของจริง</b></button>
+            <div class="body"><p>ผู้ทำแผนที่เลือกเฉพาะสิ่งที่สำคัญ แล้วใช้สีและสัญลักษณ์แทน เช่น สีฟ้าแทนแหล่งน้ำ เส้นแทนถนน รายละเอียดที่ไม่จำเป็นอย่างต้นไม้ละไว้ได้เพื่อให้อ่านง่าย</p><p class="hint">สัญลักษณ์ทุกแบบต้องอธิบายไว้ในคำอธิบายสัญลักษณ์ ดูที่มุมขวาล่างของแผนที่</p></div></li>
+          <li class="step" data-step="5"><button type="button"><b>องค์ประกอบของแผนที่</b></button>
+            <div class="body"><p>แผนที่ที่สมบูรณ์ต้องมีองค์ประกอบเหล่านี้ แตะแต่ละข้อเพื่อดูว่าอยู่ตรงไหน</p>
+              <ul class="els">
+                <li><button type="button" data-el="title"><b>ชื่อแผนที่</b><span>บอกว่าเป็นแผนที่ของอะไร ที่ไหน</span></button></li>
+                <li><button type="button" data-el="north"><b>ทิศ</b><span>ลูกศรชี้ทิศเหนือ</span></button></li>
+                <li><button type="button" data-el="scale"><b>มาตราส่วน</b><span>อัตราย่อจากของจริง</span></button></li>
+                <li><button type="button" data-el="legend"><b>คำอธิบายสัญลักษณ์</b><span>บอกความหมายของสีและเครื่องหมาย</span></button></li>
+                <li><button type="button" data-el="frame"><b>ขอบระวางและเส้นกริด</b><span>กรอบแผนที่และช่องสำหรับบอกตำแหน่ง เช่น ฉ3</span></button></li>
+                <li><button type="button" data-el="source"><b>แหล่งที่มาและปีที่จัดทำ</b><span>บอกว่าข้อมูลมาจากไหน ทำเมื่อใด</span></button></li>
+              </ul></div></li>
+          <li class="step" data-step="6"><button type="button"><b>ภารกิจนักอ่านแผนที่</b></button>
+            <div class="body"><p>เปิดเครื่องมือ <b>วัดระยะและทิศ</b> แล้วแตะจุดเริ่มต้นและจุดปลายบนแผนที่ ระบบจะบอกระยะทางและทิศให้ ใช้ช่วยตอบคำถามต่อไปนี้</p>
+              <div class="quiz" id="quiz"></div><p class="score" id="score"></p></div></li>
+        </ol>
+        <p class="credit">ครูระพีพัฒน์ กลัดกันแสง · กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม · โรงเรียนวังหลวงพิทยาสรรพ์</p>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const vp=$('#vp'),canvas=$('#gl'),pinsEl=$('#pins'),glab=$('#glabels'),msvg=$('#msvg'),tip=$('#tip'),readout=$('#readout');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const coarse=matchMedia('(pointer: coarse)').matches;
+/* world: metres, +x = east, -z = north (north follows the model's ground plan) */
+const GX0=-160,GZ0=-190,CELL=50,GCOLS=6,GROWS=7,ROWL='กขคงจฉช';
+const HOME={tx:-25,tz:-10,r:430,th:2.55,ph:.95};
+const MAPBOX={x0:-172,x1:150,z0:-198,z1:168};
+const DIRS=['ทิศเหนือ','ทิศตะวันออกเฉียงเหนือ','ทิศตะวันออก','ทิศตะวันออกเฉียงใต้','ทิศใต้','ทิศตะวันตกเฉียงใต้','ทิศตะวันตก','ทิศตะวันตกเฉียงเหนือ'];
+const fmt=(n,d)=>n.toLocaleString('th-TH',{maximumFractionDigits:d||0,minimumFractionDigits:d||0});
+const gridRef=(x,z)=>{const c=Math.floor((x-GX0)/CELL)+1,r=Math.floor((z-GZ0)/CELL);return (r>=0&&r<GROWS&&c>=1&&c<=GCOLS)?ROWL[r]+c:'นอกกริด'};
+const bearing=(dx,dz)=>{let b=Math.atan2(dx,-dz)*180/Math.PI;if(b<0)b+=360;return b};
+const dirName=b=>DIRS[Math.round(b/45)%8];
+
+if(!window.THREE||!THREE.GLTFLoader||!THREE.OrbitControls){fail('โหลดไลบรารีสำหรับภาพ 3 มิติไม่สำเร็จ ลองตรวจสอบอินเทอร์เน็ตแล้วโหลดหน้านี้ใหม่');return}
+let renderer;
+try{renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true})}catch(e){fail('เบราว์เซอร์หรืออุปกรณ์นี้แสดงภาพ 3 มิติไม่ได้ ลองเปิดด้วย Chrome หรือ Safari รุ่นใหม่');return}
+function fail(msg){$('#loading b').textContent='แสดงโมเดลไม่ได้';$('#lmsg').textContent=msg;$('.bar').hidden=true}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;renderer.setClearColor(0x000000,0);
+if(!coarse){renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap}
+const scene=new THREE.Scene();
+scene.add(new THREE.HemisphereLight(0xffffff,0x7d8a62,.95));
+const sun=new THREE.DirectionalLight(0xfff1dc,.85);sun.position.set(-140,220,-90);sun.target.position.set(-20,0,0);scene.add(sun,sun.target);
+if(!coarse){sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);const sc=sun.shadow.camera;sc.left=-230;sc.right=230;sc.top=230;sc.bottom=-230;sc.near=50;sc.far=600;sun.shadow.bias=-.0008}
+const persp=new THREE.PerspectiveCamera(38,1,1,4000);
+const ortho=new THREE.OrthographicCamera(-1,1,1,-1,1,3000);ortho.up.set(0,0,-1);
+let cam=persp;
+const controls=new THREE.OrbitControls(persp,canvas);
+controls.enableDamping=!reduce;controls.dampingFactor=.09;controls.maxPolarAngle=1.45;controls.minDistance=40;controls.maxDistance=1100;controls.screenSpacePanning=false;
+function setHome(){controls.target.set(HOME.tx,0,HOME.tz);persp.position.set(HOME.tx+HOME.r*Math.sin(HOME.ph)*Math.sin(HOME.th),HOME.r*Math.cos(HOME.ph),HOME.tz+HOME.r*Math.sin(HOME.ph)*Math.cos(HOME.th));controls.update()}
+setHome();
+let needs=true;const ask=()=>{needs=true};
+controls.addEventListener('change',ask);
+
+/* ---------- sizing ---------- */
+let W=1,H=1;
+const map={cx:(MAPBOX.x0+MAPBOX.x1)/2,cz:(MAPBOX.z0+MAPBOX.z1)/2,hh:200,zoom:1};
+function fitMap(){const a=W/H;map.hh=Math.max((MAPBOX.z1-MAPBOX.z0)/2,(MAPBOX.x1-MAPBOX.x0)/2/a)*1.08;map.cx=(MAPBOX.x0+MAPBOX.x1)/2;map.cz=(MAPBOX.z0+MAPBOX.z1)/2;map.zoom=1}
+function applyOrtho(){const a=W/H;ortho.left=-map.hh*a;ortho.right=map.hh*a;ortho.top=map.hh;ortho.bottom=-map.hh;ortho.zoom=map.zoom;ortho.position.set(map.cx,900,map.cz);ortho.lookAt(map.cx,0,map.cz);ortho.updateProjectionMatrix();ask()}
+function resize(){const r=vp.getBoundingClientRect();W=Math.max(1,r.width);H=Math.max(1,r.height);renderer.setSize(W,H,false);persp.aspect=W/H;persp.updateProjectionMatrix();if(cam===ortho)applyOrtho();ask()}
+new ResizeObserver(resize).observe(vp);resize();
+
+/* ---------- model ---------- */
+let root=null,ground=null,trees=null,props=null;const items=[];const cats={};
+const SYMF={bldg:0xc7613f,house:0xe3a95e,walk:0xe6dcc8};const SYM3={},SYM2={};
+for(const k in SYMF){SYM2[k]=new THREE.MeshBasicMaterial({color:SYMF[k]});SYM3[k]=new THREE.MeshLambertMaterial({color:new THREE.Color(SYMF[k]).multiplyScalar(.66)})}
+let groundSym=null;
+new THREE.GLTFLoader().load('media/school-model.json',g=>{
+  root=g.scene.getObjectByName('WangLuangPittayasan')||g.scene;scene.add(g.scene);
+  const houses=new THREE.Box3();
+  root.children.forEach(o=>{const n=o.name;let c;
+    if(n==='ground'){c='ground';ground=o}else if(n==='props'){c='props';props=o}else if(n==='campus-trees'){c='trees';trees=o}
+    else if(/^h\d$/.test(n)){c='house';houses.union(new THREE.Box3().setFromObject(o))}else if(['Cn','Cs','Jw'].includes(n))c='walk';else c='bldg';
+    o.traverse(m=>{m.userData.cat=c;if(m.isMesh){m.castShadow=c!=='ground';m.receiveShadow=true}});
+    if(c==='bldg'){const b=new THREE.Box3().setFromObject(o),ce=b.getCenter(new THREE.Vector3()),s=b.getSize(new THREE.Vector3());
+      items.push({id:n,label:n,name:'อาคาร '+n,kind:'bldg',x:ce.x,z:ce.z,top:b.max.y,w:s.x,d:s.z,big:s.x*s.z>=150})}});
+  if(!houses.isEmpty()){const ce=houses.getCenter(new THREE.Vector3());items.push({id:'houses',label:'บ้านพัก',name:'กลุ่มบ้านพัก',kind:'house',x:ce.x,z:ce.z,top:houses.max.y,w:houses.max.x-houses.min.x,d:houses.max.z-houses.min.z,big:true,note:'บ้านพัก 10 หลัง'})}
+  [{id:'track',label:'สนามฟุตบอลและลู่วิ่ง',x:-114.7,z:-16.3,top:3,w:85,d:170},{id:'pond',label:'สระน้ำ',x:-105.5,z:113.7,top:2,w:57,d:48},{id:'tower',label:'หอถังน้ำ',x:-33.7,z:99.3,top:17.4,sym:'◉'},
+   {id:'gate',label:'ประตูโรงเรียน',x:-60.3,z:-122,top:6.4,sym:'▲'},{id:'court1',label:'ลานกีฬา',x:9,z:-66,top:4},{id:'court2',label:'ลานกีฬา',x:-25.3,z:-68.5,top:4},{id:'road',label:'ถนน',x:95,z:-141,top:1}]
+   .forEach(f=>items.push(Object.assign({kind:'feat',name:f.label,big:true},f)));
+  buildPins();buildGrid();
+  $('#loading').hidden=true;ask();
+  const h=(location.hash||'').slice(1);if(h==='map')setView('map');
+},e=>{if(e.lengthComputable){$('#lbar').style.width=(e.loaded/e.total*100).toFixed(0)+'%'}else if(e.loaded){$('#lmsg').textContent=`โหลดแล้ว ${(e.loaded/1048576).toFixed(1)} MB`}},
+ err=>{console.error(err);fail('โหลดไฟล์โมเดลไม่สำเร็จ ลองโหลดหน้านี้ใหม่อีกครั้ง')});
+
+/* map-style ground: repaint the site plan with flat map colours */
+function makeGroundSym(){const tex=ground.material.map;if(!tex||!tex.image)return null;const N=1024,c=document.createElement('canvas');c.width=c.height=N;const x=c.getContext('2d');x.drawImage(tex.image,0,0,N,N);
+  const im=x.getImageData(0,0,N,N),d=im.data;
+  const A=[[0x52,0x66,0x38,0xef,0xea,0xdc],[0x55,0x68,0x3a,0xef,0xea,0xdc],[0x51,0x5e,0x34,0xef,0xea,0xdc],[0x93,0xa5,0x62,0xe3,0xe9,0xcf],[0x8b,0x9d,0x5c,0xe3,0xe9,0xcf],
+    [0x7e,0xa5,0x52,0xc9,0xdf,0xa9],[0x86,0xaa,0x58,0xc9,0xdf,0xa9],[0x99,0xb1,0x70,0xc9,0xdf,0xa9],[0xb2,0xc9,0x95,0xc9,0xdf,0xa9],[0xcd,0xc9,0xbf,0xff,0xff,0xff],[0xd4,0xcf,0xc1,0xff,0xff,0xff],
+    [0xf2,0xf2,0xee,0xff,0xff,0xff],[0xb1,0x7e,0x58,0xdf,0x8f,0x6c],[0xb1,0x9d,0x73,0xd8,0xc7,0xa2],[0xae,0xa6,0x79,0xd8,0xc7,0xa2],[0x64,0x6b,0x5e,0x8e,0x92,0x92],
+    [0x35,0x58,0x4b,0x8c,0xbf,0xd8],[0x68,0x85,0x7f,0x8c,0xbf,0xd8],[0x3c,0x7a,0xd0,0xa9,0xb6,0xe3],[0xb9,0xb9,0xb2,0xd2,0xd2,0xcc],[0xe8,0xa3,0x3a,0xe9,0xb8,0x6a]];
+  for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];let best=0,bd=1e9;for(let k=0;k<A.length;k++){const a=A[k],dr=r-a[0],dg=g-a[1],db=b-a[2],dd=dr*dr+dg*dg+db*db;if(dd<bd){bd=dd;best=k}}const a=A[best];d[i]=a[3];d[i+1]=a[4];d[i+2]=a[5]}
+  x.putImageData(im,0,0);const t=new THREE.CanvasTexture(c);t.flipY=tex.flipY;t.encoding=THREE.sRGBEncoding;t.anisotropy=renderer.capabilities.getMaxAnisotropy();t.wrapS=tex.wrapS;t.wrapT=tex.wrapT;
+  return new THREE.MeshBasicMaterial({map:t})}
+
+/* ---------- state + toggles ---------- */
+const S={view:'3d',labels:true,sym:false,grid:false,measure:false};
+function applyMats(){if(!root)return;const on=S.sym,SYM=cam===ortho?SYM2:SYM3;
+  root.traverse(m=>{if(!m.isMesh)return;if(!m.userData.m0)m.userData.m0=m.material;const c=m.userData.cat;
+    if(on){if(c==='ground'&&groundSym)m.material=groundSym;else if(SYM[c])m.material=SYM[c]}else m.material=m.userData.m0});ask()}
+function setSym(on){if(!root)return;S.sym=on;$('#tSym').setAttribute('aria-pressed',String(on));
+  if(on&&!groundSym)groundSym=makeGroundSym();applyMats();
+  if(trees)trees.visible=!on;if(props)props.visible=!on;$('#legend').hidden=!on;updatePins();ask()}
+function setLabels(on){S.labels=on;$('#tLabels').setAttribute('aria-pressed',String(on));vp.classList.toggle('nolabels',!on);hideTip();ask()}
+let gridObj=null;
+function buildGrid(){const p=[];for(let i=0;i<=GCOLS;i++){const x=GX0+i*CELL;p.push(x,.35,GZ0,x,.35,GZ0+GROWS*CELL)}for(let j=0;j<=GROWS;j++){const z=GZ0+j*CELL;p.push(GX0,.35,z,GX0+GCOLS*CELL,.35,z)}
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));gridObj=new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x1d2930,transparent:true,opacity:.55}));gridObj.visible=false;scene.add(gridObj);
+  let h='';for(let i=0;i<GCOLS;i++)h+=`<span class="glab" data-gx="${GX0+(i+.5)*CELL}" data-gz="${GZ0}">${i+1}</span><span class="glab s" data-gx="${GX0+(i+.5)*CELL}" data-gz="${GZ0+GROWS*CELL}">${i+1}</span>`;
+  for(let j=0;j<GROWS;j++)h+=`<span class="glab" data-gx="${GX0}" data-gz="${GZ0+(j+.5)*CELL}">${ROWL[j]}</span><span class="glab s" data-gx="${GX0+GCOLS*CELL}" data-gz="${GZ0+(j+.5)*CELL}">${ROWL[j]}</span>`;
+  glab.innerHTML=h;glab.hidden=true}
+function setGrid(on){S.grid=on;$('#tGrid').setAttribute('aria-pressed',String(on));if(gridObj)gridObj.visible=on;glab.hidden=!on;ask()}
+function setMeasure(on){S.measure=on;$('#tMeasure').setAttribute('aria-pressed',String(on));vp.classList.toggle('measuring',on);if(!on){M.pts=[];readout.hidden=true;msvg.innerHTML=''}else{readout.hidden=false;readout.innerHTML='แตะ<b style="font-family:inherit;color:inherit"> จุดเริ่มต้น </b>บนพื้นที่ต้องการวัด';}ask()}
+$('#tLabels').onclick=()=>setLabels(!S.labels);
+$('#tSym').onclick=()=>setSym(!S.sym);
+$('#tGrid').onclick=()=>setGrid(!S.grid);
+$('#tMeasure').onclick=()=>setMeasure(!S.measure);
+$('#tReset').onclick=()=>{if(S.view==='map'){fitMap();applyOrtho()}else{setHome();ask()}};
+$$('.seg button').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+
+/* ---------- view transitions ---------- */
+let anim=null;
+function tween(ms,step,done){if(anim)cancelAnimationFrame(anim.id);if(reduce||ms<=0){step(1);done&&done();anim=null;return}const t0=performance.now();anim={};
+  const f=t=>{const k=Math.min(1,(t-t0)/ms),e=k<.5?4*k*k*k:1-Math.pow(-2*k+2,3)/2;step(e);ask();if(k<1)anim.id=requestAnimationFrame(f);else{anim=null;done&&done()}};anim.id=requestAnimationFrame(f)}
+function sph(){const o=persp.position.clone().sub(controls.target),r=o.length();return{r,th:Math.atan2(o.x,o.z),ph:Math.acos(Math.min(1,Math.max(-1,o.y/r)))}}
+function putPersp(tx,tz,r,th,ph){persp.up.set(0,1,0);persp.position.set(tx+r*Math.sin(ph)*Math.sin(th),r*Math.cos(ph),tz+r*Math.sin(ph)*Math.cos(th));persp.lookAt(tx,0,tz)}
+const wrap=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<-Math.PI)a+=2*Math.PI;return a};
+function setView(v){if(v===S.view||anim||!root)return;hideTip();
+  $$('.seg button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));
+  const tanH=Math.tan(persp.fov*Math.PI/360);
+  if(v==='map'){S.view='map';controls.enabled=false;fitMap();
+    const s0=sph(),t0=controls.target.clone(),r1=map.hh/tanH,th1=s0.th+wrap(0-s0.th);
+    tween(1300,e=>{const tx=t0.x+(map.cx-t0.x)*e,tz=t0.z+(map.cz-t0.z)*e;putPersp(tx,tz,s0.r+(r1-s0.r)*e,s0.th+(th1-s0.th)*e,s0.ph+(.0006-s0.ph)*e)},
+      ()=>{cam=ortho;applyOrtho();applyMats();vp.classList.add('map');updateScale()})}
+  else{S.view='3d';const tx=map.cx,tz=map.cz,r0=map.hh/map.zoom/tanH;cam=persp;applyMats();vp.classList.remove('map');putPersp(tx,tz,r0,0,.0006);updateScale();
+    tween(1300,e=>{putPersp(tx+(HOME.tx-tx)*e,tz+(HOME.tz-tz)*e,r0+(HOME.r-r0)*e,0+(HOME.th-0)*e,.0006+(HOME.ph-.0006)*e)},
+      ()=>{controls.target.set(HOME.tx,0,HOME.tz);controls.enabled=true;controls.update();ask()})}}
+
+/* ---------- pins, labels, compass, scale ---------- */
+const V=new THREE.Vector3();
+function toScreen(x,y,z){V.set(x,y,z).project(cam);return{x:(V.x+1)/2*W,y:(1-V.y)/2*H,ok:V.z<1&&V.z>-1}}
+function buildPins(){pinsEl.innerHTML=items.map((it,i)=>`<button type="button" class="pin ${it.kind==='feat'?'feat':it.kind==='house'?'house':''}" data-i="${i}" aria-label="${it.name}">${it.sym?it.sym+' ':''}${it.label}</button>`).join('');
+  $$('.pin',pinsEl).forEach(p=>{p.addEventListener('click',e=>{e.stopPropagation();showTip(+p.dataset.i,p)});p.addEventListener('pointerdown',e=>e.stopPropagation())})}
+function updatePins(){if(!items.length)return;const map3=cam===ortho;
+  $$('.pin',pinsEl).forEach(p=>{const it=items[+p.dataset.i];const show=map3?true:it.big;if(!show){p.style.display='none';return}
+    const s=toScreen(it.x,map3?0:it.top+1.5,it.z);if(!s.ok||s.x<-40||s.y<-40||s.x>W+40||s.y>H+40){p.style.display='none';return}
+    p.style.display='';p.style.transform=map3?`translate(${s.x}px,${s.y}px) translate(-50%,-50%)`:`translate(${s.x}px,${s.y}px) translate(-50%,calc(-100% - 6px))`});
+  if(!glab.hidden)$$('.glab',glab).forEach(l=>{if(!map3&&l.classList.contains('s')){l.style.display='none';return}const s=toScreen(+l.dataset.gx,.4,+l.dataset.gz);l.style.display=s.ok?'':'none';l.style.transform=`translate(${s.x}px,${s.y}px) translate(-50%,-50%)`})}
+function updateCompass(){const t=cam===ortho?new THREE.Vector3(map.cx,0,map.cz):controls.target;const a=toScreen(t.x,0,t.z),b=toScreen(t.x,0,t.z-60);const ang=Math.atan2(b.x-a.x,-(b.y-a.y))*180/Math.PI;$('#rose').style.transform=`rotate(${ang.toFixed(1)}deg)`}
+function mpp(){return (ortho.top-ortho.bottom)/ortho.zoom/H}
+function updateScale(){const el=$('#scale');
+  if(cam!==ortho){el.innerHTML='<div class="snote"><b>ภาพ 3 มิติยังไม่มีมาตราส่วน</b><span class="long"><br>ของใกล้ดูใหญ่ ของไกลดูเล็ก ระยะจึงย่อไม่เท่ากันทั้งภาพ สลับเป็นมุมมองแผนที่เพื่อดูมาตราส่วน</span></div>';return}
+  const m=mpp(),nice=[5,10,20,25,50,100,200,250,500];let L=nice[0];for(const n of nice){if(n/m<=Math.min(170,W*.3))L=n}
+  const px=L/m,denom=m/0.0002646,sig=Math.pow(10,Math.floor(Math.log10(denom))-1),den=Math.round(denom/sig)*sig;
+  el.innerHTML=`<div class="sbar" style="width:${px.toFixed(0)}px"><i></i><i></i><i></i><i></i></div><div class="snums" style="width:${px.toFixed(0)}px"><span style="left:0">0</span><span style="left:50%">${L/2}</span><span style="left:100%">${L}&nbsp;ม.</span></div><div class="sratio">1 : ${fmt(den)}<em>บนจอนี้โดยประมาณ</em></div>`}
+
+/* tooltip */
+let tipI=-1;
+function showTip(i,el){const it=items[i];if(tipI===i){hideTip();return}hideTip();tipI=i;el.setAttribute('aria-expanded','true');
+  let dl='';if(it.w)dl+=`<dt>ขนาดพื้นที่</dt><dd>${fmt(it.w)} × ${fmt(it.d)} ม.</dd>`;if(it.kind==='bldg'||it.id==='tower')dl+=`<dt>ความสูง</dt><dd>ประมาณ ${fmt(it.top)} ม.</dd>`;
+  dl+=`<dt>ช่องกริด</dt><dd>${gridRef(it.x,it.z)}</dd>`;
+  tip.innerHTML=`<b>${it.name}</b>${it.note?`<span>${it.note}</span>`:''}<dl>${dl}</dl>`;tip.hidden=false;placeTip(el)}
+function placeTip(el){const r=el.getBoundingClientRect(),v=vp.getBoundingClientRect();let x=r.left-v.left+r.width/2-tip.offsetWidth/2,y=r.top-v.top-tip.offsetHeight-10;
+  if(y<8)y=r.bottom-v.top+10;x=Math.max(8,Math.min(W-tip.offsetWidth-8,x));tip.style.left=x+'px';tip.style.top=y+'px'}
+function hideTip(){if(tipI>=0){const p=$(`.pin[data-i="${tipI}"]`);p&&p.setAttribute('aria-expanded','false')}tipI=-1;tip.hidden=true}
+
+/* ---------- measuring ---------- */
+const M={pts:[]};const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
+function pickGround(cx,cy){if(!ground)return null;const r=canvas.getBoundingClientRect();ndc.set((cx-r.left)/r.width*2-1,-((cy-r.top)/r.height)*2+1);ray.setFromCamera(ndc,cam);const h=ray.intersectObject(ground,true)[0];return h?h.point.clone():null}
+function addPoint(p){if(M.pts.length>=2)M.pts=[];M.pts.push(p);drawMeasure();
+  if(M.pts.length===1){readout.innerHTML='แตะ<b style="font-family:inherit;color:inherit"> จุดปลาย </b>ที่ต้องการวัด';return}
+  const [a,b]=M.pts,dx=b.x-a.x,dz=b.z-a.z,d=Math.hypot(dx,dz),br=bearing(dx,dz);
+  readout.innerHTML=`ระยะทาง <b>${fmt(d,1)} ม.</b> · จุด 2 อยู่ทาง<b style="font-family:inherit">${dirName(br)}</b>ของจุด 1 (${fmt(br)}°)<br>ถ้าย่อด้วยมาตราส่วน 1 : 2,000 จะยาว <b>${fmt(d/20,1)} ซม.</b> บนแผนที่ · แตะอีกครั้งเพื่อวัดใหม่`}
+function drawMeasure(){if(!M.pts.length){msvg.innerHTML='';return}const s=M.pts.map(p=>toScreen(p.x,p.y+.3,p.z));let h='';
+  if(s.length===2)h+=`<line x1="${s[0].x}" y1="${s[0].y}" x2="${s[1].x}" y2="${s[1].y}" stroke="#fbf9f3" stroke-width="6" stroke-linecap="round"/><line x1="${s[0].x}" y1="${s[0].y}" x2="${s[1].x}" y2="${s[1].y}" stroke="#b3401d" stroke-width="3" stroke-dasharray="9 6" stroke-linecap="round"/>`;
+  s.forEach((p,i)=>{h+=`<circle cx="${p.x}" cy="${p.y}" r="10" fill="#b3401d" stroke="#fbf9f3" stroke-width="2.5"/><text x="${p.x}" y="${p.y+4.2}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#fff">${i+1}</text>`});
+  msvg.innerHTML=h}
+
+/* ---------- pointer: map pan/zoom, clicks ---------- */
+const ptrs=new Map();let down=null,pinch=null;
+canvas.addEventListener('pointerdown',e=>{ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});down={x:e.clientX,y:e.clientY,t:performance.now(),moved:false};hideTip();
+  if(cam===ortho){try{canvas.setPointerCapture(e.pointerId)}catch(_){}if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:map.zoom}}}});
+canvas.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
+  if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6)down.moved=true;
+  if(cam!==ortho||anim)return;
+  if(ptrs.size>=2&&pinch){const [a,b]=[...ptrs.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);const r=canvas.getBoundingClientRect();zoomAt((a.x+b.x)/2-r.left,(a.y+b.y)/2-r.top,pinch.z*d/pinch.d);return}
+  const m=mpp();map.cx=clamp(map.cx-dx*m,-250,170);map.cz=clamp(map.cz-dy*m,-230,210);applyOrtho()});
+function endPtr(e){ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;
+  if(down&&!down.moved&&performance.now()-down.t<600&&ptrs.size===0&&S.measure&&e.type==='pointerup'){const p=pickGround(e.clientX,e.clientY);if(p)addPoint(p)}if(ptrs.size===0)down=null}
+canvas.addEventListener('pointerup',endPtr);canvas.addEventListener('pointercancel',endPtr);
+canvas.addEventListener('wheel',e=>{if(cam!==ortho)return;e.preventDefault();const r=canvas.getBoundingClientRect();zoomAt(e.clientX-r.left,e.clientY-r.top,map.zoom*Math.pow(1.0015,-e.deltaY))},{passive:false});
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function zoomAt(sx,sy,z){z=clamp(z,.6,10);const m0=mpp(),wx=map.cx+(sx-W/2)*m0,wz=map.cz+(sy-H/2)*m0;map.zoom=z;ortho.zoom=z;ortho.updateProjectionMatrix();const m1=mpp();map.cx=wx-(sx-W/2)*m1;map.cz=wz-(sy-H/2)*m1;applyOrtho()}
+
+/* ---------- render loop ---------- */
+let lastScaleKey='';
+function loop(){requestAnimationFrame(loop);if(controls.enabled&&cam===persp)controls.update();if(!needs)return;needs=false;renderer.render(scene,cam);
+  updatePins();updateCompass();drawMeasure();if(tipI>=0){const p=$(`.pin[data-i="${tipI}"]`);if(p&&p.style.display!=='none')placeTip(p);else hideTip()}
+  const k=cam===ortho?(ortho.zoom.toFixed(3)+'|'+W+'|'+H):'p';if(k!==lastScaleKey){lastScaleKey=k;updateScale()}}
+loop();
+
+/* ---------- lesson steps ---------- */
+const STEP={1:()=>{setSym(false);setLabels(true);setGrid(false);setMeasure(false);setView('3d')},
+  2:()=>{setSym(false);setMeasure(false);setView('map')},
+  3:()=>{setMeasure(false);setView('map')},
+  4:()=>{setSym(true);setView('map')},
+  5:()=>{setSym(true);setGrid(true);setView('map')},
+  6:()=>{setGrid(true);setView('map');setMeasure(true)}};
+$$('.step>button').forEach(b=>b.onclick=()=>{const li=b.parentElement,n=+li.dataset.step;const was=li.getAttribute('aria-current')==='true';
+  $$('.step').forEach(s=>s.setAttribute('aria-current','false'));if(!was){li.setAttribute('aria-current','true');STEP[n]&&STEP[n]()}});
+$$('.els button').forEach(b=>b.onclick=()=>{const el=$(`[data-mel="${b.dataset.el}"]`);if(!el)return;if(b.dataset.el==='frame')setGrid(true);if(b.dataset.el==='legend'){$('#legend').open=true}
+  el.classList.remove('hl');void el.offsetWidth;el.classList.add('hl')});
+$('.step[data-step="1"]').setAttribute('aria-current','true');
+if(innerWidth<900)$('#legend').open=false;
+
+/* quiz */
+const Q=[
+ {q:'สนามฟุตบอลอยู่ทางทิศใดของอาคาร E',ch:['ทิศเหนือ','ทิศตะวันออก','ทิศตะวันตก','ทิศใต้'],a:2,why:'เมื่อหันทิศเหนือขึ้นด้านบน ด้านซ้ายของแผนที่คือทิศตะวันตก สนามฟุตบอลอยู่ด้านซ้ายของอาคาร E'},
+ {q:'อาคาร A อยู่ทางทิศใดของอาคาร G',ch:['ทิศใต้','ทิศเหนือ','ทิศตะวันออก','ทิศตะวันตกเฉียงใต้'],a:1,why:'อาคาร A อยู่ติดถนนด้านบนของแผนที่ ส่วนอาคาร G อยู่ด้านล่าง อาคาร A จึงอยู่ทางทิศเหนือ'},
+ {q:'สระน้ำอยู่ทางทิศใดของอาคาร E',ch:['ทิศตะวันออกเฉียงเหนือ','ทิศตะวันออกเฉียงใต้','ทิศตะวันตกเฉียงใต้','ทิศเหนือ'],a:2,why:'สระน้ำอยู่ด้านซ้ายล่างของอาคาร E คือระหว่างทิศตะวันตกกับทิศใต้'},
+ {q:'ใช้เครื่องมือวัดระยะ จากประตูโรงเรียนถึงอาคาร G ระยะทางเป็นเส้นตรงประมาณเท่าใด',ch:['ประมาณ 50 เมตร','ประมาณ 110 เมตร','ประมาณ 215 เมตร','ประมาณ 400 เมตร'],a:2,why:'วัดจากจุดกลางของประตูถึงจุดกลางของอาคาร G ได้ราว 215 เมตร'},
+ {q:'หอถังน้ำอยู่ในช่องกริดใด',ch:['ค2','ฉ3','ง4','ช1'],a:1,why:'นับแถวจากบนลงล่าง (ก ถึง ช) ได้แถว ฉ และนับคอลัมน์จากซ้ายไปขวาได้ช่องที่ 3'},
+ {q:'แผนที่มาตราส่วน 1 : 2,000 วัดระยะบนแผนที่ได้ 5 ซม. ระยะจริงเท่ากับกี่เมตร',ch:['10 เมตร','100 เมตร','1,000 เมตร','10,000 เมตร'],a:1,why:'5 × 2,000 = 10,000 ซม. และ 100 ซม. เท่ากับ 1 เมตร จึงได้ 100 เมตร'}];
+const ans=new Array(Q.length).fill(null);
+$('#quiz').innerHTML=Q.map((x,i)=>`<div class="qq" data-q="${i}"><p><small>${i+1}.</small>${x.q}</p><div class="qch">${x.ch.map((c,j)=>`<button type="button" data-j="${j}">${c}</button>`).join('')}</div><p class="why" hidden></p></div>`).join('');
+$('#quiz').addEventListener('click',e=>{const b=e.target.closest('[data-j]');if(!b)return;const box=b.closest('.qq'),i=+box.dataset.q,j=+b.dataset.j;if(ans[i]!==null)return;ans[i]=j;
+  $$('button',box).forEach(x=>{x.disabled=true;const k=+x.dataset.j;if(k===Q[i].a)x.classList.add('right');else if(k===j)x.classList.add('wrong')});
+  const w=$('.why',box);w.hidden=false;w.textContent=(j===Q[i].a?'ถูกต้อง · ':'ยังไม่ถูก · ')+Q[i].why;
+  const done=ans.filter(v=>v!==null).length,ok=ans.filter((v,k)=>v===Q[k].a).length;$('#score').textContent=done===Q.length?`ได้ ${ok} จาก ${Q.length} ข้อ`:`ตอบแล้ว ${done} จาก ${Q.length} ข้อ`});
+
+window.SCHOOLMAP={setView,setSym,setGrid,setMeasure,addPoint,items,get S(){return S},pickGround,gridRef,bearing,dirName};
+})();
+</script>
+</body>
+</html>
