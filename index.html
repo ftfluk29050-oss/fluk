@@ -53,6 +53,7 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .seg button{padding:6px 14px;border-radius:999px;font-size:14px;color:#c3c9e4;white-space:nowrap;transition:background .2s,color .2s}
 .seg button[aria-selected="true"][data-d="self"]{background:linear-gradient(135deg,#2b47d6,#5b7cff);color:#fff}
 .seg button[aria-selected="true"][data-d="work"]{background:linear-gradient(135deg,#c4263a,#ff5b6e);color:#fff}
+.seg button[aria-selected="true"][data-d="media"]{background:linear-gradient(135deg,#6a3fd1,#a07bff);color:#fff}
 .seg button[aria-selected="true"][data-d="awards"]{background:linear-gradient(135deg,#0f8a6a,#35c79c);color:#fff}
 .seg button[aria-selected="true"][data-d="book"]{background:linear-gradient(135deg,#b8862a,#e2bf5e);color:#0b1437}
 .theme-switch{position:relative;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;color:var(--gold-hi);overflow:hidden;transition:background .2s}
@@ -92,7 +93,9 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .cover-art img{height:100%;max-height:100%;width:auto;max-width:100%;object-fit:contain;object-position:bottom;display:block;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%);-webkit-mask-composite:source-in;mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 86%,transparent 100%),linear-gradient(to bottom,transparent 0,#000 8%);mask-composite:intersect;mix-blend-mode:multiply}
 
 /* Domain cards overlapping hero */
-.domains{position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.domains{position:relative;z-index:2;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}
+.domains .dtext{padding:16px 18px 0}.domains .dcard h2{font-size:20px}.domains .dcard p{font-size:13.5px}.domains .dcard .meta{margin:12px 18px 18px;gap:4px 14px;font-size:12.5px}.domains .dcard .meta b{font-size:16px}
+.domains .stagebg{height:158px}.domains .mascot{height:150px}
 .dcard{position:relative;overflow:hidden;text-align:left;border-radius:20px;padding:24px 22px 20px;align-content:start;background:var(--surface);box-shadow:var(--shadow);border:1px solid var(--line);display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center;transition:transform .2s,box-shadow .2s,border-color .2s}
 .dcard:hover{transform:translateY(-3px)}
 .dcard .ico{width:58px;height:58px;border-radius:16px;display:grid;place-items:center;color:#fff}
@@ -229,7 +232,8 @@ body[data-domain="awards"] .side{display:none}
 .icard .tx{padding:14px 16px 16px;display:grid;gap:6px}
 .icard .ctag{font-size:12px;font-weight:600;color:var(--accent);letter-spacing:.02em}
 .icard .tx p{margin:0;font-size:14.5px;line-height:1.6;color:var(--fg);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-@media (max-width:1100px){.domains{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1180px){.domains{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:900px){.domains{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){
   .top .wrap{flex-wrap:nowrap;gap:8px}
   .tools{min-width:0;flex:1;justify-content:flex-end}
@@ -251,6 +255,38 @@ body[data-domain="awards"] .side{display:none}
 .aw-tag.bronze{background:linear-gradient(135deg,#ffe0c2,#d08a4e);color:#3d1f07}
 .aw-tag svg{width:15px;height:15px}
 .icard .use{display:block;font-size:12px;color:var(--faint);border-top:1px dashed var(--line);padding-top:6px;margin-top:2px}
+
+
+/* Topic 4: learning media */
+:root{--st-media:linear-gradient(165deg,#f3eeff,#d6c8ff)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--st-media:linear-gradient(165deg,#2a1d57,#4b3494)}}
+:root[data-theme="dark"]{--st-media:linear-gradient(165deg,#2a1d57,#4b3494)}
+.dcard[data-d="media"] .stagebg{background:var(--st-media)}
+.dcard[aria-selected="true"][data-d="media"]{border-color:#7d55e6;box-shadow:0 0 0 3px rgba(125,85,230,.25),var(--shadow)}
+body[data-domain="media"]{--accent:#6a3fd1;--accent-2:#a07bff;--grad:linear-gradient(135deg,#6a3fd1,#a07bff);--grad-sh:#6a3fd1}
+:root[data-theme="dark"] body[data-domain="media"]{--accent:#b9a0ff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body[data-domain="media"]{--accent:#b9a0ff}}
+body[data-domain="media"] .banner{background:radial-gradient(70% 120% at 100% 0%,rgba(160,123,255,.5),transparent 60%),linear-gradient(135deg,#3b2491,#0b1437)}
+body[data-domain="media"] .banner .b-mascot{max-height:230px}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.mcard{display:flex;flex-direction:column;text-align:left;border-radius:20px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,border-color .2s;animation:fade .35s ease both}
+.mcard:hover{transform:translateY(-4px);border-color:var(--accent)}
+.mph{position:relative;aspect-ratio:16/10;background:var(--surface-2);overflow:hidden}
+.mph img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .45s}
+.mcard:hover .mph img{transform:scale(1.05)}
+.mkind{position:absolute;left:12px;top:12px;font-size:12.5px;font-weight:600;padding:4px 12px;border-radius:999px;background:rgba(255,255,255,.92);color:#2a1d57;box-shadow:0 4px 10px -4px rgba(0,0,0,.35)}
+.mph .cnt{position:absolute;right:10px;bottom:10px;display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:3px 10px;border-radius:999px;background:rgba(11,20,55,.72);color:#fff}
+.mph .cnt svg{width:14px;height:14px}
+.mph .medal{position:absolute;right:10px;top:10px;width:38px;height:38px}
+.mph .medal svg{width:20px;height:20px}
+.mtx{padding:16px 18px 18px;display:grid;gap:6px}
+.msubj{font-size:12.5px;font-weight:600;color:var(--accent)}
+.mtx h3{font-size:18px;font-weight:500;line-height:1.45}
+.mtx p{margin:0;font-size:14px;line-height:1.65;color:var(--muted)}
+.mref{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.mref span{font-size:12px;padding:2px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+@media (max-width:1000px){.mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.mgrid{grid-template-columns:1fr}body[data-domain="media"] .banner .b-mascot{height:92px}}
 
 /* Main */
 .main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:18px 64px}
@@ -439,6 +475,7 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
       <button role="tab" data-d="self"><span class="lg">ด้านการ</span>ปฏิบัติตน</button>
       <button role="tab" data-d="work"><span class="lg">ด้านการ</span>ปฏิบัติงาน</button>
       <button role="tab" data-d="book">รูปเล่ม<span class="lg">รายงาน</span></button>
+      <button role="tab" data-d="media">สื่อ<span class="lg">การเรียนรู้</span></button>
       <button role="tab" data-d="awards">รางวัล<span class="lg">และกิจกรรม</span></button>
     </div>
     <button class="theme-switch" id="theme-switch" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด">
@@ -513,11 +550,27 @@ const FOLDERS = {
   11:{d:'work',k:5,name:'งานกิจกรรมตามภารกิจบริหารงานของสถานศึกษา'},
   12:{d:'work',k:6,name:'การใช้ภาษาและเทคโนโลยี'}
 };
-const DNAME={self:'ด้านการปฏิบัติตน',work:'ด้านการปฏิบัติงาน',book:'รูปเล่มรายงาน',awards:'รางวัลและกิจกรรม'};
+const DNAME={self:'ด้านการปฏิบัติตน',work:'ด้านการปฏิบัติงาน',book:'รูปเล่มรายงาน',media:'สื่อการจัดการเรียนรู้',awards:'รางวัลและกิจกรรม'};
 const BOOK_PAGES=56;
 const AW=[{"cat": "cert", "cap": "ได้รับรางวัลผู้สร้างสรรค์นวัตกรรมและแนวทางปฏิบัติที่เป็นเลิศ (Best Practice) คลังสื่อดิจิทัลครูต้นแบบ", "award": true, "photos": [{"src": "aw/13.jpg", "w": 636, "h": 450}]}, {"cat": "cert", "cap": "เข้าร่วมอบรม ยกระดับคุณภาพครูไทยสู่ความเป็นเลิศ คอนเน็กซ์อีดี ร่วมกับ จุฬาลงกรณ์วิทยาลัย", "award": false, "photos": [{"src": "aw/27.jpg", "w": 645, "h": 445}]}, {"cat": "cert", "cap": "ครูผู้จัดการเรียนรู้ Active Learning ผ่านกระบวนการ PLC สพม.หนองคาย", "award": false, "photos": [{"src": "aw/44.jpg", "w": 650, "h": 460}]}, {"cat": "cert", "cap": "นำนักเรียนเข้าร่วมอบรมเยาวชนแกนนำ (สร้างผู้นำ เยาวชนเป็นพลเมืองดีต้นแบบ) ณ สพม.หนองคาย", "award": false, "photos": [{"src": "aw/69.jpg", "w": 1186, "h": 843}]}, {"cat": "cert", "cap": "นำนักเรียนเข้าร่วมตอบปัญหาวัน รพี ได้รับรางวัลรองชนะเลิศอันดับที่ 1 (ตัวแทนจังหวัดหนองคาย)", "award": true, "photos": [{"src": "aw/115.jpg", "w": 1188, "h": 842}]}, {"cat": "cert", "cap": "นำนักเรียนเข้าร่วมแข่งขันกีฬาเยาวชนแห่งชาติได้รับ รางวัลรองชนะเลิศอันดับที่ 2 เซปักตะกร้อ อายุไม่เกิน 17 ปี (ชาย)", "award": true, "photos": [{"src": "aw/89.jpg", "w": 1181, "h": 847}]}, {"cat": "cert", "cap": "นำนักเรียนเข้าร่วมแข่งขันกีฬานักเรียนประจำจังหวัด ได้รับรางวัลรองชนะเลิศอันดับที่ 1 เซปักตะกร้อ อายุไม่เกิน 18 ปี (ชาย)", "award": true, "photos": [{"src": "aw/145.jpg", "w": 1180, "h": 847}]}, {"cat": "cert", "cap": "นำนักเรียนเข้าร่วมแข่งขันตอบปัญหากฎหมายเนื่องในวัน รพี ณ จังหวัดขอนแก่น", "award": false, "photos": [{"src": "aw/147.jpg", "w": 1195, "h": 837}]}, {"cat": "class", "cap": "ท่านผู้อำนวยการโรงเรียนและรองผู้อำนวยการฝ่ายวิชาการได้ตรวจเยี่ยมชั้นเรียน แนะแนวทางในการจัดการเรียนรู้และแก้ไขปัญหา", "award": false, "photos": [{"src": "aw/230.jpg", "w": 706, "h": 530}, {"src": "aw/232.jpg", "w": 706, "h": 530}]}, {"cat": "class", "cap": "การจัดกิจกรรมการเรียนการสอนแบบ Active Learning ด้วยการจัดกิจกรรมการเรียนรู้ โดยใช้การจัดการเรียนรู้แบบ ไทม์ไลน์ประวัติศาสตร์ สำหรับวิชาประวัติศาสตร์ไทย", "award": false, "photos": [{"src": "aw/186.jpg", "w": 673, "h": 505}, {"src": "aw/188.jpg", "w": 669, "h": 502}]}, {"cat": "class", "cap": "จัดการจัดการเรียนรู้โดยการคำนึงถึงความแตกต่างของนักเรียนรายบุคคล", "award": false, "photos": [{"src": "aw/243.jpg", "w": 474, "h": 632}, {"src": "aw/245.jpg", "w": 473, "h": 631}]}, {"cat": "class", "cap": "ก่อนการจัดการจัดการเรียนรู้ ให้มีการนั่งสมาธิก่อนมีการจัดการเรียนการสอน 5 นาที", "award": false, "photos": [{"src": "aw/247.jpg", "w": 678, "h": 509}, {"src": "aw/249.jpg", "w": 684, "h": 513}]}, {"cat": "class", "cap": "รับการนิเทศการจัดการเรียนรู้จาก ครูพี่เลี้ยง รองผู้อำนวยการฝ่ายวิชาการ ผู้บริหารสถานศึกษา", "award": false, "photos": [{"src": "aw/280.jpg", "w": 913, "h": 513}, {"src": "aw/282.jpg", "w": 920, "h": 517}, {"src": "aw/304.jpg", "w": 934, "h": 531}]}, {"cat": "class", "cap": "การจัดกิจกรรมการเรียนการสอนแบบ Active Learning ด้วยการจัดกิจกรรมการเรียนรู้โดยการให้นักเรียนได้มีการระดมความคิด และลงมือทำ บอลลูน วันสำคัญทางพระพุทธศาสนา", "award": false, "photos": [{"src": "aw/319.jpg", "w": 686, "h": 386}, {"src": "aw/313.jpg", "w": 682, "h": 384}, {"src": "aw/315.jpg", "w": 689, "h": 388}, {"src": "aw/317.jpg", "w": 674, "h": 386}]}, {"cat": "class", "cap": "การจัดกิจกรรมการเรียนการสอนแบบ Active Learning ด้วยการจัดกิจกรรมการเรียนรู้โดยการให้นักเรียนได้มีการระดมความคิด ประวัติศาสตร์ท้องถิ่น", "award": false, "photos": [{"src": "aw/321.jpg", "w": 757, "h": 568}, {"src": "aw/349.jpg", "w": 749, "h": 562}]}, {"cat": "sup", "cap": "การจัดกิจกรรมการเรียนการสอนแบบ Active Learning ด้วยการจัดกิจกรรมการเรียนรู้ ไทม์ไลน์พุทธประวัติโดยได้รับการนิเทศจากรองผู้อำนวยการฝ่ายวิชาการ", "award": false, "photos": [{"src": "aw/364.jpg", "w": 1244, "h": 750}, {"src": "aw/366.jpg", "w": 1268, "h": 699}]}, {"cat": "duty", "cap": "ปฏิบัติหน้าที่ครูเวรประจำวันพุธ โดยการยืนเวร หน้าโรงเรียนตรวจนักเรียนก่อนทำกิจกรรมหน้าเสาธง และตรวจความเรียบร้อยบริเวณพื้นที่ภายในของโรงเรียน", "award": false, "photos": [{"src": "aw/435.jpg", "w": 762, "h": 501}, {"src": "aw/437.jpg", "w": 765, "h": 498}]}, {"cat": "duty", "cap": "ปฏิบัติหน้าที่ครูประจำชั้นมัธยมศึกษาปีที่ 3/4 โดยการพานักเรียนรับผิดชอบเขตบริเวณของโรงเรียนเป็นประจำ", "award": false, "photos": [{"src": "aw/407.jpg", "w": 725, "h": 408}, {"src": "aw/407.jpg", "w": 725, "h": 408}]}, {"cat": "act", "cap": "นำนักเรียนเข้าร่วมค่ายคุณธรรมต้านยาเสพติด", "award": false, "photos": [{"src": "aw/489.jpg", "w": 699, "h": 524}, {"src": "aw/491.jpg", "w": 708, "h": 531}]}, {"cat": "act", "cap": "เป็นครูผู้ดูแลชุมนุม เซปักตะกร้อ", "award": false, "photos": [{"src": "aw/446.jpg", "w": 540, "h": 405}, {"src": "aw/493.jpg", "w": 516, "h": 419}]}, {"cat": "act", "cap": "นำนักเรียนเข้าร่วมแข่งขัน ตอบปัญหากฎหมายเนื่องในวัน รพี ได้รับรางวัล รองชนะเลิศอันดับที่ 1 เป็นตัวแทนจังหวัดหนองคาย", "award": true, "photos": [{"src": "aw/552.jpg", "w": 727, "h": 409}, {"src": "aw/554.jpg", "w": 476, "h": 416}]}, {"cat": "act", "cap": "ออกแนะแนวนักเรียนเข้าศึกษาต่อ โรงเรียนที่อยู่ในเขตบริการของโรงเรียนวังหลวงพิทยาสรรพ์", "award": false, "photos": [{"src": "aw/506.jpg", "w": 612, "h": 459}, {"src": "aw/508.jpg", "w": 610, "h": 457}]}, {"cat": "act", "cap": "ติว O-net รายวิชาสังคมศึกษา ศาสนาและวัฒนธรรม ให้กับนักเรียนชั้นมัธยมศึกษาปีที่ 6 ปีการศึกษา 2568", "award": false, "photos": [{"src": "aw/510.jpg", "w": 613, "h": 460}, {"src": "aw/512.jpg", "w": 619, "h": 464}]}, {"cat": "act", "cap": "เป็นผู้ดำเนินการกิจกรรม เปิดบ้านวิชาการ กลุ่มสาระการเรียนรู้สังคมศึกษา", "award": false, "photos": [{"src": "aw/593.jpg", "w": 757, "h": 568}, {"src": "aw/595.jpg", "w": 636, "h": 565}]}, {"cat": "act", "cap": "เป็นคณะดำเนินงานกิจกรรม Wangluang Run For Health และร่วมวิ่งออกกำลังกายด้วย", "award": false, "photos": [{"src": "aw/597.jpg", "w": 623, "h": 640}, {"src": "aw/599.jpg", "w": 840, "h": 630}]}, {"cat": "act", "cap": "เข้าร่วมประชุมการรายงานผลการพัฒนาคุณภาพ การศึกษาตามเครื่องมือ ก.ต.ป.น. ณ โรงเรียนชุมพลโพนพิสัย", "award": false, "photos": [{"src": "aw/639.jpg", "w": 711, "h": 589}, {"src": "aw/641.jpg", "w": 739, "h": 554}]}, {"cat": "act", "cap": "รับสมัครนักเรียนใหม่ชั้นมัธยมศึกษาปีที่ 1 และ 4 ปีการศึกษา 2569", "award": false, "photos": [{"src": "aw/643.jpg", "w": 686, "h": 514}, {"src": "aw/645.jpg", "w": 694, "h": 521}]}, {"cat": "act", "cap": "นำนักเรียนเข้าร่วมแข่งขันกีฬา เซปักตะกร้อ รุ่นอายุไม่เกิน 16 ปี จังหวัดหนองคาย ได้รับรางวัลรองชนะเลิศอันดับที่ 1", "award": true, "photos": [{"src": "aw/698.jpg", "w": 670, "h": 503}, {"src": "aw/700.jpg", "w": 648, "h": 518}]}, {"cat": "act", "cap": "ช่างภาพกิจกรรม ปัจฉิมนิเทศนักเรียนใหม่ปีการศึกษา 2568", "award": false, "photos": [{"src": "aw/702.jpg", "w": 592, "h": 789}]}, {"cat": "act", "cap": "เข้าร่วมกิจกรรมบุญบั้งไฟ ตำบลวังหลวง อำเภอเฝ้าไร่ จังหวัดหนองคาย", "award": false, "photos": [{"src": "aw/737.jpg", "w": 671, "h": 504}, {"src": "aw/739.jpg", "w": 673, "h": 500}]}, {"cat": "act", "cap": "เข้าร่วมกิจกรรมเนื่องในวันแม่แห่งชาติ ปีการศึกษา 2569", "award": false, "photos": [{"src": "aw/749.jpg", "w": 763, "h": 572}, {"src": "aw/751.jpg", "w": 689, "h": 573}]}, {"cat": "act", "cap": "ร่วมกิจกรรมพิธีไหว้ครู โรงเรียนวังหลวงพิทยาสรรพ์", "award": false, "photos": [{"src": "aw/780.jpg", "w": 781, "h": 586}, {"src": "aw/782.jpg", "w": 770, "h": 578}]}, {"cat": "act", "cap": "ถ่ายทำหนังสั้น หัวข้อ ทางลัดที่ยาที่สุด ได้รับรางวัลชนะเลิศ จังหวัดหนองคาย", "award": true, "photos": [{"src": "aw/784.jpg", "w": 720, "h": 540}, {"src": "aw/786.jpg", "w": 705, "h": 529}]}, {"cat": "act", "cap": "ร่วมกิจกรรมเลือกตั้งประธานนักเรียนโรงเรียนวังหลวงพิทยาสรรพ์", "award": false, "photos": [{"src": "aw/835.jpg", "w": 868, "h": 579}]}, {"cat": "act", "cap": "นำนักเรียนร่วมกิจกรรมการจัดการเรียนรู้ PHBL", "award": false, "photos": [{"src": "aw/837.jpg", "w": 1289, "h": 967}]}, {"cat": "act", "cap": "ฝึกสอนนักเรียนแข่งขันกิจกรรมภาพถ่ายต้านทุจริต ได้รับรางวัลรองชนะเลิศ อันดับที่ 2", "award": true, "photos": [{"src": "aw/868.jpg", "w": 551, "h": 826}, {"src": "aw/870.jpg", "w": 552, "h": 828}]}, {"cat": "act", "cap": "เยี่ยมบ้านนักเรียนปีการศึกษา 2569", "award": false, "photos": [{"src": "aw/881.jpg", "w": 732, "h": 549}, {"src": "aw/883.jpg", "w": 732, "h": 549}]}, {"cat": "act", "cap": "เข้าร่วมกิจกรรมพัฒนาหลักสูตรสถานศึกษา ตามเขตเศรษฐกิจ SEZ ณ จังหวัดหนองคาย", "award": false, "photos": [{"src": "aw/922.jpg", "w": 1158, "h": 652}]}, {"cat": "act", "cap": "เป็นผู้กำกับนำนักเรียนเดินสวนสนามเนื่องในวันลูกเสือแห่งชาติ ปีการศึกษา 2569", "award": false, "photos": [{"src": "aw/924.jpg", "w": 1137, "h": 758}]}, {"cat": "act", "cap": "นำนักเรียนเข้าร่วมอบรมการพัฒนาเยาวชนให้เป็นพลเมืองดีต้นแบบ ณ วิทยาลัยเทคนิคหนองคาย", "award": false, "photos": [{"src": "aw/971.jpg", "w": 1012, "h": 759}]}, {"cat": "act", "cap": "จัดกิจกรรมการจัดการเรียนรู้แบบ แก้ไขปัญหาขยะ", "award": false, "photos": [{"src": "aw/973.jpg", "w": 732, "h": 549}, {"src": "aw/982.jpg", "w": 749, "h": 562}]}, {"cat": "act", "cap": "เข้าร่วมกิจกรรมเฉลิมพระเกียรติพระบาทสมเด็จพระเจ้าอยู่หัว 28 กรกฎาคม 2569", "award": false, "photos": [{"src": "aw/1024.jpg", "w": 842, "h": 632}, {"src": "aw/1026.jpg", "w": 479, "h": 638}]}, {"cat": "act", "cap": "เข้าร่วมแข่งขันการตอบปัญหากฎหมายเนื่องในวัน รพี ณ จังหวัดหนองคาย ได้รับรางวัลรองชนะเลิศอันดับที่ 1", "award": true, "photos": [{"src": "aw/1028.jpg", "w": 1380, "h": 776}]}, {"cat": "act", "cap": "เข้าร่วมประชุมผู้ฝึกสอนกีฬาเยาวชนแห่งชาติ ณ จังหวัดหนองคาย", "award": false, "photos": [{"src": "aw/1073.jpg", "w": 750, "h": 563}, {"src": "aw/1075.jpg", "w": 749, "h": 562}]}, {"cat": "act", "cap": "ครูที่ปรึกษา มอบทุนปัจจัยพื้นฐานนักเรียนชั้นมัธยมศึกษาปีที่ 3/4 ปีการศึกษา 2569", "award": false, "photos": [{"src": "aw/1077.jpg", "w": 822, "h": 711}]}, {"cat": "act", "cap": "แก้ไขปัญหานักเรียนร่วมกับ ผู้ปกครองนักเรียน", "award": false, "photos": [{"src": "aw/1120.jpg", "w": 1380, "h": 776}]}, {"cat": "act", "cap": "นำนักเรียนเข้าร่วมแข่งขันกีฬาประจำจังหวัดและอำเภอรุ่นอายุไม่เกิน 18 ปี ได้รับรางวัลรองชนะเลิศอันดับที่ 1 ตัวแทนจังหวัดหนองคาย", "award": true, "photos": [{"src": "aw/1122.jpg", "w": 1383, "h": 818}]}, {"cat": "act", "cap": "เป็นตัวแทนจังหวัดหนองคายเซปักตะกร้อ ชาย และ หญิง รุ่นอายุไม่เกิน 17 ปี", "award": false, "photos": [{"src": "aw/1170.jpg", "w": 788, "h": 1400}]}];
 const AWCAT={cert:'เกียรติบัตรและรางวัล',class:'การจัดการเรียนการสอนในชั้นเรียน',sup:'การนิเทศภายใน',duty:'การปฏิบัติหน้าที่ในโรงเรียน',act:'ภาพกิจกรรมต่าง ๆ'};
 const AWN=AW.filter(a=>a.award).length, AWP=new Set(AW.flatMap(a=>a.photos.map(p=>p.src))).size;
+const MTYPE={digital:'สื่อดิจิทัลและออนไลน์',game:'เกมและกิจกรรมการเรียนรู้',work:'ผลงานนักเรียน'};
+const P=(src,w,h)=>({src,w,h});
+const MEDIA=[
+ {t:'digital',kind:'วิดีโอ YouTube',subj:'หน้าที่พลเมือง',title:'วิดีโอการสอน เรื่อง หน้าที่ของเยาวชนไทย',desc:'สื่อวิดีโอการสอนสังคมศึกษาเผยแพร่ผ่าน YouTube ช่วยให้นักเรียนเห็นภาพชัดเจนและทบทวนบทเรียนได้ด้วยตนเอง',ref:[['12','6.1'],['7','1.4']],photos:[P('img/12-image8.jpg',1200,780),P('img/7-image12.jpg',863,567)]},
+ {t:'digital',kind:'ห้องเรียนเสมือนจริง',subj:'ประวัติศาสตร์',title:'ห้องเรียนเสมือนจริง พิพิธภัณฑ์ประวัติศาสตร์ไทย',desc:'พิพิธภัณฑ์ 3 มิติให้นักเรียนเดินชมนิทรรศการประวัติศาสตร์ไทยผ่านหน้าจอ เรียนรู้ได้ทุกที่ทุกเวลา',ref:[['12','6.1'],['6','6.2']],photos:[P('img/12-image10.jpg',926,464),P('img/6-image11.jpg',1200,615)]},
+ {t:'digital',kind:'ห้องเรียนออนไลน์',subj:'สังคมศึกษา',title:'ห้องเรียนออนไลน์ Social Studies Class',desc:'พื้นที่รวมบทเรียนและสื่อของรายวิชาสังคมศึกษาไว้ในที่เดียว ให้นักเรียนเข้าถึงเนื้อหาได้สะดวก',ref:[['6','6.2']],photos:[P('img/6-image10.jpg',1200,617)]},
+ {t:'digital',kind:'อินโฟกราฟิก',subj:'เทคโนโลยี',title:'อินโฟกราฟิก เครื่องมือ AI 10 อย่าง',desc:'สื่ออินโฟกราฟิกแนะนำเครื่องมือ AI ที่นำมาใช้พัฒนางานและนวัตกรรมการเรียนรู้',ref:[['12','6.1']],photos:[P('img/12-image7.jpg',832,832)]},
+ {t:'game',kind:'เกมออนไลน์',subj:'ประวัติศาสตร์',title:'เกม Kahoot เรื่อง หลักฐานทางประวัติศาสตร์',desc:'ใช้เกมตอบคำถามออนไลน์ Kahoot เก็บคะแนนและทบทวนความรู้ ทำให้นักเรียนสนุกและมีส่วนร่วม',ref:[['12','6.1']],photos:[P('img/12-image19.jpg',956,475)]},
+ {t:'game',kind:'สื่อกิจกรรม Active Learning',subj:'ประวัติศาสตร์',title:'กิจกรรมเรียง Timeline ประวัติศาสตร์ไทย',desc:'นักเรียนเรียงเหตุการณ์และภาพประวัติศาสตร์ตามลำดับเวลา ฝึกคิดวิเคราะห์และทำงานเป็นกลุ่ม',ref:[['12','6.1']],photos:[P('img/12-image12.jpg',302,430),P('img/12-image11.jpg',307,436),P('img/12-image13.jpg',651,488)]},
+ {t:'game',kind:'เกมกระดานและบทเพลง',subj:'พระพุทธศาสนา',title:'เส้นทางพุทธประวัติ และเพลงพระพุทธเจ้า',desc:'เกมกระดานเรียง Timeline พุทธประวัติ ร่วมกับบทเพลงช่วยจำ ให้นักเรียนเรียนรู้ผ่านการเล่นและลงมือทำ',ref:[['12','6.1']],photos:[P('img/12-image15.jpg',431,609),P('img/12-image14.jpg',1200,673),P('img/12-image16.jpg',712,595)]},
+ {t:'work',kind:'ผลงานนักเรียน',subj:'วันต้านยาเสพติดโลก',title:'ประกวดโปสเตอร์ วันต้านยาเสพติดโลก',desc:'นักเรียนสร้างสรรค์โปสเตอร์รณรงค์ต้านยาเสพติด ถ่ายทอดความคิดผ่านงานศิลปะ',ref:[['12','6.1']],photos:[P('img/12-image17.jpg',723,406),P('img/12-image18.jpg',887,500)]},
+ {t:'work',kind:'หนังสั้น',subj:'สื่อสร้างสรรค์',title:'หนังสั้น "ทางลัดที่ยาที่สุด"',desc:'ผลงานถ่ายทำหนังสั้น ได้รับรางวัลชนะเลิศ ระดับจังหวัดหนองคาย',award:['ชนะเลิศ','gold'],ref:[['12','6.1']],aw:32},
+];
+MEDIA.forEach(m=>{if(m.aw!=null)m.photos=AW[m.aw].photos});
+const MEDIA_AW=[{i:0,title:'คลังสื่อดิจิทัลครูต้นแบบ (Best Practice)',lv:['Best Practice','gold']},{i:32,title:'หนังสั้น "ทางลัดที่ยาที่สุด"',lv:['ชนะเลิศ ระดับจังหวัด','gold']}];
+
 const TOC=[['ปก',0],['คำนำ',1],['สารบัญ',2],['ข้อมูลผู้ขอรับการประเมิน',3],['องค์ประกอบที่ 1 การปฏิบัติตน',8],['องค์ประกอบที่ 2 การปฏิบัติงาน',18],['ภาคผนวก ก คำสั่งการปฏิบัติราชการ',23],['ภาคผนวก ข เกียรติบัตร รางวัล',28],['ภาคผนวก ค รูปภาพกิจกรรม',33],['ปกหลัง',55]];
 const ICO_BOOK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>';
 const DDESC={self:'วินัย คุณธรรม จริยธรรม จรรยาบรรณวิชาชีพ เศรษฐกิจพอเพียง และความเป็นครู',work:'การจัดการเรียนการสอน การบริหารชั้นเรียน การพัฒนาตนเอง ทีมงาน และงานสถานศึกษา'};
@@ -541,7 +594,9 @@ document.getElementById('domains').innerHTML=['self','work'].map((d,x)=>{const s
   <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('')
   +`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
   <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
+  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>สื่อดิจิทัล ห้องเรียนเสมือนจริง เกม และกิจกรรมการเรียนรู้ที่ใช้ในชั้นเรียน</p></span>
+  <span class="meta"><span><b>${MEDIA.length}</b>ชิ้นงาน</span><span><b>${MEDIA.reduce((a,m)=>a+m.photos.length,0)}</b>ภาพ</span></span></button>`
+  +`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 5</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
   <span class="meta"><span><b>${AWN}</b>รางวัล</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></span></button>`;
 
 function renderSide(d){
@@ -670,6 +725,7 @@ function openFolder(n){
   const ac=document.querySelector('.flist button[aria-current="true"]');if(ac){const ul=ac.closest('.flist');if(ul.scrollWidth>ul.clientWidth)ul.scrollLeft=ac.parentElement.offsetLeft-16}
 }
 
+
 const MEDAL='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>';
 function level(c){if(/Best Practice/i.test(c))return['Best Practice','gold'];if(/รองชนะเลิศ\s*อันดับที่\s*1/.test(c))return['รองชนะเลิศอันดับ 1','silver'];if(/รองชนะเลิศ\s*อันดับที่\s*2/.test(c))return['รองชนะเลิศอันดับ 2','bronze'];if(/ชนะเลิศ/.test(c))return['ชนะเลิศ','gold'];return['รางวัล','gold']}
 let awFilter='all';
@@ -688,8 +744,8 @@ function openAwards(){
   awFilter='all';
   const cnt=k=>AW.filter(a=>k==='award'?a.award:a.cat===k).length;
   const awards=AW.map((a,i)=>[a,i]).filter(([a])=>a.award);
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="04"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-awards.png" alt="">
-    <div class="kick"><span class="g">หัวข้อที่ 4</span><span>การประเมินครั้งที่ 3</span></div>
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="05"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-awards.png" alt="">
+    <div class="kick"><span class="g">หัวข้อที่ 5</span><span>การประเมินครั้งที่ 3</span></div>
     <h2><small>ผลงานระหว่างการเตรียมความพร้อม</small>รางวัลและกิจกรรม</h2>
     <div class="facts"><span><b>${AWN}</b>รางวัล</span><span><b>${cnt('cert')}</b>เกียรติบัตร</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></div></div>
     <div class="sec-title">รางวัลที่ได้รับ</div>
@@ -701,8 +757,38 @@ function openAwards(){
       ${Object.keys(AWCAT).map(k=>`<button data-flt="${k}">${AWCAT[k]}<small>${cnt(k)}</small></button>`).join('')}
     </div>
     <div class="agrid" id="agrid"></div>
-    <nav class="pager"><button data-nav="menu"><small>← กลับ</small><span>เลือกหัวข้อ</span></button><button class="next" data-nav="home"><small>กลับสู่ →</small><span>หน้าแรก</span></button></nav></div>`;
+    <nav class="pager"><button data-nav="media"><small>← หัวข้อที่ 4</small><span>สื่อการจัดการเรียนรู้</span></button><button class="next" data-nav="home"><small>กลับสู่ →</small><span>หน้าแรก</span></button></nav></div>`;
   renderAwGrid();
+}
+
+let mFilter='all';
+function mediaCard(m,i){const p=m.photos[0];
+  return `<button class="mcard" data-md="${i}"><span class="mph"><img src="${p.src}" alt="" loading="lazy" width="${p.w}" height="${p.h}"><span class="mkind">${m.kind}</span>${m.photos.length>1?`<span class="cnt">${ICO_IMG}${m.photos.length} ภาพ</span>`:''}${m.award?`<span class="medal ${m.award[1]}" title="${m.award[0]}">${MEDAL}</span>`:''}</span>
+  <span class="mtx"><span class="msubj">${MTYPE[m.t]} · ${m.subj}</span><h3>${m.title}</h3><p>${m.desc}</p>
+  <span class="mref">${m.ref.map(([n,no])=>`<span>แฟ้มที่ ${n} · ตัวชี้วัด ${no}</span>`).join('')}</span></span></button>`}
+function renderMGrid(){
+  document.getElementById('mgrid').innerHTML=MEDIA.map((m,i)=>[m,i]).filter(([m])=>mFilter==='all'||m.t===mFilter).map(([m,i])=>mediaCard(m,i)).join('');
+  document.querySelectorAll('[data-mf]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mf===mFilter));
+}
+function openMedia(){
+  document.body.dataset.domain='media';setSel('media');document.getElementById('main').classList.add('full');
+  crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],['สื่อการจัดการเรียนรู้']]);
+  mFilter='all';
+  const np=MEDIA.reduce((a,m)=>a+m.photos.length,0);
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="04"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-media.png" alt="">
+    <div class="kick"><span class="g">หัวข้อที่ 4</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
+    <h2><small>นวัตกรรมและสื่อที่ใช้ในชั้นเรียน</small>สื่อการจัดการเรียนรู้</h2>
+    <div class="facts"><span><b>${MEDIA.length}</b>ชิ้นงาน</span><span><b>${Object.keys(MTYPE).length}</b>ประเภท</span><span><b>${np}</b>ภาพ</span></div></div>
+    <div class="sec-title">รางวัลด้านสื่อและนวัตกรรม</div>
+    <div class="award-grid">${MEDIA_AW.map(x=>{const a=AW[x.i];return `<button class="acard" data-aw="${x.i}"><span class="medal ${x.lv[1]}">${MEDAL}</span><span><span class="lv">${x.lv[0]}</span><p><b>${x.title}</b><br>${a.cap}</p></span><img src="${a.photos[0].src}" alt="" loading="lazy"></button>`}).join('')}</div>
+    <div class="sec-title">สื่อทั้งหมด</div>
+    <div class="filters" role="group" aria-label="กรองตามประเภทสื่อ">
+      <button data-mf="all">ทั้งหมด<small>${MEDIA.length}</small></button>
+      ${Object.keys(MTYPE).map(k=>`<button data-mf="${k}">${MTYPE[k]}<small>${MEDIA.filter(m=>m.t===k).length}</small></button>`).join('')}
+    </div>
+    <div class="mgrid" id="mgrid"></div>
+    <nav class="pager"><button data-nav="book"><small>← หัวข้อที่ 3</small><span>รูปเล่มรายงาน</span></button><button class="next" data-nav="awards"><small>หัวข้อที่ 5 →</small><span>รางวัลและกิจกรรม</span></button></nav></div>`;
+  renderMGrid();
 }
 function route(h){
   h=h||(location.hash||'').slice(1)||'home';
@@ -712,6 +798,7 @@ function route(h){
   else if(h==='self'||h==='work'){showPage('content');showDomain(h)}
   else if(h==='book'){showPage('content');openBook()}
   else if(h==='awards'){showPage('content');openAwards()}
+  else if(h==='media'){showPage('content');openMedia()}
   else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
   else{showPage('home');setSel(null)}
   scrollTo(0,0);
@@ -720,7 +807,9 @@ function route(h){
 function go(h){const before=location.hash;try{location.hash=h}catch(e){}if(location.hash!=='#'+h||before==='#'+h)route(h)}
 window.addEventListener('hashchange',()=>route());
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt]');if(!t)return;
+  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf]');if(!t)return;
+  if(t.dataset.mf){mFilter=t.dataset.mf;renderMGrid();return}
+  if(t.dataset.md!==undefined){const m=MEDIA[+t.dataset.md];lbList=m.photos.map(p=>p.src);lbCaps=m.photos.map(()=>m.title+' · '+m.kind);showLb(0);return}
   if(t.dataset.flt){awFilter=t.dataset.flt;renderAwGrid();return}
   if(t.dataset.aw!==undefined){const a=AW[+t.dataset.aw];lbList=a.photos.map(p=>p.src);lbCaps=a.photos.map(()=>a.cap);showLb(0);return}
   if(t.dataset.nav){go(t.dataset.nav);return}
