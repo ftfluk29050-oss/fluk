@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>หนังสือศาสนาสากล</title>
+<meta name="description" content="หนังสือ 3 มิติ ศาสนาสากล 5 ศาสนา เปิดอ่านองค์ประกอบของศาสนา 7 ประการ">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chonburi&family=Taviraj:ital,wght@0,400;0,500;0,600;1,400&family=IM+Fell+English+SC&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@600&text=%E0%A5%90&display=swap">
+<style>
+/* Layout: a candle-lit reading desk. One leather-bound tome sits on the stage (a turnable 3D object when closed,
+   an open spread when reading); a slim header above and a chapter dock below. Single committed dark look. */
+:root{
+  --desk:#0e0906;
+  --desk-2:#20150d;
+  --lamp:#f2cd85;
+  --ink:#2b1d11;
+  --ink-2:#5b4331;
+  --oxblood:#6b2315;
+  --gilt:#d5ae5e;
+  --gilt-hi:#f5df9f;
+  --paper:#efe0bd;
+  --ui:#efe2c4;
+  --ui-dim:#b9a585;
+  --ui-line:rgba(213,174,94,.3);
+  --f-display:"Chonburi","Taviraj",Georgia,serif;
+  --f-body:"Taviraj","Sarabun","Noto Serif Thai",Georgia,serif;
+  --f-latin:"IM Fell English SC","IM Fell English",Georgia,serif;
+  --s:1;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--desk);color:var(--ui);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gilt-hi);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.app{height:100%;display:grid;grid-template-rows:auto minmax(0,1fr) auto;
+  background:
+   radial-gradient(60% 55% at 50% 42%,rgba(242,205,133,.16),transparent 70%),
+   radial-gradient(120% 80% at 50% 115%,#2a1b10 0%,transparent 60%),
+   var(--desk)}
+
+/* header */
+.top{display:flex;align-items:center;gap:12px;padding:10px 16px;padding-top:calc(10px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--ui-line);background:rgba(14,9,6,.7);position:relative;z-index:5}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--ui-dim);text-decoration:none;font-size:15px;padding:6px 10px 6px 4px;border-radius:10px;border:1px solid transparent;white-space:nowrap}
+.back:hover{color:var(--ui);border-color:var(--ui-line)}
+.back svg{width:18px;height:18px}
+.ttl{display:grid;line-height:1.3;min-width:0}
+.ttl small{font-size:12.5px;color:var(--gilt);letter-spacing:.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ttl b{font-family:var(--f-display);font-weight:400;font-size:19px;color:var(--gilt-hi);white-space:nowrap}
+.sp{flex:1}
+.ib{width:40px;height:40px;flex:none;border-radius:10px;border:1px solid var(--ui-line);background:rgba(255,255,255,.03);display:grid;place-items:center;cursor:pointer;color:var(--ui)}
+.ib:hover{border-color:var(--gilt)}
+.ib svg{width:19px;height:19px}
+@media (max-width:560px){.ttl small{display:none}.ttl b{font-size:17px}.back span{display:none}}
+
+/* stage */
+.stage{position:relative;overflow:hidden;touch-action:pan-y pinch-zoom;cursor:grab;user-select:none;-webkit-user-select:none}
+.stage.open{cursor:default}
+.stage::before{content:"";position:absolute;left:-10%;top:-30%;width:70%;height:130%;background:linear-gradient(115deg,rgba(242,205,133,.07),transparent 55%);transform:skewX(-12deg);pointer-events:none}
+#dust{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.scaler{position:absolute;left:50%;top:50%;width:0;height:0;transform:scale(var(--s))}
+.scaler.persp{perspective:3200px}
+.shadow{position:absolute;left:0;top:0;width:470px;height:120px;margin:-60px 0 0 -235px;border-radius:50%;background:radial-gradient(closest-side,rgba(0,0,0,.72),rgba(0,0,0,0));transform:translateY(300px);transition:width .9s,margin .9s,transform .9s,opacity .9s}
+.stage.open .shadow{width:900px;margin-left:-450px;transform:translateY(300px) scaleY(.7)}
+.stage.single.open .shadow{opacity:0}
+
+/* book */
+.book{position:absolute;left:0;top:-283px;width:400px;height:566px;transform-style:preserve-3d}
+.leaf{position:absolute;left:0;top:0;width:400px;height:566px;transform-origin:0 50%;transform-style:preserve-3d;transition:transform var(--ft,.85s) cubic-bezier(.45,.05,.25,1)}
+.leaf.cover{top:-7px;width:408px;height:580px}
+.face{position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.face.b{transform:rotateY(180deg)}
+.shade{position:absolute;inset:0;pointer-events:none;opacity:0;background:linear-gradient(90deg,rgba(40,22,6,.55),rgba(40,22,6,.12) 60%,rgba(40,22,6,0))}
+.face.b .shade{background:linear-gradient(270deg,rgba(40,22,6,.55),rgba(40,22,6,.12) 60%,rgba(40,22,6,0))}
+.leaf.flipping .shade{animation:shade var(--ft,.85s) ease-in-out}
+@keyframes shade{0%{opacity:0}50%{opacity:1}100%{opacity:0}}
+
+/* closed-book box: spine, gilt edges */
+.bx{position:absolute;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:opacity .5s}
+.book.open .bx{opacity:0}
+.bx.spine{left:0;top:-7px;height:580px;transform-origin:0 50%;overflow:hidden;background:var(--leather) center/cover,#44180e;box-shadow:inset 0 0 18px rgba(0,0,0,.7)}
+.bx.spine .band{position:absolute;left:0;right:0;height:9px;background:linear-gradient(180deg,rgba(0,0,0,.5),rgba(255,210,170,.16) 40%,rgba(0,0,0,.35) 60%,rgba(0,0,0,.6));border-top:1px solid rgba(213,174,94,.55);border-bottom:1px solid rgba(213,174,94,.55)}
+.bx.spine .st{position:absolute;left:0;right:0;top:170px;height:240px;display:grid;place-items:center;writing-mode:vertical-rl;font-family:var(--f-display);font-size:17px;letter-spacing:.06em}
+.bx.gilt{background:repeating-linear-gradient(90deg,rgba(110,70,16,.45) 0 .7px,transparent .7px 2.4px),linear-gradient(180deg,#f0d27f,#b98a33 48%,#e8c76f 70%,#a67624)}
+.bx.gilt.h{background:repeating-linear-gradient(0deg,rgba(110,70,16,.45) 0 .7px,transparent .7px 2.4px),linear-gradient(90deg,#b98a33,#f0d27f 30%,#c99a42 70%,#a67624)}
+.edge{position:absolute;top:0;width:400px;height:566px;transform:translateZ(.3px);transition:opacity .5s;pointer-events:none}
+.edge.r{left:0}.edge.l{left:-400px}
+.book:not(.open) .edge{opacity:0}
+.ribbon{position:absolute;left:62px;top:560px;width:13px;height:64px;background:linear-gradient(90deg,#5e0b10,#b3262c 45%,#7a141a);clip-path:polygon(0 0,100% 0,100% 100%,50% 84%,0 100%);box-shadow:0 2px 4px rgba(0,0,0,.4);transition:transform .9s}
+
+/* leather cover */
+.cvf,.cvb,.cvin{position:absolute;inset:0;background:var(--leather) center/cover,#4a1c11;box-shadow:inset 0 0 0 1px rgba(0,0,0,.6),inset 0 0 26px rgba(0,0,0,.55),inset 0 0 3px 2px rgba(255,210,160,.07)}
+.joint{position:absolute;top:0;bottom:0;left:13px;width:6px;background:linear-gradient(90deg,rgba(0,0,0,.45),rgba(255,214,170,.08) 50%,rgba(0,0,0,.4))}
+.fr1{position:absolute;inset:18px 18px 18px 30px;border:2px solid rgba(213,174,94,.85);border-radius:2px;box-shadow:0 1px 0 rgba(0,0,0,.6),inset 0 1px 0 rgba(0,0,0,.5)}
+.fr2{position:absolute;inset:26px 26px 26px 38px;border:1px solid rgba(213,174,94,.55)}
+.fr2::before,.fr2::after{content:"";position:absolute;width:9px;height:9px;background:var(--gilt);transform:rotate(45deg);top:-5px;left:-5px;box-shadow:calc(100% + 0px) 0 0 0 transparent}
+.fr2::after{left:auto;right:-5px}
+.fr2 i{position:absolute;width:9px;height:9px;background:var(--gilt);transform:rotate(45deg);bottom:-5px}
+.fr2 i:first-child{left:-5px}.fr2 i:last-child{right:-5px}
+.gt{background:linear-gradient(180deg,#fff2c2 0%,#eccb6c 38%,#b27d25 68%,#f1d27e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(0,0,0,.6)) drop-shadow(0 -1px 0 rgba(255,232,190,.14))}
+.cv-top{position:absolute;left:30px;right:18px;top:52px;text-align:center;font-family:var(--f-latin);font-size:13.5px;letter-spacing:.34em}
+.cv-ring{position:absolute;left:218px;top:270px;width:0;height:0}
+.circ{position:absolute;left:-134px;top:-134px;width:268px;height:268px;border-radius:50%;border:2px solid rgba(213,174,94,.8);box-shadow:0 1px 0 rgba(0,0,0,.55)}
+.circ::before{content:"";position:absolute;inset:9px;border-radius:50%;border:1px dashed rgba(213,174,94,.45)}
+.rs{position:absolute;left:-28px;top:-28px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 40% 35%,#5c2417,#2a0c06);box-shadow:0 0 0 2px #c79f4c,0 0 0 4px #2f110a,0 0 0 5px rgba(213,174,94,.55),inset 0 2px 7px rgba(0,0,0,.7)}
+.rs svg{width:36px;height:36px;filter:drop-shadow(0 1px 0 rgba(0,0,0,.7))}
+.cv-mid{position:absolute;left:-110px;width:220px;top:-50px;height:100px;display:grid;place-items:center;align-content:center;text-align:center;gap:0}
+.cv-mid small{font-size:14px;font-family:var(--f-body)}
+.cv-title{margin:0;font-family:var(--f-display);font-weight:400;font-size:37px;line-height:1.35}
+.cv-sub{position:absolute;left:30px;right:18px;top:442px;text-align:center;font-size:17px;font-weight:500}
+.cv-orn{position:absolute;left:30px;right:18px;top:478px;display:flex;justify-content:center}
+.cv-orn svg{width:150px;height:18px}
+.cv-foot{position:absolute;left:30px;right:18px;top:506px;text-align:center;font-size:13px;letter-spacing:.04em}
+.brass{position:absolute;width:62px;height:62px;right:-1px}
+.brass.tr{top:-1px}.brass.br{bottom:-1px;transform:scaleY(-1)}
+.shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(112deg,transparent 42%,rgba(255,232,180,.13) 50%,transparent 58%);background-size:260% 100%;animation:shine 8s ease-in-out infinite}
+@keyframes shine{0%{background-position:130% 0}55%,100%{background-position:-30% 0}}
+.cvb .blind{position:absolute;inset:22px 30px 22px 18px;border:2px solid rgba(0,0,0,.4);box-shadow:inset 0 0 0 6px transparent,inset 0 0 0 7px rgba(0,0,0,.3),0 1px 0 rgba(255,220,180,.06)}
+.cvb .ros{position:absolute;left:50%;top:44%;width:74px;height:74px;margin:-37px 0 0 -44px}
+.cvb .bk{position:absolute;left:18px;right:30px;bottom:60px;text-align:center;font-size:13px;line-height:1.6}
+
+/* endpapers */
+.endp{position:absolute;top:9px;bottom:9px;background:var(--marble) center/cover,#4a3a5a;filter:saturate(.62) sepia(.32) brightness(.8) contrast(.92);box-shadow:inset 0 0 14px rgba(0,0,0,.35),0 0 0 1px rgba(0,0,0,.35)}
+.endp.L{left:12px;right:0}.endp.R{left:0;right:12px}
+.plate{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);width:236px;padding:18px 16px 16px;background:var(--paperimg) center/cover,#efe0bd;color:var(--ink);text-align:center;display:grid;gap:2px;box-shadow:0 6px 16px rgba(0,0,0,.4);outline:1px solid rgba(107,35,21,.6);outline-offset:-7px}
+.plate small{font-family:var(--f-latin);letter-spacing:.3em;font-size:12px;color:var(--oxblood)}
+.plate svg{width:40px;height:40px;margin:4px auto;color:var(--oxblood)}
+.plate b{font-weight:600;font-size:15px}
+.plate span{font-size:14.5px;color:var(--ink-2)}
+.plate .who{font-family:var(--f-display);color:var(--oxblood);font-size:15px}
+.how{position:absolute;left:40px;right:28px;bottom:34px;margin:0;padding:8px 12px;border-radius:6px;background:rgba(24,12,6,.82);text-align:center;font-size:13.5px;line-height:1.55;color:#f3e6c9}
+
+/* pages */
+.pg{position:absolute;inset:0;background:var(--paperimg) center/cover,var(--paper);color:var(--ink);font-family:var(--f-body)}
+.pg::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(135% 105% at 50% 50%,transparent 58%,rgba(110,68,22,.24) 100%)}
+.pg.L::after,.pg.R::after{content:"";position:absolute;top:0;bottom:0;width:54px;pointer-events:none}
+.pg.L::after{right:0;background:linear-gradient(90deg,transparent,rgba(70,40,12,.1) 55%,rgba(45,24,6,.34))}
+.pg.R::after{left:0;background:linear-gradient(270deg,transparent,rgba(70,40,12,.1) 55%,rgba(45,24,6,.34))}
+.pg-in{position:absolute;top:44px;bottom:44px;overflow:hidden;font-size:17px;line-height:1.6}
+.pg.L .pg-in{left:34px;right:42px}.pg.R .pg-in{left:42px;right:34px}
+.rh{position:absolute;top:15px;display:flex;align-items:center;gap:6px;font-size:12.5px;color:#86674a;border-bottom:1px solid rgba(120,80,30,.3);padding-bottom:4px}
+.pg.L .rh{left:34px;right:42px}.pg.R .rh{left:42px;right:34px;justify-content:flex-end}
+.rh svg{width:14px;height:14px;color:var(--rc,#86674a)}
+.fo{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-family:var(--f-display);font-size:13px;color:#7a5a3a}
+.curl{position:absolute;right:0;bottom:0;width:30px;height:30px;opacity:0;transition:width .25s,height .25s,opacity .3s;background:linear-gradient(315deg,transparent 48%,rgba(0,0,0,.18) 50%,#f7ecd2 51%,#d9c59a 100%);box-shadow:-2px -2px 5px rgba(0,0,0,.12)}
+.leaf.cur-r .face.f .curl{opacity:1}
+.stage.open:not(.single) .leaf.cur-r .face.f:hover .curl{width:46px;height:46px}
+.leaf.cur-r,.leaf.cur-l{cursor:pointer}
+
+.pg h2.ph{margin:0 0 .3em;font-family:var(--f-display);font-weight:400;font-size:1.65em;line-height:1.35;color:var(--oxblood);text-align:center;text-wrap:balance}
+.rule{display:flex;align-items:center;gap:8px;margin:.1em auto .7em;width:70%}
+.rule::before,.rule::after{content:"";flex:1;height:1px;background:rgba(107,35,21,.45)}
+.rule i{width:7px;height:7px;transform:rotate(45deg);background:var(--oxblood)}
+.lead{margin:0 0 .6em;color:var(--ink-2)}
+.sec{margin:0 0 .75em}
+.sec h3{margin:0 0 .25em;display:flex;align-items:center;gap:.45em;font-family:var(--f-display);font-weight:400;font-size:1.05em;line-height:1.35;color:var(--oxblood)}
+.num{flex:none;width:1.5em;height:1.5em;border-radius:50%;display:inline-grid;place-items:center;font-family:var(--f-display);font-size:.74em;line-height:1;background:var(--oxblood);color:#f5e6c3;box-shadow:0 0 0 2px var(--paper),0 0 0 3px rgba(107,35,21,.5)}
+.sec p{margin:0 0 .3em}
+.sec b,.it b{color:#48220f;font-weight:600}
+.kw{display:inline-block;padding:0 .45em;margin-right:.35em;border:1.5px solid var(--rc,var(--oxblood));border-radius:4px;font-weight:600;color:var(--rc,var(--oxblood));line-height:1.35;font-size:.92em}
+ul.it{list-style:none;margin:.05em 0 .25em;padding:0;display:grid;gap:.2em}
+ul.it li{position:relative;padding-left:1.05em}
+ul.it li::before{content:"";position:absolute;left:.1em;top:.62em;width:.38em;height:.38em;transform:rotate(45deg);background:var(--rc,var(--oxblood))}
+ol.two{list-style:none;margin:.1em 0 .45em;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:.1em .8em;counter-reset:t}
+ol.two li{counter-increment:t;display:flex;gap:.4em;font-size:.95em}
+ol.two li::before{content:counter(t) ".";color:var(--rc);font-weight:600;min-width:1.1em}
+.sub{margin:.15em 0 .05em!important;font-weight:600;color:var(--rc)}
+.quote{margin:.35em 0 .1em;padding:.3em .9em;border-left:3px double var(--rc,var(--oxblood));font-style:italic;color:var(--ink-2)}
+.quote small{font-size:.85em}
+.note{font-size:.8em;color:var(--ink-2);margin:.35em 0 0!important;padding-top:.3em;border-top:1px dotted rgba(120,80,30,.45)}
+.symfig{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7em;align-items:start;margin:.1em 0 .4em}
+.symfig .sf{width:3.1em;height:3.1em;border-radius:50%;display:grid;place-items:center;color:var(--rc);box-shadow:0 0 0 1.5px var(--rc),0 0 0 4px var(--paper),0 0 0 5px rgba(0,0,0,.18)}
+.symfig .sf svg{width:2.2em;height:2.2em}
+.symfig p{margin:0}
+
+/* chapter opener */
+.op{text-align:center;margin:0 0 .65em}
+.medal{width:86px;height:86px;margin:0 auto 4px;border-radius:50%;display:grid;place-items:center;color:var(--rc);background:radial-gradient(circle,rgba(255,250,235,.5),transparent 70%);box-shadow:0 0 0 2px var(--rc),0 0 0 6px var(--paper),0 0 0 7px var(--rc)}
+.medal svg{width:56px;height:56px}
+.op h2{margin:.12em 0 0;font-family:var(--f-display);font-weight:400;font-size:1.85em;line-height:1.3;color:var(--rc);text-wrap:balance}
+.op .lt{font-family:var(--f-latin);letter-spacing:.24em;font-size:.72em;color:#86674a}
+.op .og{display:inline-block;margin-top:.35em;padding:.18em .8em;border-top:1px solid rgba(120,80,30,.4);border-bottom:1px solid rgba(120,80,30,.4);font-size:.84em;color:var(--ink-2)}
+.op .mean{margin:.35em 0 0;font-size:.86em;font-style:italic;color:var(--ink-2)}
+
+/* title page */
+.tp{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;text-align:center;gap:6px;padding:10px 6px}
+.tp .k{font-family:var(--f-latin);letter-spacing:.3em;font-size:12.5px;color:#86674a}
+.tp h1{margin:0;font-family:var(--f-display);font-weight:400;font-size:46px;line-height:1.3;color:var(--oxblood)}
+.tp .s{font-size:16.5px;line-height:1.55;color:var(--ink-2)}
+.tp .syms{display:flex;gap:12px;margin:14px 0 10px;color:var(--oxblood)}
+.tp .syms svg{width:30px;height:30px}
+.tp .by{font-size:15px;line-height:1.65;color:var(--ink-2)}
+.tp .by b{font-family:var(--f-display);font-weight:400;color:var(--oxblood);font-size:17px}
+.tp .yr{margin-top:10px;font-family:var(--f-display);font-size:14px;color:#86674a}
+.tp-frame{position:absolute;inset:26px 26px 30px 34px;border:1px solid rgba(107,35,21,.45);outline:3px double rgba(107,35,21,.35);outline-offset:5px;pointer-events:none}
+
+/* contents */
+.toc{list-style:none;margin:.2em 0 0;padding:0;display:grid;gap:.15em}
+.toc button{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:.5em;width:100%;padding:.32em .2em;border-radius:6px}
+.toc button:hover{background:rgba(107,35,21,.08)}
+.toc button:focus-visible{outline:2px solid var(--oxblood)}
+.toc i{flex:none;width:1.4em;height:1.4em;color:var(--rc,var(--oxblood));display:grid;place-items:center}
+.toc i svg{width:100%;height:100%}
+.toc .t{font-weight:500}
+.toc .d{flex:1;border-bottom:2px dotted rgba(90,60,30,.4);transform:translateY(-.25em)}
+.toc .n{font-family:var(--f-display);color:var(--oxblood);font-size:.92em}
+.toc-note{margin:1em 0 0;font-size:.85em;font-style:italic;color:var(--ink-2);text-align:center}
+ol.comp{list-style:none;margin:0;padding:0;display:grid;gap:.3em}
+ol.comp li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:.6em;align-items:start;line-height:1.4}
+ol.comp li .num{margin-top:.12em}
+ol.comp b{color:var(--oxblood);font-weight:600}
+ol.comp span.d{display:block;font-size:.88em;color:var(--ink-2);line-height:1.4}
+.gloss{margin-top:.7em;padding:.5em .7em;border:1px solid rgba(107,35,21,.35);border-radius:4px;font-size:.84em;line-height:1.55;background:rgba(255,248,230,.35)}
+.gloss b{color:var(--oxblood)}
+
+/* comparison */
+.cmp{display:grid;grid-template-rows:34px repeat(5,72px);margin-top:4px}
+.cr{display:grid;align-items:center;border-bottom:1px solid rgba(120,80,30,.35);font-size:.86em;line-height:1.35}
+.cmp.L .cr{grid-template-columns:1.25fr 1.05fr .95fr}
+.cmp.R .cr{grid-template-columns:1.2fr 1fr 1.2fr}
+.cr span{padding:0 .35em}
+.cr.hd{font-family:var(--f-display);color:var(--oxblood);font-size:.82em;border-bottom:2px solid rgba(107,35,21,.6)}
+.cr .rn{display:flex;align-items:center;gap:.45em;font-weight:600;color:var(--rc)}
+.cr .rn i{flex:none;width:1.6em;height:1.6em;display:grid;place-items:center}
+.cr .rn i svg{width:100%;height:100%}
+.fin{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:.9em;font-family:var(--f-display);color:var(--oxblood);font-size:.95em}
+.fin svg{width:34px;height:14px}
+
+/* chapter tabs on the fore-edge */
+.tab{all:unset;position:absolute;left:100%;width:27px;height:70px;transform-style:preserve-3d;cursor:pointer}
+.tab .tf,.tab .tb{position:absolute;inset:0;display:grid;place-items:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;color:#f3dc9c;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 40%),var(--tc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,230,190,.2)}
+.tab .tf{border-radius:0 7px 7px 0}
+.tab .tb{border-radius:7px 0 0 7px;transform:rotateY(180deg);background:linear-gradient(270deg,rgba(0,0,0,.35),rgba(0,0,0,0) 40%),var(--tc)}
+.tab svg{width:18px;height:18px}
+.tab:hover .tf,.tab:hover .tb{filter:brightness(1.25)}
+.stage.single .tab{display:none}
+
+/* closed-state call to action */
+.cta{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:grid;justify-items:center;gap:6px;text-align:center;z-index:3}
+.openbtn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:999px;border:1px solid #f0d58d;background:linear-gradient(180deg,#e9c46f,#b98a33);color:#2a1a08;font-family:var(--f-display);font-size:16px;cursor:pointer;box-shadow:0 10px 26px -10px rgba(233,196,111,.7)}
+.openbtn svg{width:18px;height:18px}
+.cta p{margin:0;font-size:13.5px;color:var(--ui-dim);text-shadow:0 1px 2px #000}
+.stage.open .cta{display:none}
+
+/* dock */
+.dock{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 16px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--ui-line);background:rgba(14,9,6,.78);position:relative;z-index:5}
+.nav{width:46px;height:46px;border-radius:50%;border:1px solid var(--ui-line);background:rgba(255,255,255,.03);display:grid;place-items:center;cursor:pointer}
+.nav:hover{border-color:var(--gilt)}
+.nav:disabled{opacity:.3;cursor:not-allowed}
+.nav svg{width:22px;height:22px}
+.mid{min-width:0;display:grid;gap:6px;justify-items:center}
+.status{font-size:13.5px;color:var(--ui-dim);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.status b{color:var(--gilt-hi);font-weight:500}
+.chips{display:flex;gap:6px;overflow-x:auto;max-width:100%;padding:2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border-radius:999px;border:1px solid var(--ui-line);background:rgba(255,255,255,.03);cursor:pointer;font-size:14px;color:var(--ui-dim);white-space:nowrap}
+.chip svg{width:16px;height:16px;color:var(--gilt)}
+.chip:hover{color:var(--ui);border-color:var(--gilt)}
+.chip[aria-current="true"]{background:rgba(213,174,94,.18);border-color:var(--gilt);color:var(--gilt-hi)}
+@media (prefers-reduced-motion:reduce){.shine{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gilt" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="100">
+      <stop offset="0" stop-color="#fff2c2"/><stop offset=".38" stop-color="#eccb6c"/><stop offset=".7" stop-color="#b07b24"/><stop offset="1" stop-color="#f1d27e"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3d993"/><stop offset=".45" stop-color="#b78a3a"/><stop offset=".75" stop-color="#7a5720"/><stop offset="1" stop-color="#d7b467"/>
+    </linearGradient>
+  </defs>
+</svg>
+<div class="app">
+  <header class="top">
+    <a class="back" href="index.html#media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg><span>กลับแฟ้มผลงาน</span></a>
+    <div class="ttl"><small>สื่อการเรียนรู้ · สังคมศึกษา ศาสนาและวัฒนธรรม</small><b>หนังสือศาสนาสากล</b></div>
+    <span class="sp"></span>
+    <button class="ib" id="snd" type="button" aria-label="เปิดหรือปิดเสียงพลิกหน้า" title="เสียงพลิกหน้า"></button>
+    <button class="ib" id="full" type="button" aria-label="เต็มจอ" title="เต็มจอ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+  </header>
+
+  <main class="stage" id="stage" tabindex="0" aria-label="หนังสือศาสนาสากล กดลูกศรซ้ายหรือขวาเพื่อพลิกหน้า">
+    <canvas id="dust" aria-hidden="true"></canvas>
+    <div class="scaler" id="scaler">
+      <div class="shadow" aria-hidden="true"></div>
+      <div class="book" id="book"></div>
+    </div>
+    <div class="cta">
+      <button class="openbtn" id="openBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5.5C4.5 4 8 4 12 6c4-2 7.5-2 10-.5V19c-2.5-1.5-6-1.5-10 .5-4-2-7.5-2-10-.5z"/><path d="M12 6v13.5"/></svg>เปิดหนังสือ</button>
+      <p>ลากเพื่อหมุนดูรอบเล่ม · แตะปกเพื่อเปิด</p>
+    </div>
+  </main>
+
+  <footer class="dock">
+    <button class="nav" id="prev" type="button" aria-label="หน้าก่อนหน้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div class="mid"><div class="status" id="status" aria-live="polite"></div><div class="chips" id="chips"></div></div>
+    <button class="nav" id="next" type="button" aria-label="หน้าถัดไป"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+  </footer>
+</div>
+
+<script>
+(function(){
+'use strict';
+const PW=400,PH=566,N=15,GAP_C=2.4,GAP_O=0.45,LASTP=27;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const TH='๐๑๒๓๔๕๖๗๘๙',thn=n=>String(n).replace(/\d/g,d=>TH[d]);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FLIP=reduce?220:850,STEP=reduce?0:95;
+document.documentElement.style.setProperty('--ft',FLIP+'ms');
+const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- textures (drawn once) ---------- */
+function rnd(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function tex(w,h,draw,q){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);return c.toDataURL('image/jpeg',q||.86)}
+const LEATHER=tex(512,736,(x,w,h)=>{const r=rnd(7);x.fillStyle='#4a1b10';x.fillRect(0,0,w,h);
+  for(let i=0;i<80;i++){const cx=r()*w,cy=r()*h,rad=30+r()*130,dark=r()<.55,g=x.createRadialGradient(cx,cy,0,cx,cy,rad);g.addColorStop(0,dark?'rgba(18,5,2,.24)':'rgba(150,76,44,.12)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(cx-rad,cy-rad,rad*2,rad*2)}
+  for(let i=0;i<30000;i++){const s=.5+r()*1.4;x.fillStyle=r()<.55?`rgba(0,0,0,${(.06+r()*.13).toFixed(3)})`:`rgba(255,200,160,${(.02+r()*.05).toFixed(3)})`;x.fillRect(r()*w,r()*h,s,s)}
+  x.lineWidth=.6;for(let i=0;i<300;i++){let px=r()*w,py=r()*h;x.strokeStyle=`rgba(0,0,0,${(.08+r()*.1).toFixed(3)})`;x.beginPath();x.moveTo(px,py);for(let k=0;k<4;k++){px+=(r()-.5)*18;py+=(r()-.5)*18;x.lineTo(px,py)}x.stroke()}
+  const v=x.createRadialGradient(w/2,h/2,Math.min(w,h)*.28,w/2,h/2,Math.max(w,h)*.72);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(8,2,1,.55)');x.fillStyle=v;x.fillRect(0,0,w,h)});
+const PAPER=tex(512,724,(x,w,h)=>{const r=rnd(11);const g=x.createLinearGradient(0,0,w,h);g.addColorStop(0,'#f2e4c5');g.addColorStop(1,'#e9d8b1');x.fillStyle=g;x.fillRect(0,0,w,h);
+  for(let i=0;i<46;i++){const cx=r()*w,cy=r()*h,rad=20+r()*100,gg=x.createRadialGradient(cx,cy,0,cx,cy,rad);gg.addColorStop(0,`rgba(165,112,48,${(.03+r()*.06).toFixed(3)})`);gg.addColorStop(1,'rgba(165,112,48,0)');x.fillStyle=gg;x.fillRect(cx-rad,cy-rad,rad*2,rad*2)}
+  for(let i=0;i<22;i++){const cx=r()*w,cy=r()*h,rad=1.5+r()*5,gg=x.createRadialGradient(cx,cy,0,cx,cy,rad);gg.addColorStop(0,`rgba(135,78,30,${(.1+r()*.16).toFixed(3)})`);gg.addColorStop(1,'rgba(135,78,30,0)');x.fillStyle=gg;x.fillRect(cx-rad,cy-rad,rad*2,rad*2)}
+  x.lineWidth=.5;for(let i=0;i<1600;i++){const px=r()*w,py=r()*h,a=r()*Math.PI,l=2+r()*7;x.strokeStyle=`rgba(120,86,46,${(.04+r()*.06).toFixed(3)})`;x.beginPath();x.moveTo(px,py);x.lineTo(px+Math.cos(a)*l,py+Math.sin(a)*l);x.stroke()}
+  for(let i=0;i<14000;i++){x.fillStyle=`rgba(90,60,30,${(.02+r()*.04).toFixed(3)})`;x.fillRect(r()*w,r()*h,1,1)}},.84);
+function marble(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d'),im=x.createImageData(w,h),d=im.data;
+  const pal=[[30,42,72],[128,42,30],[206,162,88],[236,222,186],[46,88,84],[34,46,78],[172,74,44],[234,218,178],[74,54,92]],L=pal.length;
+  for(let yy=0;yy<h;yy++)for(let xx=0;xx<w;xx++){
+    const u=xx+22*Math.sin(yy*.045+Math.sin(xx*.013)*2)+9*Math.sin(yy*.17+xx*.02),v=yy+14*Math.sin(u*.03);
+    const t=u*.075+Math.sin(v*.05)*1.6+Math.sin((u+v)*.021)*1.2;const i=Math.floor(t),fr=t-i;
+    const a=pal[((i%L)+L)%L],b=pal[(((i+1)%L)+L)%L],e=fr<.88?0:(fr-.88)/.12,vein=fr>.8&&fr<.88?.72:1,o=(yy*w+xx)*4;
+    d[o]=(a[0]*(1-e)+b[0]*e)*vein;d[o+1]=(a[1]*(1-e)+b[1]*e)*vein;d[o+2]=(a[2]*(1-e)+b[2]*e)*vein;d[o+3]=255}
+  x.putImageData(im,0,0);const r=rnd(3);for(let i=0;i<9000;i++){x.fillStyle=`rgba(${r()<.5?'0,0,0':'255,240,210'},${(.03+r()*.05).toFixed(3)})`;x.fillRect(r()*w,r()*h,1.2,1.2)}
+  return c.toDataURL('image/jpeg',.85)}
+const RS=document.documentElement.style;
+RS.setProperty('--leather',`url(${LEATHER})`);RS.setProperty('--paperimg',`url(${PAPER})`);RS.setProperty('--marble',`url(${marble(400,580)})`);
+
+/* ---------- symbols ---------- */
+let uid=0;
+function star(cx,cy,R,r,F){let p='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r:R;p+=(i?'L':'M')+(cx+Math.cos(a)*rr).toFixed(2)+' '+(cy+Math.sin(a)*rr).toFixed(2)}return `<path d="${p}Z" fill="${F}"/>`}
+function kirpan(F,m){return `<g${m?' transform="translate(100 0) scale(-1 1)"':''}><path d="M60 79 C79 75 91 58 88 27 C85 50 75 65 58 72 Z" fill="${F}"/><path d="M57.5 71 L62 80.5" stroke="${F}" stroke-width="4.2" stroke-linecap="round"/><path d="M60 77 L43.5 92" stroke="${F}" stroke-width="5" stroke-linecap="round"/></g>`}
+function sym(k,gold){const F=gold?'url(#gilt)':'currentColor',id='m'+(++uid);let s='';
+  if(k==='bud'){s=`<circle cx="50" cy="50" r="36" fill="none" stroke="${F}" stroke-width="6"/><circle cx="50" cy="50" r="29.5" fill="none" stroke="${F}" stroke-width="1.6"/><circle cx="50" cy="50" r="11.5" fill="none" stroke="${F}" stroke-width="2.6"/><circle cx="50" cy="50" r="6" fill="${F}"/>`;
+    for(let i=0;i<8;i++)s+=`<path d="M47.7 38.6 L48.9 21 H51.1 L52.3 38.6 Z" fill="${F}" transform="rotate(${i*45} 50 50)"/><circle cx="50" cy="7" r="4.3" fill="${F}" transform="rotate(${i*45+22.5} 50 50)"/>`}
+  else if(k==='chr')s=`<path d="M43.5 5h13v23.5h21v13h-21V95h-13V41.5h-21v-13h21z" fill="${F}"/>`;
+  else if(k==='isl')s=`<defs><mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="59" cy="44" r="29" fill="#000"/></mask></defs><circle cx="44" cy="52" r="36" fill="${F}" mask="url(#${id})"/>`+star(72,42,12,4.8,F);
+  else if(k==='hin')s=`<text x="50" y="77" text-anchor="middle" font-family="'Noto Serif Devanagari','Kohinoor Devanagari','Nirmala UI','Mangal','Devanagari MT',serif" font-weight="600" font-size="82" fill="${F}">ॐ</text>`;
+  else if(k==='sik')s=`<circle cx="50" cy="50" r="20" fill="none" stroke="${F}" stroke-width="6"/><path d="M50 3 L55.6 14 L55 58 H45 L44.4 14 Z" fill="${F}"/><rect x="38.5" y="57.5" width="23" height="4.6" rx="2.2" fill="${F}"/><rect x="47.5" y="61.5" width="5" height="10" fill="${F}"/><circle cx="50" cy="75" r="3.6" fill="${F}"/>`+kirpan(F,false)+kirpan(F,true);
+  else if(k==='tbl')s=`<rect x="12" y="18" width="76" height="64" rx="4" fill="none" stroke="${F}" stroke-width="7"/><path d="M12 38H88M12 60H88M40 18V82" stroke="${F}" stroke-width="6"/>`;
+  else if(k==='book')s=`<path d="M8 22c12-6 28-6 42 4 14-10 30-10 42-4v58c-12-6-28-6-42 4-14-10-30-10-42-4z" fill="none" stroke="${F}" stroke-width="6" stroke-linejoin="round"/><path d="M50 26v58" stroke="${F}" stroke-width="5"/>`;
+  return `<svg viewBox="0 0 100 100" aria-hidden="true">${s}</svg>`}
+const FLOUR=`<svg viewBox="0 0 150 18" aria-hidden="true"><path d="M2 9h52M96 9h52" stroke="url(#gilt)" stroke-width="1.4"/><path d="M75 2l7 7-7 7-7-7z" fill="url(#gilt)"/><circle cx="60" cy="9" r="2.4" fill="url(#gilt)"/><circle cx="90" cy="9" r="2.4" fill="url(#gilt)"/></svg>`;
+const FIN=`<svg viewBox="0 0 34 14" aria-hidden="true"><path d="M1 7h12M21 7h12" stroke="currentColor" stroke-width="1.2"/><path d="M17 2l5 5-5 5-5-5z" fill="currentColor"/></svg>`;
+const BRASS=`<svg class="brass" viewBox="0 0 62 62" aria-hidden="true"><path d="M0 0H62V62C58 36 30 8 0 0Z" fill="url(#brass)" stroke="#5a3d12" stroke-width="1"/><path d="M8 3H59V54" fill="none" stroke="rgba(255,240,200,.45)" stroke-width="1"/><circle cx="50" cy="12" r="3" fill="#6a4a18"/><circle cx="49.4" cy="11.4" r="1.4" fill="#f4dc9c"/><circle cx="30" cy="8" r="2.4" fill="#6a4a18"/><circle cx="54" cy="32" r="2.4" fill="#6a4a18"/></svg>`;
+
+/* ---------- content ---------- */
+const COMP=[null,'ศาสดา / ผู้ก่อตั้ง','ศาสนทัศน์','คัมภีร์ทางศาสนา','หลักคำสอนสำคัญ','นิกายสำคัญ','จุดมุ่งหมายสูงสุด','ศาสนพิธีและสัญลักษณ์'];
+const S=(n,body)=>`<section class="sec"><h3><span class="num">${n}</span>${COMP[n]}</h3>${body}</section>`;
+const P=t=>`<p>${t}</p>`;
+const UL=a=>`<ul class="it">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+const OL2=a=>`<ol class="two">${a.map(x=>`<li>${x}</li>`).join('')}</ol>`;
+const KW=t=>`<span class="kw">${t}</span>`;
+const FIG=(k,t)=>`<div class="symfig"><span class="sf">${sym(k)}</span><p>${t}</p></div>`;
+
+const REL=[
+{k:'bud',name:'พระพุทธศาสนา',latin:'Buddhism',short:'พุทธ',rc:'#7a470c',tab:'#6e400b',origin:'ชมพูทวีป (อินเดียตอนเหนือ) · กว่า 2,600 ปีมาแล้ว',
+ cmp:['พระพุทธเจ้า','อเทวนิยม','พระไตรปิฎก','พระนิพพาน','ธรรมจักร'],
+ pages:[
+  S(1,P('<b>พระพุทธเจ้า</b> (พระสมณโคดม) เดิมคือเจ้าชายสิทธัตถะ พระราชโอรสของพระเจ้าสุทโธทนะและพระนางสิริมหามายา แห่งกรุงกบิลพัสดุ์ ทรงออกผนวชเมื่อพระชนมายุ 29 พรรษา บำเพ็ญเพียร 6 ปีจนตรัสรู้เมื่อพระชนมายุ 35 พรรษา ทรงเผยแผ่ธรรม 45 พรรษา และเสด็จดับขันธปรินิพพานเมื่อพระชนมายุ 80 พรรษา')),
+  S(2,P(KW('อเทวนิยม')+'ไม่เชื่อว่ามีพระเจ้าผู้สร้างโลก เชื่อว่าทุกสิ่งเกิดขึ้นตามเหตุและปัจจัย มนุษย์พ้นทุกข์ได้ด้วยความเพียรและปัญญาของตนเอง ตามหลักกรรมว่า ทำดีได้ดี ทำชั่วได้ชั่ว'))+
+  S(3,P('<b>พระไตรปิฎก</b> บันทึกด้วยภาษาบาลี แบ่งเป็น 3 หมวด')+UL(['<b>พระวินัยปิฎก</b> ศีลและระเบียบของภิกษุ ภิกษุณี','<b>พระสุตตันตปิฎก</b> พระธรรมเทศนาที่แสดงแก่บุคคลต่าง ๆ','<b>พระอภิธรรมปิฎก</b> หลักธรรมชั้นสูงว่าด้วยจิต เจตสิก รูป และนิพพาน'])),
+  S(4,UL(['<b>อริยสัจ 4</b> ทุกข์ สมุทัย นิโรธ มรรค ความจริงอันประเสริฐที่ทรงตรัสรู้','<b>ไตรสิกขา</b> ศีล สมาธิ ปัญญา','<b>โอวาทปาฏิโมกข์</b> ไม่ทำความชั่ว ทำความดี ทำจิตใจให้ผ่องใส','<b>ไตรลักษณ์</b> อนิจจัง ทุกขัง อนัตตา','<b>เบญจศีล</b> ศีล 5 ข้อสำหรับผู้ครองเรือน']))+
+  S(5,UL(['<b>เถรวาท</b> ยึดพระไตรปิฎกตามแบบดั้งเดิม นับถือในไทย ลาว เมียนมา กัมพูชา และศรีลังกา','<b>มหายาน</b> ปรับคำสอนให้เข้ากับแต่ละสังคม นับถือในจีน ญี่ปุ่น เกาหลี เวียดนาม และทิเบต'])+P('คณะสงฆ์ไทยมี 2 นิกาย คือ <b>มหานิกาย</b> และ<b>ธรรมยุติกนิกาย</b> ซึ่งรัชกาลที่ 4 ทรงก่อตั้งขณะทรงผนวช')),
+  S(6,P('<b>พระนิพพาน</b> คือความดับกิเลสและดับทุกข์โดยสิ้นเชิง หลุดพ้นจากการเวียนว่ายตายเกิด')+'<p class="quote">นิพพานัง ปะระมัง สุขัง<br><small>พระนิพพานเป็นสุขอย่างยิ่ง</small></p>')+
+  S(7,FIG('bud','<b>ธรรมจักร</b> (กงล้อแห่งธรรม) หมายถึงการประกาศพระธรรมครั้งแรกของพระพุทธเจ้า ซี่ล้อ 8 ซี่แทนมรรคมีองค์ 8')+P('ศาสนพิธีแบ่งเป็น 4 หมวด')+UL(['<b>กุศลพิธี</b> เช่น การเวียนเทียน การบรรพชาอุปสมบท','<b>บุญพิธี</b> เช่น ทำบุญงานมงคลและงานอวมงคล','<b>ทานพิธี</b> เช่น ถวายสังฆทาน ทอดกฐิน','<b>ปกิณกพิธี</b> เช่น การจัดโต๊ะหมู่บูชา']))
+ ]},
+{k:'chr',name:'คริสต์ศาสนา',latin:'Christianity',short:'คริสต์',rc:'#25406b',tab:'#1f3558',origin:'ดินแดนปาเลสไตน์ · ราว 2,000 ปีมาแล้ว',
+ cmp:['พระเยซู','เอกเทวนิยม','ไบเบิล','อาณาจักรของพระเจ้า','ไม้กางเขน'],
+ pages:[
+  S(1,P('<b>พระเยซู</b> ประสูติที่เมืองเบธเลเฮม พระมารดาคือพระนางมารีย์ มีโยเซฟ ช่างไม้แห่งเมืองนาซาเร็ธ เป็นบิดาเลี้ยง เมื่ออายุราว 30 ปี ทรงเริ่มสั่งสอนเรื่องความรักและการกลับใจจากบาป ต่อมาถูกตรึงบนไม้กางเขน ชาวคริสต์เชื่อว่าพระองค์ทรงฟื้นคืนพระชนม์ในวันที่สาม และทรงเป็นพระบุตรของพระเจ้า')),
+  S(2,P(KW('เอกเทวนิยม')+'เชื่อในพระเจ้าองค์เดียว ผู้ทรงสร้างโลกและสรรพสิ่ง และทรงรักมนุษย์ ชาวคริสต์ส่วนใหญ่ยึดหลัก<b>ตรีเอกานุภาพ</b> คือ พระเจ้าองค์เดียวมี 3 พระบุคคล ได้แก่ พระบิดา พระบุตร และพระจิต'))+
+  S(3,P('<b>คัมภีร์ไบเบิล</b> แบ่งเป็น 2 ภาค')+UL(['<b>พันธสัญญาเดิม</b> เรื่องการสร้างโลก ประวัติชนชาติฮีบรู และบทบัญญัติของพระเจ้า ก่อนสมัยพระเยซู','<b>พันธสัญญาใหม่</b> ประวัติและคำสอนของพระเยซูในพระวรสาร 4 เล่ม และจดหมายของอัครสาวก'])),
+  S(4,UL(['<b>หลักความรัก</b> รักพระเจ้าสุดจิตใจ และรักเพื่อนมนุษย์เหมือนรักตนเอง','<b>บัญญัติ 10 ประการ</b> เช่น นมัสการพระเจ้าองค์เดียว นับถือบิดามารดา ไม่ฆ่าคน ไม่ลักขโมย ไม่พูดเท็จ','<b>บาปกำเนิดและการไถ่บาป</b> มนุษย์รอดพ้นจากบาปได้ด้วยความเชื่อในพระเยซู','<b>อาณาจักรพระเจ้า</b> ความสุขนิรันดร์ของผู้ทำตามพระประสงค์ของพระเจ้า']))+
+  S(5,UL(['<b>โรมันคาทอลิก</b> มีสมเด็จพระสันตะปาปาที่นครรัฐวาติกันเป็นประมุข บาทหลวงถือโสด','<b>ออร์โธดอกซ์</b> แยกตัวใน ค.ศ. 1054 นับถือมากในกรีซ รัสเซีย และยุโรปตะวันออก','<b>โปรเตสแตนต์</b> เกิดจากการปฏิรูปศาสนาของมาร์ติน ลูเทอร์ ใน ค.ศ. 1517 ยึดคัมภีร์ไบเบิลเป็นหลัก ศาสนาจารย์แต่งงานได้'])),
+  S(6,P('<b>การได้เข้าสู่อาณาจักรของพระเจ้า</b> มีชีวิตนิรันดร์อยู่กับพระเจ้าในสวรรค์ ด้วยความเชื่อในพระเจ้า การปฏิบัติตามคำสอน และความรักต่อเพื่อนมนุษย์'))+
+  S(7,FIG('chr','<b>ไม้กางเขน</b> ระลึกถึงการสิ้นพระชนม์ของพระเยซูบนไม้กางเขนเพื่อไถ่บาปให้มนุษย์ และความรักที่ยอมเสียสละ')+UL(['<b>ศีลศักดิ์สิทธิ์ 7 ประการ</b> (คาทอลิก) ศีลล้างบาป ศีลกำลัง ศีลมหาสนิท ศีลแก้บาป ศีลเจิมคนไข้ ศีลบวช และศีลสมรส','<b>โปรเตสแตนต์</b> ถือพิธีหลัก 2 อย่าง คือ พิธีบัพติศมาและพิธีมหาสนิท','<b>เทศกาล</b> คริสต์มาส (25 ธันวาคม) และอีสเตอร์ ฉลองการฟื้นคืนพระชนม์']))
+ ]},
+{k:'isl',name:'ศาสนาอิสลาม',latin:'Islam',short:'อิสลาม',rc:'#1d5537',tab:'#174a30',origin:'คาบสมุทรอาหรับ นครมักกะฮ์ · ราว ค.ศ. 610',mean:'“อิสลาม” แปลว่า การนอบน้อมต่อพระเจ้า และสันติ',
+ cmp:['นบีมุฮัมมัด','เอกเทวนิยม','อัลกุรอาน','สวรรค์<br>(ญันนะฮ์)','ดาวและ<br>จันทร์เสี้ยว'],
+ pages:[
+  S(1,P('<b>ท่านนบีมุฮัมมัด</b> (ซ.ล.) เกิดที่นครมักกะฮ์ ราว ค.ศ. 570 กำพร้าบิดามารดาตั้งแต่เยาว์วัย เมื่ออายุ 40 ปี ได้รับโองการจากพระอัลลอฮ์ผ่านมลาอิกะฮ์ญิบรีลที่ถ้ำฮิรออ์ ชาวมุสลิมถือว่าท่านเป็นศาสนทูตคนสุดท้าย ผู้นำคำสอนของพระเจ้ามาเผยแผ่ ไม่ใช่ผู้คิดตั้งศาสนาขึ้นเอง')+'<p class="note">ซ.ล. ย่อมาจาก ศ็อลลัลลอฮุอะลัยฮิวะซัลลัม แปลว่า ขอพระอัลลอฮ์ทรงประทานพรและความสันติแด่ท่าน</p>'),
+  S(2,P(KW('เอกเทวนิยม')+'ศรัทธาในพระอัลลอฮ์เพียงองค์เดียว ผู้ทรงสร้างและดูแลสรรพสิ่ง ไม่มีสิ่งใดเสมอเหมือนพระองค์ จึงไม่มีรูปเคารพใด ๆ')+'<p class="quote">ไม่มีพระเจ้าอื่นใดนอกจากอัลลอฮ์<br>และมุฮัมมัดเป็นศาสนทูตของอัลลอฮ์</p>')+
+  S(3,UL(['<b>อัลกุรอาน</b> พระวจนะของพระอัลลอฮ์ที่ประทานแก่ท่านนบีมุฮัมมัดตลอดราว 23 ปี เป็นภาษาอาหรับ มี 114 บท (ซูเราะฮ์)','<b>อัลหะดีษ</b> บันทึกคำพูดและแบบอย่างการปฏิบัติของท่านนบี ใช้เป็นแนวทางรองจากอัลกุรอาน'])),
+  S(4,'<p class="sub">หลักศรัทธา 6 ประการ</p>'+OL2(['พระอัลลอฮ์','มลาอิกะฮ์ (เทวทูต)','คัมภีร์','ศาสนทูต','วันพิพากษา','กฎกำหนดสภาวการณ์'])+'<p class="sub">หลักปฏิบัติ 5 ประการ</p>'+OL2(['ปฏิญาณตน','ละหมาดวันละ 5 เวลา','ถือศีลอดเดือนรอมฎอน','จ่ายซะกาต','ประกอบพิธีฮัจญ์']))+
+  S(5,UL(['<b>ซุนนี</b> กลุ่มใหญ่ที่สุด ยึดแนวทาง (ซุนนะฮ์) ของท่านนบี มุสลิมในไทยส่วนใหญ่เป็นซุนนี','<b>ชีอะฮ์</b> ยกย่องท่านอะลี ลูกพี่ลูกน้องและบุตรเขยของท่านนบี และผู้สืบเชื้อสายเป็นผู้นำ นับถือมากในอิหร่านและอิรัก'])),
+  S(6,P('<b>การได้รับความโปรดปรานจากพระอัลลอฮ์</b> และได้เข้าสวรรค์ (ญันนะฮ์) ในโลกหน้า (อาคิเราะฮ์) ซึ่งเป็นชีวิตนิรันดร์หลังวันพิพากษา'))+
+  S(7,FIG('isl','<b>ดาวและจันทร์เสี้ยว</b> อิสลามห้ามรูปเคารพ จึงไม่มีสัญลักษณ์ที่กำหนดในหลักศาสนา แต่เครื่องหมายนี้นิยมใช้แทนศาสนาอิสลามอย่างแพร่หลาย จันทร์เสี้ยวยังเกี่ยวกับปฏิทินจันทรคติ เช่น การดูจันทร์เสี้ยวเพื่อเริ่มเดือนรอมฎอน')+UL(['<b>การละหมาด 5 เวลา</b> ซุบฮิ ซุฮริ อัศริ มัฆริบ อิชาอ์ และละหมาดวันศุกร์ที่มัสยิด','<b>วันอีด</b> อีดิลฟิฏริ หลังสิ้นสุดการถือศีลอด และอีดิลอัฎฮา ช่วงพิธีฮัจญ์','<b>พิธีฮัจญ์</b> ณ นครมักกะฮ์']))
+ ]},
+{k:'hin',name:'ศาสนาพราหมณ์–ฮินดู',latin:'Hinduism',short:'ฮินดู',rc:'#8a2a16',tab:'#7a2412',origin:'ลุ่มแม่น้ำสินธุ อินเดีย · ราว 3,500 ปีมาแล้ว',mean:'ศาสนาเก่าแก่ที่สุดศาสนาหนึ่งของโลก เดิมเรียกว่าศาสนาพราหมณ์',
+ cmp:['ไม่มีศาสดา','พหุเทวนิยม','พระเวท','โมกษะ','โอม'],
+ pages:[
+  S(1,P('<b>ไม่มีศาสดาผู้ก่อตั้ง</b> คำสอนเกิดจากการสั่งสมความรู้ของฤๅษีจำนวนมาก ซึ่งเชื่อว่าได้ยินหรือหยั่งรู้ความจริงจากการบำเพ็ญภาวนา แล้วถ่ายทอดสืบต่อกันมา คัมภีร์ชั้นสูงสุดจึงเรียกว่า “ศรุติ” แปลว่า สิ่งที่ได้ยิน')),
+  S(2,P(KW('พหุเทวนิยม')+'นับถือเทพเจ้าหลายองค์ ที่สำคัญคือ<b>ตรีมูรติ</b> ได้แก่ พระพรหม (ผู้สร้าง) พระวิษณุหรือพระนารายณ์ (ผู้รักษา) และพระศิวะหรือพระอิศวร (ผู้ทำลาย)')+P('ในทางปรัชญาเชื่อว่าเทพทั้งหลายล้วนมาจาก <b>พรหมัน</b> (ปรมาตมัน) สภาวะสูงสุดเพียงหนึ่งเดียว'))+
+  S(3,P('<b>คัมภีร์พระเวท</b> 4 เล่ม ภาษาสันสกฤต')+UL(['<b>ฤคเวท</b> บทสรรเสริญเทพเจ้า','<b>ยชุรเวท</b> ระเบียบพิธีบูชายัญ','<b>สามเวท</b> บทสวดขับร้องในพิธีบูชา','<b>อถรรพเวท</b> มนตร์และคาถา'])+P('คัมภีร์อื่น เช่น อุปนิษัท ภควัทคีตา รามายณะ และมหาภารตะ')),
+  S(4,UL(['<b>อาศรม 4</b> ขั้นตอนของชีวิต ได้แก่ พรหมจารี (ศึกษาเล่าเรียน) คฤหัสถ์ (ครองเรือน) วานปรัสถ์ (ออกบำเพ็ญในป่า) และสันยาสี (สละทางโลก)','<b>กรรมและสังสารวัฏ</b> การกระทำส่งผลให้เวียนว่ายตายเกิด','<b>หลักธรรม 10 ประการ</b> เช่น ความอดทน การข่มใจ ความสัตย์จริง ความไม่โกรธ','<b>มรรค 3</b> ทางสู่โมกษะ ได้แก่ กรรมมรรค (การกระทำ) ชญาณมรรค (ความรู้) และภักติมรรค (ความภักดี)']))+
+  S(5,UL(['<b>ไศวนิกาย</b> นับถือพระศิวะเป็นใหญ่','<b>ไวษณพนิกาย</b> นับถือพระวิษณุ รวมทั้งอวตาร เช่น พระราม พระกฤษณะ','<b>ศากตะนิกาย</b> นับถือพระแม่หรือศักติ เช่น พระแม่อุมา พระแม่ทุรคา'])),
+  S(6,P('<b>โมกษะ</b> คือการหลุดพ้นจากการเวียนว่ายตายเกิด อาตมัน (วิญญาณของแต่ละคน) ได้กลับไปรวมเป็นหนึ่งเดียวกับปรมาตมันหรือพรหมัน'))+
+  S(7,FIG('hin','<b>โอม</b> เสียงศักดิ์สิทธิ์ ประกอบด้วยเสียง อะ อุ มะ หมายถึงเทพตรีมูรติ นิยมเปล่งเสียงก่อนสวดมนต์และภาวนา')+UL(['<b>สังสการ</b> พิธีประจำช่วงชีวิต เช่น พิธีตั้งชื่อ พิธีอุปนยนะ (สวมสายยัชโญปวีตเพื่อเริ่มศึกษาพระเวท) และพิธีแต่งงาน','<b>พิธีศราทธ์</b> ทำบุญอุทิศให้บรรพบุรุษ','<b>ปูชา</b> การบูชาเทพ และการอาบน้ำชำระบาปในแม่น้ำคงคา','<b>เทศกาล</b> ดิวาลี (ทีปาวลี) เทศกาลแห่งแสงไฟ และโฮลี เทศกาลสาดสี']))
+ ]},
+{k:'sik',name:'ศาสนาซิกข์',latin:'Sikhism',short:'ซิกข์',rc:'#3b2e74',tab:'#2f2660',origin:'แคว้นปัญจาบ อินเดียตอนเหนือ · ราว ค.ศ. 1500',mean:'“ซิกข์” แปลว่า ศิษย์ หมายถึงผู้เป็นศิษย์ของพระศาสดา (คุรุ)',
+ cmp:['คุรุนานัก','เอกเทวนิยม','คุรุครันถ์สาหิบ','มุกติ','คันดา'],
+ pages:[
+  S(1,P('<b>คุรุนานัก</b> (ค.ศ. 1469–1539) เป็นศาสดาองค์แรก ต่อมามีศาสดาสืบต่อกันรวม 10 องค์ องค์สุดท้ายคือ <b>คุรุโควินทสิงห์</b> ซึ่งประกาศให้คัมภีร์คุรุครันถ์สาหิบเป็นศาสดาสืบต่อไปตลอดกาล')),
+  S(2,P(KW('เอกเทวนิยม')+'เชื่อในพระเจ้าองค์เดียว ไม่มีรูปร่าง ไม่เกิดไม่ตาย เรียกพระเจ้าว่า “วาเฮคุรุ” ไม่บูชารูปเคารพ และถือว่ามนุษย์ทุกคนเท่าเทียมกัน'))+
+  S(3,P('<b>คัมภีร์คุรุครันถ์สาหิบ</b> (อาทิครันถ์) รวบรวมบทสวดสรรเสริญพระเจ้าของศาสดาและนักบุญ เริ่มรวบรวมโดยคุรุอรชุน ศาสดาองค์ที่ 5 เขียนด้วยอักษรคุรมุขี ชาวซิกข์เคารพคัมภีร์นี้เสมือนพระศาสดาที่ยังมีชีวิต')),
+  S(4,UL(['<b>หลักปฏิบัติ 3 ประการ</b> ระลึกถึงพระนามของพระเจ้าเสมอ ประกอบอาชีพสุจริต และแบ่งปันแก่ผู้อื่น','<b>ความเสมอภาค</b> ไม่แบ่งวรรณะ ชายและหญิงเท่าเทียมกัน','<b>ละเว้นกิเลส 5</b> กาม ความโกรธ ความโลภ ความหลง และความอหังการ']))+
+  S(5,UL(['<b>ขาลสา</b> ผู้ผ่านพิธีรับน้ำอมฤต ถือปฏิบัติกักกา 5 อย่างเคร่งครัด ก่อตั้งโดยคุรุโควินทสิงห์ ใน ค.ศ. 1699','<b>สหัชธารี</b> ผู้นับถือที่ยังไม่ได้รับน้ำอมฤต ปฏิบัติตามคำสอนแต่ไม่เคร่งครัดเรื่องกักกา'])),
+  S(6,P('<b>มุกติ</b> คือการหลุดพ้นจากการเวียนว่ายตายเกิด ได้รวมเป็นหนึ่งเดียวกับพระเจ้า ด้วยการระลึกถึงพระเจ้าและการทำความดี'))+
+  S(7,FIG('sik','<b>คันดา</b> ดาบสองคมตรงกลางหมายถึงความจริงและความยุติธรรม วงจักรหมายถึงพระเจ้าผู้เป็นนิรันดร์ ดาบโค้ง 2 เล่มหมายถึงอำนาจทางธรรมและทางโลก')+UL(['<b>กักกา 5</b> เกศ (ผมยาวไม่ตัด) กังฆา (หวี) กฉา (กางเกงขาสั้น) กรา (กำไลเหล็ก) และกิรปาน (ดาบสั้น)','<b>พิธีปาหุล</b> พิธีรับน้ำอมฤตเข้าเป็นขาลสา','<b>ลังกัร</b> โรงครัวในศาสนสถานคุรุทวารา ทุกคนนั่งรับประทานอาหารร่วมกันอย่างเท่าเทียม']))
+ ]}
+];
+REL.forEach((r,i)=>r.p0=4+i*4);
+
+/* ---------- pages ---------- */
+function chapterOf(p){if(p<=1)return{t:'หน้าปก'};if(p===2)return{t:'องค์ประกอบของศาสนา'};if(p===3)return{t:'สารบัญ'};
+  if(p<=23){const r=REL[Math.floor((p-4)/4)];return{t:r.name,r}}if(p<=25)return{t:'ตารางเปรียบเทียบ',k:'tbl'};if(p===26)return{t:'ส่งท้าย'};return{t:'ปกหลัง'}}
+function titlePage(){return `<div class="tp-frame"></div><div class="tp"><div class="k">LIBER · RELIGIONUM</div><h1>ศาสนาสากล</h1><div class="s">ว่าด้วยองค์ประกอบของศาสนา<br>สำคัญของโลก ๕ ศาสนา</div>
+  <div class="syms">${REL.map(r=>`<span style="color:${r.rc}">${sym(r.k)}</span>`).join('')}</div>
+  <div class="by">เรียบเรียงโดย<br><b>ครูระพีพัฒน์ กลัดกันแสง</b><br>กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม<br>โรงเรียนวังหลวงพิทยาสรรพ์</div><div class="yr">พุทธศักราช ๒๕๖๙</div></div>`}
+function compPage(){const d=['ผู้ตั้งศาสนาหรือผู้นำคำสอนมาเผยแผ่','มุมมองต่อพระเจ้า (ดูคำอธิบายท้ายหน้า)','หนังสือบันทึกหลักคำสอน','แนวทางปฏิบัติและศีลธรรม','การแตกแขนงย่อยของศาสนา','เป้าหมายสูงสุดของชีวิต','พิธีกรรมและเครื่องหมายประจำศาสนา'];
+  return `<h2 class="ph">องค์ประกอบของศาสนา</h2><div class="rule"><i></i></div><p class="lead">ศาสนาที่สมบูรณ์มีองค์ประกอบสำคัญ 7 ประการ</p>
+  <ol class="comp">${d.map((x,i)=>`<li><span class="num">${i+1}</span><div><b>${COMP[i+1]}</b><span class="d">${x}</span></div></li>`).join('')}</ol>
+  <div class="gloss"><b>เอกเทวนิยม</b> เชื่อในพระเจ้าองค์เดียว · <b>พหุเทวนิยม</b> เชื่อในพระเจ้าหลายองค์ · <b>อเทวนิยม</b> ไม่เชื่อว่ามีพระเจ้าผู้สร้างโลก</div>`}
+function tocPage(){const e=[['องค์ประกอบของศาสนา',2,null],...REL.map(r=>[r.name,r.p0,r]),['ตารางเปรียบเทียบ',24,{k:'tbl',rc:'#6b2315'}],['ส่งท้าย',26,null]];
+  return `<h2 class="ph">สารบัญ</h2><div class="rule"><i></i></div><ol class="toc">${e.map(([t,p,r])=>`<li><button type="button" data-goto="${p}"${r?` style="--rc:${r.rc}"`:''}><i>${r?sym(r.k):''}</i><span class="t">${t}</span><span class="d"></span><span class="n">${thn(p)}</span></button></li>`).join('')}</ol>
+  <p class="toc-note">แตะชื่อบทเพื่อเปิดไปยังหน้านั้น</p>`}
+function opener(r){return `<div class="op"><div class="medal">${sym(r.k)}</div><h2>${r.name}</h2><div class="lt">${r.latin}</div><div class="og">ถือกำเนิด · ${r.origin}</div>${r.mean?`<p class="mean">${r.mean}</p>`:''}</div>`}
+function cmpPage(side){const L=side==='L';const hd=L?['ศาสนา','ศาสดา','ศาสนทัศน์']:['คัมภีร์','จุดมุ่งหมาย','สัญลักษณ์'];
+  return `<h2 class="ph">${L?'ตารางเปรียบเทียบ':'ศาสนาสากล ๕ ศาสนา'}</h2><div class="rule"><i></i></div><div class="cmp ${side}"><div class="cr hd">${hd.map(h=>`<span>${h}</span>`).join('')}</div>
+  ${REL.map(r=>`<div class="cr" style="--rc:${r.rc}">${L?`<span class="rn"><i>${sym(r.k)}</i>${r.name.replace('ศาสนา','').replace('พระพุทธ','พุทธ').replace('คริสต์','คริสต์')||r.short}</span><span>${r.cmp[0]}</span><span>${r.cmp[1]}</span>`:`<span>${r.cmp[2]}</span><span>${r.cmp[3]}</span><span class="rn" style="font-weight:500"><i>${sym(r.k)}</i>${r.cmp[4]}</span>`}</div>`).join('')}</div>`}
+function endPage(){return `<h2 class="ph">ส่งท้าย</h2><div class="rule"><i></i></div><p class="lead">แม้แต่ละศาสนาจะมีความเชื่อ คัมภีร์ และพิธีกรรมต่างกัน แต่ทุกศาสนามีจุดร่วมเดียวกัน คือสอนให้มนุษย์เป็นคนดี</p>
+  <section class="sec"><h3>หลักร่วมของทุกศาสนา</h3>${UL(['ละเว้นความชั่ว และทำความดี','มีความรักความเมตตาต่อผู้อื่น','ซื่อสัตย์ และรู้จักควบคุมตนเอง','ช่วยเหลือแบ่งปันผู้ตกทุกข์ได้ยาก'])}</section>
+  <section class="sec"><h3>อยู่ร่วมกันในสังคมที่หลากหลาย</h3>${UL(['เคารพความเชื่อและศาสนสถานของผู้อื่น','ไม่ดูหมิ่นหรือล้อเลียนศาสนาอื่น','เรียนรู้ความแตกต่างอย่างเปิดใจ','ร่วมมือกันทำประโยชน์ต่อสังคม'])}</section>
+  <div class="fin">${FIN}<span>จบบริบูรณ์</span>${FIN}</div>`}
+function pageHTML(p){const side=p%2?'R':'L',ch=chapterOf(p);let body='',rc=ch.r?ch.r.rc:'';
+  if(p===1)body=titlePage();else if(p===2)body=compPage();else if(p===3)body=tocPage();
+  else if(p<=23){const r=ch.r,j=(p-4)%4;body=(j===0?opener(r):'')+r.pages[j]}
+  else if(p===24)body=cmpPage('L');else if(p===25)body=cmpPage('R');else body=endPage();
+  const rh=p>1?`<div class="rh">${side==='L'?`<span>ศาสนาสากล</span>`:`${ch.r?sym(ch.r.k):''}<span>${ch.t}</span>`}</div>`:'';
+  const fo=p>1?`<div class="fo">— ${thn(p)} —</div>`:'';
+  return `<div class="pg ${side}" data-p="${p}"${rc?` style="--rc:${rc}"`:''}>${rh}${p===1?body:`<div class="pg-in">${body}</div>`}${fo}${side==='R'?'<i class="curl"></i>':''}</div>`}
+function coverFront(){const ring=REL.map((r,i)=>{const a=(-90+i*72)*Math.PI/180;return `<span class="rs" style="transform:translate(${(Math.cos(a)*134).toFixed(1)}px,${(Math.sin(a)*134).toFixed(1)}px)">${sym(r.k,true)}</span>`}).join('');
+  return `<div class="cvf"><div class="joint"></div><div class="fr1"></div><div class="fr2"><i></i><i></i></div>
+  <div class="cv-top gt">LIBER · RELIGIONUM</div>
+  <div class="cv-ring"><div class="circ"></div>${ring}<div class="cv-mid"><small class="gt">ว่าด้วย</small><h1 class="cv-title gt">ศาสนาสากล</h1><small class="gt">องค์ประกอบ ๗ ประการ</small></div></div>
+  <div class="cv-sub gt">ศาสนาสำคัญของโลก ๕ ศาสนา</div><div class="cv-orn">${FLOUR}</div><div class="cv-foot gt">สังคมศึกษา ศาสนาและวัฒนธรรม</div>
+  ${BRASS}${BRASS.replace('class="brass"','class="brass br"')}<div class="shine"></div></div>`.replace('class="brass" viewBox','class="brass tr" viewBox')}
+function coverBack(){let ros='';for(let i=0;i<8;i++)ros+=`<ellipse cx="50" cy="28" rx="7" ry="19" fill="url(#gilt)" transform="rotate(${i*45} 50 50)" opacity=".9"/>`;
+  return `<div class="cvb"><div class="blind"></div><svg class="ros" viewBox="0 0 100 100" aria-hidden="true">${ros}<circle cx="50" cy="50" r="9" fill="#3a140b" stroke="url(#gilt)" stroke-width="3"/></svg>
+  <div class="bk gt">หนังสือศาสนาสากล<br>สื่อการเรียนรู้ · โรงเรียนวังหลวงพิทยาสรรพ์</div>${BRASS.replace('class="brass"','class="brass tr" style="right:auto;left:-1px;transform:scaleX(-1)"')}${BRASS.replace('class="brass"','class="brass br" style="right:auto;left:-1px;transform:scale(-1,-1)"')}</div>`}
+function insideFront(){return `<div class="cvin"><div class="endp L"></div><div class="plate"><small>EX LIBRIS</small>${sym('book')}<b>หนังสือเล่มนี้เป็นของ</b><span>ห้องเรียนสังคมศึกษา</span><span class="who">ครูระพีพัฒน์ กลัดกันแสง</span></div>
+  <p class="how">แตะหน้าขวาเพื่อพลิกไปข้างหน้า<br>แตะหน้าซ้ายเพื่อย้อนกลับ หรือปัดซ้าย–ขวา</p></div>`}
+function insideBack(){return `<div class="cvin"><div class="endp R"></div><div class="plate" style="width:210px"><small>COLOPHON</small><b>หนังสือศาสนาสากล</b><span>จัดทำเพื่อการเรียนรู้ในชั้นเรียน</span><span>พุทธศักราช ๒๕๖๙</span></div></div>`}
+
+/* ---------- build the book ---------- */
+const book=$('#book'),stage=$('#stage'),scaler=$('#scaler');
+const TABS=[...REL.map(r=>({p:r.p0,k:r.k,c:r.tab,n:r.name})),{p:24,k:'tbl',c:'#4a3526',n:'ตารางเปรียบเทียบ'}];
+const leaves=[];
+for(let i=0;i<N;i++){const el=document.createElement('div');el.className='leaf'+(i===0||i===N-1?' cover':'');el.dataset.i=i;
+  let fr,bk;if(i===0){fr=coverFront();bk=insideFront()}else if(i===N-1){fr=insideBack();bk=coverBack()}else{fr=pageHTML(2*i-1);bk=pageHTML(2*i)}
+  let tabs='';TABS.forEach((t,k)=>{if(t.p/2===i)tabs+=`<button class="tab" type="button" data-goto="${t.p}" style="top:${44+k*84}px;--tc:${t.c}" aria-label="เปิดบท${t.n}"><span class="tf">${sym(t.k,true)}</span><span class="tb">${sym(t.k,true)}</span></button>`});
+  el.innerHTML=`<div class="face f">${fr}<i class="shade"></i></div><div class="face b">${bk}<i class="shade"></i></div>${tabs}`;
+  book.appendChild(el);leaves.push({el,fl:false})}
+const T=(N-1)*GAP_C,Wf=(N-3)*GAP_C,zHi=(N-2)*GAP_C;
+book.insertAdjacentHTML('beforeend',
+ `<div class="bx spine" style="width:${T+2}px;transform:translateZ(-1px) rotateY(-90deg)"><div class="band" style="top:70px"></div><div class="band" style="top:140px"></div><div class="band" style="top:420px"></div><div class="band" style="top:490px"></div><div class="st gt">ศาสนาสากล</div></div>
+  <div class="bx gilt" style="left:400px;top:0;width:${Wf}px;height:566px;transform-origin:0 50%;transform:translateZ(${zHi}px) rotateY(90deg)"></div>
+  <div class="bx gilt h" style="left:0;top:0;width:400px;height:${Wf}px;transform-origin:50% 0;transform:translateZ(${GAP_C}px) rotateX(90deg)"></div>
+  <div class="bx gilt h" style="left:0;top:566px;width:400px;height:${Wf}px;transform-origin:50% 0;transform:translateZ(${zHi}px) rotateX(-90deg)"></div>
+  <div class="edge r" id="edgeR"></div><div class="edge l" id="edgeL"></div><div class="ribbon" id="ribbon"></div>`);
+book.style.transformOrigin=`200px 283px ${T/2}px`;
+const edgeR=$('#edgeR'),edgeL=$('#edgeL'),ribbon=$('#ribbon');
+
+/* ---------- state ---------- */
+let f=0,g=GAP_C,mode='closed',single=false,cur=1,s=1;
+let pose={ax:-15,ay:-32},ax=pose.ax,ay=pose.ay,tx=-PW/2;
+function setBook(anim,ms){const k=mode==='closed'||mode==='closing'?.84:1;book.style.transition=anim?`transform ${ms||900}ms cubic-bezier(.45,.05,.25,1)`:'none';book.style.transform=`translateX(${tx}px) rotateX(${ax.toFixed(2)}deg) rotateY(${ay.toFixed(2)}deg) scale3d(${k},${k},${k})`}
+function zOf(i,fl){return fl?i*g:(N-1-i)*g}
+function layLeaves(old,base){base=base||0;const fwd=f>=old;
+  leaves.forEach((L,i)=>{const want=i<f;let delay=0;
+    if(L.fl!==want){delay=base+(fwd?(i-old):(old-1-i))*STEP;L.el.classList.remove('flipping');void L.el.offsetWidth;L.el.style.setProperty('--d',delay+'ms');
+      setTimeout(()=>{L.el.classList.add('flipping');setTimeout(()=>L.el.classList.remove('flipping'),FLIP+40)},delay);L.fl=want}
+    L.el.style.transitionDelay=delay+'ms';L.el.style.transform=`translateZ(${zOf(i,want).toFixed(2)}px) rotateY(${want?-180:0}deg)`;
+    L.el.classList.toggle('cur-l',want&&i===f-1&&mode!=='closed');L.el.classList.toggle('cur-r',!want&&i===f&&f>0)});
+  updEdges();ribbon.style.transform=`translateZ(${(mode==='closed'?T/2:.4).toFixed(1)}px)`}
+function updEdges(){const inner=N-2,right=Math.max(0,N-1-f),left=Math.max(0,f-1);
+  const lay=(n,dir)=>{const a=[];for(let k=1;k<=n;k++)a.push(`${dir*k}px ${k}px 0 ${k%2?'#e6d6ae':'#cbb58a'}`);a.push(`${dir*(n+1)}px ${n+3}px 6px rgba(0,0,0,.35)`);return a.join(',')};
+  edgeR.style.boxShadow=lay(Math.round(right/inner*7),1);edgeL.style.boxShadow=lay(Math.round(left/inner*7),-1)}
+let perspT=0;
+function persp(on,ms){clearTimeout(perspT);if(on)scaler.classList.add('persp');else perspT=setTimeout(()=>{if(mode==='open')scaler.classList.remove('persp')},ms||0)}
+
+/* sound */
+let AC=null,muted=store.get('relbook.mute',false);
+function ac(){if(!AC){try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){AC=null}}if(AC&&AC.state==='suspended')AC.resume();return AC}
+function rustle(delay,big){const a=ac();if(!a||muted)return;const len=big?.5:.34,n=Math.floor(a.sampleRate*len),buf=a.createBuffer(1,n,a.sampleRate),d=buf.getChannelData(0);
+  for(let i=0;i<n;i++){const t=i/n;d[i]=(Math.random()*2-1)*Math.pow(1-t,1.6)*Math.min(1,t*14)*(.55+.45*Math.sin(i/(38+Math.random()*6)))}
+  const src=a.createBufferSource();src.buffer=buf;const hp=a.createBiquadFilter();hp.type='highpass';hp.frequency.value=big?300:900;const bp=a.createBiquadFilter();bp.type='bandpass';bp.frequency.value=big?900:2300+Math.random()*1300;bp.Q.value=.6;
+  const gn=a.createGain();gn.gain.value=big?.55:.3;src.connect(hp);hp.connect(bp);bp.connect(gn);gn.connect(a.destination);src.start(a.currentTime+(delay||0)/1000)}
+function paintSnd(){$('#snd').innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z"/>${muted?'<path d="M16 9.5l5 5M21 9.5l-5 5"/>':'<path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/>'}</svg>`;$('#snd').setAttribute('aria-pressed',String(!muted))}
+$('#snd').onclick=()=>{muted=!muted;store.set('relbook.mute',muted);paintSnd();if(!muted)rustle()};paintSnd();
+
+/* navigation */
+function goF(nf,base){nf=Math.max(0,Math.min(N-1,nf));if(nf===f)return 0;const old=f;f=nf;persp(true);layLeaves(old,base);
+  const n=Math.abs(nf-old);for(let k=0;k<Math.min(n,4);k++)rustle((base||0)+k*STEP*(n>4?n/4:1));
+  const dur=(base||0)+FLIP+(n-1)*STEP;if(mode==='open')persp(false,dur+80);return dur}
+function fOfPage(p){return p%2?(p+1)/2:p/2+1}
+function place(anim,delay){tx=mode==='closed'?-PW/2:single?(cur%2?-PW/2:PW/2):0;if(delay){setTimeout(()=>setBook(anim,600),delay)}else setBook(anim,600)}
+function goPage(p){if(p<0){closeBook();return}p=Math.max(0,Math.min(LASTP,p));
+  if(mode==='closed'){openBook(p);return}if(mode!=='open')return;
+  cur=p;const dur=goF(fOfPage(p));place(true,single&&dur?FLIP*.35:0);ui()}
+function next(){if(mode==='closed'){openBook(1);return}if(mode!=='open')return;if(single){if(cur<LASTP)goPage(cur+1)}else if(f<N-1){cur=2*(f+1)-1;goF(f+1);ui()}}
+function prev(){if(mode!=='open')return;if(single){if(cur<=1)closeBook();else goPage(cur-1)}else{if(f<=1)closeBook();else{cur=2*(f-1)-1;goF(f-1);ui()}}}
+function openBook(target){if(mode!=='closed')return;mode='opening';idleOff();stage.classList.add('open');book.classList.add('open');persp(true);
+  ax=0;ay=0;cur=1;g=GAP_O;tx=single?-PW/2:0;setBook(true,1000);
+  f=1;layLeaves(0,260);rustle(260,true);
+  setTimeout(()=>{mode='open';leaves[0].el.classList.add('cur-l');if(target!=null&&target>1)goPage(target);else persp(false,60);ui()},260+FLIP+120);ui()}
+function closeBook(){if(mode!=='open')return;mode='closing';persp(true);const old=f;f=0;layLeaves(old);for(let k=0;k<Math.min(old,4);k++)rustle(k*STEP*(old>4?old/4:1),k===Math.min(old,4)-1);
+  const dur=FLIP+(old-1)*STEP;
+  setTimeout(()=>{g=GAP_C;mode='closed';layLeaves(0);stage.classList.remove('open');book.classList.remove('open');ax=pose.ax;ay=pose.ay;tx=-PW/2;setBook(true,1000);ui();setTimeout(idleOn,1100)},Math.max(0,dur-150));ui()}
+
+/* ui */
+const CHIPS=[{l:'ปก',p:-1,ic:'book'},{l:'สารบัญ',p:3},...REL.map(r=>({l:r.short,p:r.p0,ic:r.k})),{l:'ตารางเปรียบเทียบ',p:24,ic:'tbl'},{l:'ส่งท้าย',p:26}];
+$('#chips').innerHTML=CHIPS.map((c,i)=>`<button class="chip" type="button" data-chip="${i}">${c.ic?sym(c.ic):''}${c.l}</button>`).join('');
+$('#chips').addEventListener('click',e=>{const b=e.target.closest('[data-chip]');if(!b)return;goPage(CHIPS[+b.dataset.chip].p)});
+function ui(){const st=$('#status');let vis;
+  if(mode==='closed'||mode==='closing'){st.innerHTML='หนังสือปิดอยู่ · <b>แตะปก</b>เพื่อเปิดอ่าน';vis=[]}
+  else if(single){vis=[cur];st.innerHTML=`หน้า <b>${cur}</b> จาก ${LASTP} · ${chapterOf(cur).t}`}
+  else{const l=2*f-2,r=2*f-1;vis=[l,r];const a=chapterOf(Math.max(l,1)),b=chapterOf(r);st.innerHTML=`หน้า <b>${l}–${r}</b> จาก ${LASTP} · ${a.t===b.t?a.t:a.t+' / '+b.t}`}
+  const inRange=(c,i)=>{if(c.p<0)return !vis.length;const end=i+1<CHIPS.length&&CHIPS[i+1].p>0?CHIPS[i+1].p:LASTP+1;const start=c.p===3?1:c.p;return vis.some(p=>p>=start&&p<end)};
+  $$('.chip').forEach((b,i)=>b.setAttribute('aria-current',String(inRange(CHIPS[i],i))));
+  const act=$('.chip[aria-current="true"]');if(act){const box=$('#chips');const x=act.offsetLeft-box.clientWidth/2+act.offsetWidth/2;box.scrollTo({left:x,behavior:reduce?'auto':'smooth'})}
+  $('#prev').disabled=mode==='closed';$('#next').disabled=mode==='open'&&(single?cur>=LASTP:f>=N-1)}
+
+/* fit & scale */
+function fit(){const W=stage.clientWidth,H=stage.clientHeight,was=single;single=W<700;stage.classList.toggle('single',single);
+  s=single?Math.min((W-20)/(PW+12),(H-70)/(PH+30)):Math.min((W-24)/(2*PW+86),(H-40)/(PH+74));s=Math.max(.35,Math.min(s,1.55));scaler.style.setProperty('--s',s.toFixed(3));
+  if(mode==='open'&&was!==single){cur=single?2*f-1:cur;place(false)}}
+addEventListener('resize',()=>{fit();sizeDust()});
+
+/* pointer: rotate when closed, swipe/tap when open */
+let drag=null;
+stage.addEventListener('pointerdown',e=>{if(e.button!==0||e.target.closest('button,a,[data-goto]'))return;drag={x:e.clientX,y:e.clientY,ax,ay,moved:false,id:e.pointerId}});
+stage.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;
+  if(!drag.moved&&Math.hypot(dx,dy)>7){drag.moved=true;if(mode==='closed'){idleOff();try{stage.setPointerCapture(drag.id)}catch(_){}}}
+  if(drag.moved&&mode==='closed'){ay=drag.ay+dx*.38;ax=Math.max(-60,Math.min(60,drag.ax-dy*.3));setBook(false)}});
+stage.addEventListener('pointerup',e=>{if(!drag)return;const d=drag;drag=null;const dx=e.clientX-d.x;
+  if(mode==='closed'){if(!d.moved)openBook(1);else{pose={ax,ay};idleLater()}return}
+  if(mode!=='open')return;
+  if(d.moved){if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(e.clientY-d.y))(dx<0?next:prev)();return}
+  const r=stage.getBoundingClientRect(),hinge=r.left+r.width/2+(single?0:tx*s);(e.clientX>hinge?next:prev)()});
+stage.addEventListener('pointercancel',()=>{drag=null});
+document.addEventListener('click',e=>{const t=e.target.closest('[data-goto]');if(!t)return;e.preventDefault();goPage(+t.dataset.goto)});
+$('#openBtn').onclick=()=>openBook(1);
+$('#next').onclick=next;$('#prev').onclick=prev;
+document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(e.key==='ArrowRight'){e.preventDefault();next()}else if(e.key==='ArrowLeft'){e.preventDefault();prev()}
+  else if(e.key==='Escape')closeBook();else if((e.key==='Enter'||e.key===' ')&&mode==='closed'&&document.activeElement===stage){e.preventDefault();openBook(1)}});
+$('#full').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();else{const p=document.documentElement.requestFullscreen();p&&p.catch&&p.catch(()=>{})}}catch(_){}};
+
+/* idle sway of the closed book */
+let idle=!reduce,idleT=0,t0=performance.now();
+function idleOn(){if(reduce)return;idle=true;t0=performance.now()}
+function idleOff(){idle=false;clearTimeout(idleT)}
+function idleLater(){clearTimeout(idleT);idleT=setTimeout(idleOn,4500)}
+function tick(t){if(idle&&mode==='closed'&&!drag){const k=(t-t0)/1000,e=Math.min(1,k/1.5);ay=pose.ay+e*12*Math.sin(k*.45);ax=pose.ax+e*3*Math.sin(k*.31);setBook(false)}
+  dust(t);requestAnimationFrame(tick)}
+
+/* dust motes in the lamp light */
+const dc=$('#dust'),dx=dc.getContext('2d');let motes=[];
+function sizeDust(){const r=stage.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);dc.width=r.width*dpr;dc.height=r.height*dpr;
+  if(!motes.length&&!reduce){const R=rnd(5);for(let i=0;i<46;i++)motes.push({x:R(),y:R(),r:.6+R()*1.6,v:.004+R()*.012,p:R()*6.28,a:.15+R()*.35})}}
+function dust(t){if(reduce||!motes.length)return;const w=dc.width,h=dc.height;dx.clearRect(0,0,w,h);
+  for(const m of motes){m.y-=m.v/60;if(m.y<-.05){m.y=1.05;m.x=Math.random()}const x=(m.x+Math.sin(t/4000+m.p)*.02)*w,y=m.y*h,tw=.6+.4*Math.sin(t/900+m.p);
+    dx.fillStyle=`rgba(245,215,150,${(m.a*tw).toFixed(3)})`;dx.beginPath();dx.arc(x,y,m.r*(w/1000+.6),0,6.283);dx.fill()}}
+
+/* keep page text inside the page */
+function fitPages(){$$('.pg-in').forEach(el=>{let fs=17;el.style.fontSize=fs+'px';while(el.scrollHeight>el.clientHeight+1&&fs>13.5){fs-=.5;el.style.fontSize=fs+'px'}})}
+
+/* start */
+fit();sizeDust();persp(true);layLeaves(0);setBook(false);ui();requestAnimationFrame(tick);
+(document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve()).then(()=>{fitPages();setTimeout(fitPages,1200)});
+const h=(location.hash||'').slice(1),hit=REL.find(r=>r.k===h);if(hit)setTimeout(()=>openBook(hit.p0),400);
+window.RELBOOK={get f(){return f},get mode(){return mode},goPage,next,prev,openBook,closeBook};
+})();
+</script>
+</body>
+</html>
