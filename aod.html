@@ -189,7 +189,6 @@ button{font:inherit;color:inherit;cursor:pointer}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/land.js"></script>
 <script src="js/chart3d.js"></script>
-<script src="js/scroll-tx.js"></script>
 <script>
 const NATION={pt:{th:'โปรตุเกส',flag:['#fff','#b3261e']},es:{th:'สเปน',flag:['#fff','#b3261e']}};
 const VOYAGES=[
@@ -269,7 +268,6 @@ const IC={pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" 
  again:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>ดูอีกครั้ง</span>'};
 const mob=()=>innerWidth<900;
 const C=Chart3D($('stage'),{land:LAND,start:[-9.6,38.4],panelFrac:()=>mob()?.45:0,onSeaClick:(lon,lat,onLand)=>freeSail(lon,lat,onLand)});
-if(window.ScrollTx&&ScrollTx.arrive())setTimeout(()=>ScrollTx.open(),700);
 if(!C){$('fail').hidden=false}else{
 let mode='free',route=null,stopIdx=-1,speed=1,done=false;
 const fmtLL=(lon,lat)=>{let l=((lon+180)%360+360)%360-180;return `${Math.abs(lat).toFixed(1)}°${lat>=0?'N':'S'} ${Math.abs(l).toFixed(1)}°${l>=0?'E':'W'}`};
@@ -326,7 +324,6 @@ renderVoyages();C.setCam(-2.2,-2.6,34);C.flyTo(-2.2,-2.6,19);
 $('lg-date').textContent='ท่าเรือลิสบอน · ค.ศ. 1487';$('lg-stop').textContent='เรือคาราเวลพร้อมออกเดินทาง';$('lg-text').textContent='คลิกบนทะเลตรงไหนก็ได้เพื่อให้เรือแล่นไป หรือเลือกเส้นทางของนักสำรวจด้านล่าง ดูการเดินทางจริงในประวัติศาสตร์ แล้วทำแบบทดสอบท้ายเส้นทาง';$('lg-pos').textContent=fmtLL(-9.6,38.4);
 const hv=(location.hash||'').slice(1);if(VOYAGES.some(v=>v.id===hv))startVoyage(hv);
 window.__aod={startVoyage,freeSail,openQuiz};
-document.querySelector('.back').addEventListener('click',e=>{if(!window.ScrollTx||e.ctrlKey||e.metaKey)return;e.preventDefault();ScrollTx.leave('index.html#media',['สื่อการจัดการเรียนรู้','กลับแฟ้มผลงาน'])});
 }
 </script>
 </body>

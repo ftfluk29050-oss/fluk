@@ -1038,7 +1038,8 @@ function labelFor(h){let t='',s='';const m=h.match(/^f(\d+)$/);
   else if(DNAME[h]){t=DNAME[h];s=({self:'หัวข้อที่ 1',work:'หัวข้อที่ 2',book:'หัวข้อที่ 3 · E-book',media:'หัวข้อที่ 4',awards:'หัวข้อที่ 5'})[h]||''}
   if(txSub){s=txSub;txSub=''}return [t,s]}
 function stxTop(){const tb=document.querySelector('.top');document.documentElement.style.setProperty('--stx-top',(tb?tb.getBoundingClientRect().bottom:0)+'px')}
-function nav(h){if(window.ScrollTx){stxTop();ScrollTx.run(()=>route(h),labelFor(h))}else route(h)}
+function nav(h){const fromHome=document.body.dataset.page==='home',toHome=h==='home';
+  if(window.ScrollTx&&(fromHome||toHome)&&!(fromHome&&toHome)){stxTop();ScrollTx.run(()=>route(h),labelFor(h))}else{txSub='';route(h)}}
 let hashByGo=null;
 function go(h){if(location.hash==='#'+h){nav(h);return}hashByGo=h;try{location.hash=h}catch(e){}if(location.hash!=='#'+h){hashByGo=null;nav(h)}}
 window.addEventListener('hashchange',()=>{hashByGo=null;nav((location.hash||'').slice(1)||'home')});
@@ -1151,8 +1152,7 @@ document.addEventListener('keydown',e=>{if(lb.hidden){if(pf&&!e.target.closest('
   window.fxWake=function(){if(!run&&active()){run=true;last=performance.now();requestAnimationFrame(step)}};
   document.addEventListener('visibilitychange',window.fxWake);
 })();
-if(window.ScrollTx&&ScrollTx.arrive()){stxTop();route();setTimeout(()=>ScrollTx.open(),380)}else route();
-document.addEventListener('click',e=>{const a=e.target.closest('a.xcard');if(!a||!window.ScrollTx||e.ctrlKey||e.metaKey||e.shiftKey)return;e.preventDefault();stxTop();ScrollTx.leave(a.getAttribute('href'),['ยุคแห่งการสำรวจ','สื่อเชิงโต้ตอบ 3 มิติ'])});
+route();
 addEventListener('resize',()=>{if(window.ScrollTx)stxTop()});
 </script>
 
