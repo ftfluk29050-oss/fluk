@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Srisakdi:wght@400;700&family=Taviraj:wght@400;500;600&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap">
 <style>
 /* Layout: separate screens (home cover 16:9 / topic menu / domain / folder / e-book) routed by #hash; ceremonial navy with gold Thai prajam-yam pattern, overlapping domain cards, sticky folder index, bold banner header per folder, indicator cards */
 :root{
@@ -327,6 +327,78 @@ body[data-domain="media"] .banner .b-mascot{max-height:230px}
 .player:fullscreen{padding:10px}
 @media (max-width:640px){.vgrid{grid-template-columns:1fr}.pl-actions span{display:none}.pl-actions button{padding:8px}.pl-t b{font-size:15px}.pl-strip button{width:84px}.play{width:58px;height:58px;margin:-29px 0 0 -29px}}
 
+
+.xcard{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);text-decoration:none;color:inherit;border-radius:22px;overflow:hidden;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .2s,border-color .2s}
+.xcard:hover{transform:translateY(-4px);border-color:var(--accent)}
+.xph{position:relative;min-height:260px;background:#2a1c10;overflow:hidden}
+.xph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.xcard:hover .xph img{transform:scale(1.04)}
+.x3d{position:absolute;left:14px;top:14px;font-family:var(--f-head);font-weight:700;font-size:15px;padding:4px 12px;border-radius:8px;background:linear-gradient(135deg,#6a3fd1,#a07bff);color:#fff;box-shadow:0 8px 18px -8px rgba(0,0,0,.6)}
+.xtx{padding:24px 26px;display:grid;gap:8px;align-content:center}
+.xtx h3{font-size:24px;font-weight:600;line-height:1.35}
+.xtx p{margin:0;font-size:15px;line-height:1.7;color:var(--muted)}
+.xfeat{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.xfeat span{font-size:12.5px;padding:3px 10px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.xgo{justify-self:start;margin-top:8px;display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--f-head);font-weight:500}
+.xgo svg{width:16px;height:16px}
+@media (max-width:800px){.xcard{grid-template-columns:1fr}.xph{min-height:0;aspect-ratio:16/9}.xtx{padding:18px}}
+
+
+/* Voyage home (3D chart) */
+.vhome{position:relative;height:calc(100vh - 63px);height:calc(100svh - 63px);min-height:480px;overflow:hidden;background:#1b120b;
+  --vellum:#efe0bc;--iron:#2a1c10;--iron-2:#6a5136;--vermilion:#a3361c;--brass:#c09a4a;--f-display:"Srisakdi","Taviraj",Georgia,serif;--f-thai:"Taviraj","Sarabun",Georgia,serif;--f-latin:"IM Fell English SC","IM Fell English",Georgia,serif}
+.vh-stage{position:absolute;inset:0}
+.vh-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(10,6,3,.55) 100%)}
+.parch{background:radial-gradient(120% 140% at 0% 0%,rgba(255,255,255,.35),transparent 50%),radial-gradient(90% 120% at 100% 100%,rgba(120,80,30,.22),transparent 60%),#efe0bc;color:#2a1c10;border:1px solid #b99a62;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px -18px rgba(0,0,0,.75),0 0 0 4px rgba(27,18,11,.55)}
+.vh-cart{position:absolute;left:18px;top:16px;display:flex;gap:14px;align-items:center;padding:12px 20px 12px 12px;border-radius:4px 22px 4px 22px;max-width:min(560px,calc(100% - 36px));font-family:var(--f-thai)}
+.vh-medal{flex:none;width:78px;height:78px;border-radius:50%;overflow:hidden;border:3px solid var(--brass);box-shadow:0 0 0 2px #2a1c10,0 8px 16px -8px rgba(0,0,0,.6)}
+.vh-medal img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.vh-ct small{display:block;font-size:13px;color:var(--vermilion);letter-spacing:.04em}
+.vh-ct h1{margin:2px 0 0;font-family:var(--f-display);font-weight:700;font-size:clamp(20px,2.2vw,28px);line-height:1.3;color:#2a1c10}
+.vh-ct h1 span{color:var(--vermilion)}
+.vh-who{margin-top:4px;font-size:14px;line-height:1.45;color:var(--iron-2)}
+.vh-who b{font-weight:600;color:#2a1c10;margin-right:6px}
+.vh-hint{position:absolute;right:18px;top:18px;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;font-family:var(--f-thai);font-size:14.5px;pointer-events:none;animation:vhp 2.6s ease-in-out infinite}
+.vh-hint svg{width:18px;height:18px;color:var(--vermilion)}
+@keyframes vhp{50%{transform:scale(1.04)}}
+.vh-legend{position:absolute;left:18px;right:18px;bottom:16px;display:flex;gap:10px;overflow-x:auto;padding:4px 4px 6px;scrollbar-width:thin}
+.vh-leg{flex:1 0 170px;display:flex;align-items:center;gap:10px;text-align:left;padding:8px 12px 8px 8px;border-radius:8px;font-family:var(--f-thai);transition:transform .2s}
+.vh-leg:hover{transform:translateY(-3px)}
+.vh-leg .mi{flex:none;width:44px;height:44px;border-radius:50%;background:#f6ebcf;border:2px solid #b99a62;overflow:hidden;display:grid;place-items:end center}
+.vh-leg .mi img{width:40px;height:auto;margin-bottom:-2px}
+.vh-leg small{display:block;font-size:12px;color:var(--vermilion);font-family:var(--f-thai)}
+.vh-leg b{display:block;font-size:15px;line-height:1.3;font-weight:600}
+.vh-leg.list{flex:0 0 auto;background:#2a1c10;color:#efe0bc;border-color:#c09a4a;padding:8px 16px}
+.vh-leg.list small{color:#d8c49b}
+.vh-leg[aria-current="true"]{background:#2a1c10;color:#efe0bc;border-color:#c09a4a}.vh-leg[aria-current="true"] small{color:#e2bf5e}
+.port{display:flex;flex-direction:column;align-items:center;gap:0;background:none;border:0;padding:0;font-family:var(--f-thai);cursor:pointer}
+.port .tag{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;border-radius:999px;background:rgba(239,224,188,.97);border:1px solid #9c7c46;color:#2a1c10;box-shadow:0 8px 16px -8px rgba(0,0,0,.65);white-space:nowrap;transition:transform .2s,background .2s}
+.port .num{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--vermilion);color:#fff;font-weight:600;font-size:14px;font-family:"IM Fell English",Georgia,serif}
+.port .tx{display:grid;text-align:left;line-height:1.2}
+.port .tx small{font-size:11px;color:var(--iron-2)}
+.port .tx b{font-size:14px;font-weight:600}
+.port .stem{width:2px;height:16px;background:#2a1c10}
+.port.tall .stem{height:58px}
+.port .dot{width:12px;height:12px;border-radius:50%;background:var(--vermilion);border:2px solid #efe0bc;box-shadow:0 0 0 2px #2a1c10;margin-top:-2px;animation:pdot 2s ease-in-out infinite}
+@keyframes pdot{50%{box-shadow:0 0 0 6px rgba(163,54,28,.25),0 0 0 2px #2a1c10}}
+.port.below{flex-direction:column-reverse}.port.below .dot{margin:0 0 -2px}
+.port:hover .tag,.port.cur .tag{background:#2a1c10;color:#efe0bc;border-color:#c09a4a;transform:translateY(-2px)}
+.port:hover .tx small,.port.cur .tx small{color:#d8c49b}
+.port.below:hover .tag,.port.below.cur .tag{transform:translateY(2px)}
+.vh-toast{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:12px 22px;border-radius:8px;font-family:var(--f-thai);font-size:17px;pointer-events:none;opacity:0;transition:opacity .3s;text-align:center}
+.vh-toast.show{opacity:1}
+.vh-toast small{display:block;font-size:13px;color:var(--vermilion)}
+.vhome .cover{position:absolute;inset:0;overflow:auto}
+@media (max-width:900px){
+  .vh-cart{left:12px;right:12px;top:10px;padding:8px 12px 8px 8px;gap:10px;max-width:none}
+  .vh-medal{width:54px;height:54px}.vh-ct small{font-size:11.5px}.vh-ct h1{font-size:17px}.vh-who{font-size:12.5px}
+  .vh-hint{top:auto;bottom:112px;right:50%;transform:translateX(50%);font-size:13px;animation:none;white-space:nowrap}
+  .vh-legend{left:12px;right:12px;bottom:10px;gap:8px}
+  .vh-leg{flex:0 0 150px;padding:6px 10px 6px 6px}.vh-leg .mi{width:36px;height:36px}.vh-leg .mi img{width:32px}.vh-leg b{font-size:13.5px}
+  .port .tx{display:none}.port .tag{padding:3px;gap:0}.port .num{width:30px;height:30px;font-size:15px}.port .stem{height:10px}.port.tall .stem{height:30px}
+}
+@media (prefers-reduced-motion:reduce){.vh-hint,.port .dot{animation:none}}
+
 /* Main */
 .main{display:grid;grid-template-columns:270px minmax(0,1fr);gap:44px;padding-block:18px 64px}
 .main.full{grid-template-columns:minmax(0,1fr)}
@@ -526,7 +598,20 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
 
 <canvas id="fx" aria-hidden="true"></canvas>
 
-<header class="cover screen" data-page="home" id="top">
+<section class="screen vhome" data-page="home" id="top">
+  <div class="vh-stage" id="vh-stage"></div>
+  <div class="vh-vig" aria-hidden="true"></div>
+  <header class="vh-cart parch">
+    <div class="vh-medal"><img src="img/hero.jpg" alt="นายระพีพัฒน์ กลัดกันแสง"></div>
+    <div class="vh-ct">
+      <small>รายงานผลการปฏิบัติงาน · ครั้งที่ ๓</small>
+      <h1>การเตรียมความพร้อมและพัฒนาอย่างเข้ม <span>ตำแหน่งครูผู้ช่วย</span></h1>
+      <div class="vh-who"><b>นายระพีพัฒน์ กลัดกันแสง</b><span>โรงเรียนวังหลวงพิทยาสรรพ์ · สพม.หนองคาย</span></div>
+    </div>
+  </header>
+  <div class="vh-hint parch" id="vh-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><path d="M12 22V8"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/></svg><span>เลือกท่าเรือบนแผนที่ เรือจะพาไปยังหัวข้อนั้น</span></div>
+  <nav class="vh-legend" id="vh-legend" aria-label="หัวข้อในแฟ้มผลงาน"></nav>
+  <header class="cover" id="cover-fallback" hidden>
   <div class="cover-in">
     <div class="cover-text">
       <div class="badge-row"><span class="chip solid">ครั้งที่ ๓</span><span class="chip">ข้าราชการครูและบุคลากรทางการศึกษา</span></div>
@@ -540,6 +625,7 @@ footer b{color:#fff;font-family:var(--f-head);font-weight:500}
     <div class="cover-art"><img src="img/cover-art.jpg" alt="ภาพนายระพีพัฒน์ กลัดกันแสง ขณะปฏิบัติงาน พร้อมตราโรงเรียน"></div>
   </div>
 </header>
+</section>
 
 <section class="screen menu-page" data-page="menu" hidden>
   <div class="wrap">
@@ -659,7 +745,7 @@ document.getElementById('domains').innerHTML=['self','work'].map((d,x)=>{const s
   <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('')
   +`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
   <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>วิดีโอการสอน สไลด์ประกอบการสอน ห้องเรียนเสมือนจริง และเกมการเรียนรู้</p></span>
+  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>แผนที่ 3 มิติยุคแห่งการสำรวจ วิดีโอการสอน สไลด์ประกอบการสอน และเกมการเรียนรู้</p></span>
   <span class="meta"><span><b>${VIDEOS.length}</b>วิดีโอ</span><span><b>${DECKS.length}</b>ชุดสไลด์</span><span><b>${MEDIA.length}</b>สื่ออื่น ๆ</span></span></button>`
   +`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 5</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
   <span class="meta"><span><b>${AWN}</b>รางวัล</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></span></button>`;
@@ -844,6 +930,12 @@ function openMedia(){
     <div class="kick"><span class="g">หัวข้อที่ 4</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
     <h2><small>นวัตกรรมและสื่อที่ใช้ในชั้นเรียน</small>สื่อการจัดการเรียนรู้</h2>
     <div class="facts"><span><b>${VIDEOS.length}</b>วิดีโอการสอน</span><span><b>${DECKS.length}</b>ชุดสไลด์ (${NSLIDES} หน้า)</span><span><b>${MEDIA.length}</b>สื่อและกิจกรรมอื่น ๆ</span></div></div>
+    <div class="sec-title">สื่อเชิงโต้ตอบ 3 มิติ</div>
+    <a class="xcard" href="aod.html"><span class="xph"><img src="media/aod-poster.jpg" alt="" loading="lazy"><span class="x3d">3D</span></span>
+      <span class="xtx"><span class="msubj">สื่อเชิงโต้ตอบ · ประวัติศาสตร์สากล</span><h3>ยุคแห่งการสำรวจ (Age of Discovery)</h3>
+      <p>แผนที่เดินเรือโบราณแบบ 3 มิติ นักเรียนบังคับเรือคาราเวลได้เอง และดูการเดินทางจริงของนักสำรวจ 5 เส้นทาง ตั้งแต่บาร์โทโลมิว ไดแอส จนถึงมาเจลลัน รวมถึงการเดินทางของโปรตุเกสสู่กรุงศรีอยุธยา พร้อมแบบทดสอบท้ายเส้นทาง</p>
+      <span class="xfeat"><span>5 เส้นทางการสำรวจ</span><span>แบบทดสอบ 15 ข้อ</span><span>ใช้ได้ทั้งคอมและมือถือ</span></span>
+      <span class="xgo">เปิดสื่อ ${ICO_PLAY}</span></span></a>
     <div class="sec-title">วิดีโอการสอน</div>
     <div class="vgrid">${VIDEOS.map((v,i)=>`<button class="vcard" data-vid="${i}"><span class="vph"><img src="${v.poster}" alt="" loading="lazy"><span class="play">${ICO_PLAY}</span><span class="dur">${v.dur}</span></span>
       <span class="mtx"><span class="msubj">วิดีโอการสอน · ${v.subj}</span><h3>${v.title}</h3><p>${v.desc}</p><span class="mref">${v.ref.map(([n,no])=>`<span>แฟ้มที่ ${n} · ตัวชี้วัด ${no}</span>`).join('')}</span></span></button>`).join('')}</div>
@@ -885,8 +977,47 @@ document.getElementById('pl-full').onclick=()=>{if(document.fullscreenElement)do
 plStage.addEventListener('click',e=>{if(!deck||e.target.tagName!=='IMG')return;const r=e.target.getBoundingClientRect();showSlide(slide+((e.clientX-r.left)<r.width*.35?-1:1))});
 let tx=null;plStage.addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});plStage.addEventListener('touchend',e=>{if(deck&&tx!=null){const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)showSlide(slide+(dx<0?1:-1))}tx=null});
 document.addEventListener('keydown',e=>{if(pl.hidden)return;if(e.key==='Escape'){plClose();e.stopImmediatePropagation()}else if(deck&&e.key==='ArrowRight'){showSlide(slide+1);e.stopImmediatePropagation()}else if(deck&&e.key==='ArrowLeft'){showSlide(slide-1);e.stopImmediatePropagation()}},true);
+
+/* ---------- 3D voyage home ---------- */
+const PORTS=[
+ {d:'self',n:1,name:'ด้านการปฏิบัติตน',port:'ลิสบอน',ll:[-9.2,38.7],img:'img/mascot-self.png'},
+ {d:'work',n:2,name:'ด้านการปฏิบัติงาน',port:'แหลมกู๊ดโฮป',ll:[18.4,-34.4],img:'img/mascot-work.png',below:1},
+ {d:'book',n:3,name:'รูปเล่มรายงาน',port:'กาลิกัต',ll:[75.6,11.3],img:'img/mascot-book.png'},
+ {d:'media',n:4,name:'สื่อการจัดการเรียนรู้',port:'มะละกา',ll:[102.25,2.15],img:'img/mascot-media.png',below:1},
+ {d:'awards',n:5,name:'รางวัลและกิจกรรม',port:'กรุงศรีอยุธยา',ll:[100.57,14.36],img:'img/mascot-awards.png',river:1,tall:1}];
+let VH=null,vhState='idle',vhCur=-1,vhFailed=false;
+function loadScript(src){return new Promise((ok,no)=>{if(document.querySelector(`script[data-src="${src}"]`))return ok();const s=document.createElement('script');s.src=src;s.dataset.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
+function vhFallback(){vhFailed=true;document.getElementById('cover-fallback').hidden=false;['vh-hint','vh-legend'].forEach(id=>document.getElementById(id).hidden=true);document.querySelector('.vh-cart').hidden=true}
+function vhLegend(){document.getElementById('vh-legend').innerHTML=PORTS.map((p,i)=>`<button class="vh-leg parch" data-port="${i}" aria-current="${i===vhCur}"><span class="mi"><img src="${p.img}" alt=""></span><span><small>ท่าที่ ${p.n} · ${p.port}</small><b>${p.name}</b></span></button>`).join('')+
+  `<button class="vh-leg list parch" data-nav="menu"><span><small>ไม่ใช้แผนที่</small><b>ดูแบบรายการ</b></span></button>`}
+function vhInit(){if(VH||vhFailed)return;vhLegend();
+  const ready=Promise.all([loadScript('https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'),loadScript('js/land.js')]).then(()=>loadScript('js/chart3d.js'));
+  ready.then(()=>{const stage=document.getElementById('vh-stage');
+    VH=Chart3D(stage,{land:window.LAND,start:[-13,36.5],panelFrac:()=>innerWidth<900?.28:.14,onSeaClick:(lon,lat,onLand)=>{if(vhState==='sailing')return;let p=VH.seaPath(VH.shipLL(),[lon,lat]);if(onLand)p=p.slice(0,-1);vhCur=-1;updPorts();VH.sail(p,{ink:'#8e3a1a',marker:true,pace:Math.max(3,pathLen(p)/2.4)})}});
+    if(!VH){vhFallback();return}
+    // guide route through all ports
+    let g=[[-13,36.5]];for(const p of PORTS){const seg=p.river?[g[g.length-1],p.ll]:VH.seaPath(g[g.length-1],p.ll);g=g.concat(seg.slice(1))}VH.setGuide(g);
+    VH.setPins(PORTS.map((p,i)=>{const el=document.createElement('button');el.className='port'+(p.below?' below':'')+(p.tall?' tall':'');el.dataset.port=i;el.setAttribute('aria-label',`ท่าที่ ${p.n} ${p.name}`);
+      el.innerHTML=`${p.below?'':''}<span class="tag"><span class="num">${p.n}</span><span class="tx"><small>ท่าที่ ${p.n} · ${p.port}</small><b>${p.name}</b></span></span><span class="stem"></span><span class="dot"></span>`;return {ll:p.ll,el,below:!!p.below}}));
+    const t=document.createElement('div');t.className='vh-toast parch';t.id='vh-toast';stage.appendChild(t);
+    VH.setCam(40/10,-6/10+1.2,40);vhFit();
+    addEventListener('resize',()=>{if(document.body.dataset.page==='home')vhFit()});
+  }).catch(vhFallback)}
+function vhFit(){if(!VH)return;VH.fitBounds([[-20,42],[108,-38]],1)}
+function pathLen(p){let s=0;for(let k=1;k<p.length;k++)s+=Math.hypot(p[k][0]-p[k-1][0],p[k][1]-p[k-1][1])/10;return s}
+function updPorts(){document.querySelectorAll('#vh-stage .port').forEach((el,i)=>el.classList.toggle('cur',i===vhCur));document.querySelectorAll('.vh-leg[data-port]').forEach((el,i)=>el.setAttribute('aria-current',i===vhCur))}
+function vhToast(html,ms){const t=document.getElementById('vh-toast');if(!t)return;t.innerHTML=html;t.classList.add('show');clearTimeout(vhToast.tm);vhToast.tm=setTimeout(()=>t.classList.remove('show'),ms||1600)}
+function sailToPort(i){const P=PORTS[i];
+  if(!VH){go(P.d);return}
+  if(vhState==='sailing'&&vhCur===i){go(P.d);return}
+  vhCur=i;updPorts();const from=VH.shipLL();
+  if(Math.hypot(from[0]-P.ll[0],from[1]-P.ll[1])<1.2){vhToast(`<small>ท่าที่ ${P.n} · ${P.port}</small>${P.name}`,900);setTimeout(()=>go(P.d),650);return}
+  let path=VH.seaPath(from,P.ll);if(P.river){const near=VH.seaPath(from,[100.6,13.4]);path=near.concat([[P.ll[0]+Math.round((near[near.length-1][0]-P.ll[0])/360)*360,P.ll[1]]])}
+  vhState='sailing';document.getElementById('vh-hint').style.opacity=0;
+  VH.sail(path,{ink:'#8e3a1a',marker:true,pace:Math.max(3,pathLen(path)/2.6),onDone:()=>{vhState='idle';vhToast(`<small>ทอดสมอที่ท่าที่ ${P.n} · ${P.port}</small>${P.name}`,1200);setTimeout(()=>{if(vhCur===i&&document.body.dataset.page==='home')go(P.d)},750)}})}
 function route(h){
   h=h||(location.hash||'').slice(1)||'home';
+  if(VH&&h!=='home'&&(h||'home')!=='home')VH.stop();
   killBook();lbCaps=[];if(typeof pl!=='undefined'&&!pl.hidden)plClose();if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
   let m;
   if(h==='menu'){showPage('menu');setSel(null)}
@@ -895,14 +1026,15 @@ function route(h){
   else if(h==='awards'){showPage('content');openAwards()}
   else if(h==='media'){showPage('content');openMedia()}
   else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
-  else{showPage('home');setSel(null)}
+  else{showPage('home');setSel(null);vhInit();if(VH){VH.start();vhFit()}}
   scrollTo(0,0);
   if(window.fxWake)window.fxWake();
 }
 function go(h){const before=location.hash;try{location.hash=h}catch(e){}if(location.hash!=='#'+h||before==='#'+h)route(h)}
 window.addEventListener('hashchange',()=>route());
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl]');if(!t)return;
+  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl],[data-port]');if(!t)return;
+  if(t.dataset.port!==undefined){sailToPort(+t.dataset.port);return}
   if(t.dataset.sl!==undefined){showSlide(+t.dataset.sl);return}
   if(t.dataset.vid!==undefined){openVideo(+t.dataset.vid);return}
   if(t.dataset.deck!==undefined){openDeck(+t.dataset.deck);return}

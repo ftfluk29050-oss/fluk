@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ยุคแห่งการสำรวจ 3 มิติ</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&family=Srisakdi:wght@400;700&family=Taviraj:wght@400;500;600&display=swap">
+<style>
+/* Layout: full-bleed 3D portolan chart laid on a navigator's table; title cartouche top-left, view instruments top-right, voyage ribbon along the bottom, ship's logbook bottom-right. Single committed antique look (no light/dark switch). */
+:root{
+  --walnut:#1b120b;
+  --vellum:#efe0bc;
+  --vellum-2:#e2cc98;
+  --iron:#2a1c10;
+  --iron-2:#6a5136;
+  --vermilion:#a3361c;
+  --verdigris:#2e6b62;
+  --brass:#c09a4a;
+  --f-display:"Srisakdi","Taviraj",Georgia,serif;
+  --f-body:"Taviraj","Sarabun","Leelawadee UI",Georgia,serif;
+  --f-latin:"IM Fell English SC","IM Fell English",Georgia,serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{margin:0;background:var(--walnut);color:var(--vellum);font-family:var(--f-body);overflow:hidden;-webkit-font-smoothing:antialiased}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px}
+#stage{position:fixed;inset:0;touch-action:none}
+#stage canvas{display:block;width:100%;height:100%;cursor:crosshair}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(10,6,3,.55) 100%)}
+
+/* parchment panel */
+.parch{background:
+  radial-gradient(120% 140% at 0% 0%,rgba(255,255,255,.35),transparent 50%),
+  radial-gradient(90% 120% at 100% 100%,rgba(120,80,30,.22),transparent 60%),
+  var(--vellum);color:var(--iron);border:1px solid #b99a62;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 18px 40px -18px rgba(0,0,0,.75),0 0 0 4px rgba(27,18,11,.55)}
+
+/* title cartouche */
+.cartouche{position:fixed;left:18px;top:calc(env(safe-area-inset-top,0px) + 16px);padding:14px 22px 14px 20px;border-radius:4px 22px 4px 22px;max-width:min(380px,calc(100vw - 110px))}
+.cartouche small{display:block;font-family:var(--f-latin);letter-spacing:.14em;font-size:13px;color:var(--vermilion)}
+.cartouche h1{margin:2px 0 0;font-family:var(--f-display);font-weight:700;font-size:clamp(28px,3.4vw,40px);line-height:1.2;color:var(--iron)}
+.cartouche p{margin:4px 0 0;font-size:14px;color:var(--iron-2);line-height:1.5}
+.cartouche .era{font-family:"IM Fell English",Georgia,serif;font-style:italic}
+
+/* view instruments */
+.instr{position:fixed;right:16px;top:calc(env(safe-area-inset-top,0px) + 16px);display:flex;flex-direction:column;gap:8px}
+.instr button{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;padding:0}
+.instr button svg{width:20px;height:20px}
+.instr button[aria-pressed="true"]{background:var(--iron);color:var(--vellum)}
+
+/* voyage ribbon */
+.voyages{position:fixed;left:16px;right:360px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);display:flex;gap:10px;overflow-x:auto;padding:4px 4px 6px;scrollbar-width:thin}
+.vy{flex:none;width:164px;text-align:left;padding:10px 12px 11px;border-radius:6px;display:grid;gap:2px;transition:transform .2s,box-shadow .2s}
+.vy:hover{transform:translateY(-3px)}
+.vy .yr{font-family:"IM Fell English",Georgia,serif;font-size:22px;line-height:1.1;color:var(--vermilion)}
+.vy b{font-weight:600;font-size:15px;line-height:1.35}
+.vy span{font-size:12.5px;color:var(--iron-2);line-height:1.4}
+.vy .fl{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:var(--iron-2)}
+.vy .fl i{width:14px;height:10px;border:1px solid #8a6b3f;display:inline-block}
+.vy[aria-pressed="true"]{background:var(--iron);color:var(--vellum);border-color:var(--brass)}
+.vy[aria-pressed="true"] .yr{color:var(--brass)}
+.vy[aria-pressed="true"] span,.vy[aria-pressed="true"] .fl{color:#d8c49b}
+.vy.free .yr{font-family:var(--f-display);font-size:19px}
+
+/* logbook */
+.log{position:fixed;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:328px;border-radius:6px;padding:14px 16px 12px;display:grid;gap:8px}
+.log .hd{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.log .hd small{display:block;font-family:var(--f-latin);letter-spacing:.12em;font-size:12px;color:var(--vermilion)}
+.log .hd h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:23px;line-height:1.25}
+.log .who{font-size:13px;color:var(--iron-2);margin-top:1px}
+.log .stop{border-top:1px dashed #b99a62;padding-top:8px;min-height:92px}
+.log .stop .dt{font-family:"IM Fell English",Georgia,serif;font-style:italic;color:var(--vermilion);font-size:14px}
+.log .stop h3{margin:0;font-size:17px;font-weight:600;line-height:1.35}
+.log .stop p{margin:3px 0 0;font-size:14px;line-height:1.6;color:#3d2b1a}
+.log .meter{display:flex;gap:4px}
+.log .meter i{flex:1;height:5px;border-radius:3px;background:#d7c08d}
+.log .meter i.on{background:var(--vermilion)}
+.log .ft{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--iron-2)}
+.log .ft .sp{flex:1;font-variant-numeric:tabular-nums}
+.log .ft button{border:1px solid #b99a62;background:rgba(255,255,255,.35);border-radius:999px;padding:4px 11px;font-size:13px;color:var(--iron);display:inline-flex;align-items:center;gap:5px}
+.log .ft button svg{width:14px;height:14px}
+.log .ft button:hover{background:rgba(255,255,255,.65)}
+
+/* stop labels */
+.pin{position:fixed;left:0;top:0;pointer-events:auto;transform:translate(-50%,-100%);font-size:12.5px;white-space:nowrap;padding:2px 8px 2px 4px;border-radius:999px;background:rgba(239,224,188,.94);color:var(--iron);border:1px solid #9c7c46;box-shadow:0 4px 10px -4px rgba(0,0,0,.6);display:flex;align-items:center;gap:5px;cursor:pointer;transition:opacity .25s}
+.pin b{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--vermilion);color:#fff;font-size:11px;font-weight:600}
+.pin span{display:none}.pin.cur span,.pin:hover span{display:inline}.pin{padding:2px}.pin.cur,.pin:hover{padding:2px 9px 2px 3px;z-index:2}
+.pin.future{opacity:.6}
+.pin.cur{background:var(--iron);color:var(--vellum);border-color:var(--brass)}
+.pin.cur b{background:var(--brass);color:var(--iron)}
+
+/* hint */
+.hint{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 18px);transform:translateX(-50%);padding:8px 16px;border-radius:999px;font-size:14px;display:flex;align-items:center;gap:8px;pointer-events:none;transition:opacity .4s}
+.hint svg{width:18px;height:18px;color:var(--vermilion)}
+.hint.pulse{animation:pulse 2.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:translateX(-50%) scale(1.05)}}
+.toast{position:fixed;left:50%;bottom:50%;transform:translate(-50%,50%);padding:10px 18px;border-radius:8px;font-size:15px;pointer-events:none;opacity:0;transition:opacity .3s}
+.toast.show{opacity:1}
+.fail{position:fixed;inset:0;display:grid;place-items:center;text-align:center;padding:24px}
+
+@media (max-width:900px){
+  .voyages{right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 12px)}
+  .vy{width:150px;padding:8px 10px}
+  .vy .yr{font-size:18px}.vy b{font-size:13.5px}.vy span{display:none}
+  .log{left:16px;right:16px;width:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);padding:10px 12px 9px;gap:6px}
+  .log .stop{min-height:0}.log .stop p{font-size:13px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .log .hd h2{font-size:19px}.log .who{display:none}.log .stop p{-webkit-line-clamp:2}.log .stop h3{font-size:15.5px}
+  .cartouche{padding:10px 14px}.cartouche p{display:none}
+  .hint{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 300px);font-size:13px}
+}
+@media (max-width:420px){.cartouche h1{font-size:24px}}
+@media (prefers-reduced-motion:reduce){.hint.pulse{animation:none}}
+
+.back{position:fixed;left:18px;bottom:auto;top:calc(env(safe-area-inset-top,0px) + 150px);display:inline-flex;align-items:center;gap:6px;padding:7px 14px 7px 10px;border-radius:999px;font-size:14px;text-decoration:none;color:var(--iron)}
+.back svg{width:16px;height:16px}
+.back:hover{background:#fff4d8}
+#stage{position:fixed;inset:0}
+/* quiz */
+.quiz-btn{display:none;width:100%;justify-content:center;align-items:center;gap:8px;padding:9px 12px;border-radius:6px;border:1px solid #8e3a1a;background:var(--vermilion);color:#fff4e2;font-size:15px;font-weight:600}
+.quiz-btn.on{display:flex}
+.quiz-btn svg{width:18px;height:18px}
+.qwrap{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(15,9,4,.62);backdrop-filter:blur(2px)}
+.quiz{width:min(560px,100%);max-height:calc(100svh - 32px);overflow:auto;border-radius:8px;padding:22px 24px 20px;position:relative}
+.quiz small{font-family:var(--f-latin);letter-spacing:.12em;font-size:12px;color:var(--vermilion)}
+.quiz h2{margin:2px 0 4px;font-family:var(--f-display);font-weight:700;font-size:26px;line-height:1.25}
+.quiz .qn{font-size:13px;color:var(--iron-2)}
+.quiz .qq{margin:14px 0 10px;font-size:18px;font-weight:600;line-height:1.5}
+.quiz .opts{display:grid;gap:8px}
+.quiz .opt{text-align:left;padding:10px 14px;border-radius:6px;border:1px solid #b99a62;background:rgba(255,255,255,.4);font-size:15.5px;color:var(--iron);display:flex;gap:10px;align-items:flex-start}
+.quiz .opt b{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#d7c08d;font-size:13px}
+.quiz .opt:hover:not([disabled]){background:rgba(255,255,255,.75)}
+.quiz .opt.ok{background:#dcecd6;border-color:#2e6b62}.quiz .opt.ok b{background:#2e6b62;color:#fff}
+.quiz .opt.no{background:#f3d9cf;border-color:#a3361c}.quiz .opt.no b{background:#a3361c;color:#fff}
+.quiz .ex{margin:12px 0 0;padding:10px 12px;border-left:3px solid var(--brass);background:rgba(255,255,255,.35);font-size:14.5px;line-height:1.6}
+.quiz .qf{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:14px}
+.quiz .qf button{padding:8px 16px;border-radius:999px;border:1px solid #8e3a1a;background:var(--iron);color:var(--vellum);font-size:15px}
+.quiz .qf button.ghost{background:transparent;color:var(--iron);border-color:#b99a62}
+.quiz .x{position:absolute;right:12px;top:10px;border:0;background:none;font-size:22px;color:var(--iron-2);width:36px;height:36px;border-radius:50%}
+.quiz .x:hover{background:rgba(0,0,0,.06)}
+.quiz .score{text-align:center;padding:10px 0 4px}
+.quiz .score .big{font-family:"IM Fell English",Georgia,serif;font-size:64px;line-height:1;color:var(--vermilion)}
+.quiz .score p{margin:8px 0 0;font-size:16px}
+.seal{display:inline-grid;place-items:center;width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#d9745a,#a3361c 60%,#6e2010);color:#fff4e2;font-family:var(--f-display);font-size:18px;box-shadow:0 8px 18px -8px rgba(0,0,0,.6);margin-bottom:8px;transform:rotate(-8deg)}
+@media (max-width:900px){.back{top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);left:auto;right:16px;z-index:3}.log{bottom:calc(env(safe-area-inset-bottom,0px) + 150px)}}
+</style>
+</head>
+<body>
+<div id="stage" aria-label="แผนที่เดินเรือ 3 มิติ คลิกบนทะเลเพื่อให้เรือแล่นไป"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<header class="cartouche parch">
+  <small>MAPPA MUNDI · AGE OF DISCOVERY</small>
+  <h1>ยุคแห่งการสำรวจ</h1>
+  <p>เส้นทางเดินเรือของนักสำรวจชาวยุโรป <span class="era">A.D. 1487 – 1522</span> · สื่อการเรียนรู้ประวัติศาสตร์สากล โดยครูระพีพัฒน์ กลัดกันแสง</p>
+</header>
+<a class="back parch" href="index.html#media"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>กลับแฟ้มผลงาน</a>
+
+<div class="instr" role="group" aria-label="มุมมองแผนที่">
+  <button class="parch" id="z-in" title="ซูมเข้า" aria-label="ซูมเข้า"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="parch" id="z-out" title="ซูมออก" aria-label="ซูมออก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+  <button class="parch" id="tilt" title="สลับมุมมอง 3 มิติ / มองจากด้านบน" aria-pressed="true">3D</button>
+  <button class="parch" id="home" title="ดูทั้งโลก" aria-label="ดูทั้งโลก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></button>
+</div>
+
+<div class="hint parch pulse" id="hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 1 1 4 0v5"/><path d="M13 10V8a2 2 0 1 1 4 0v4"/><path d="M17 11a2 2 0 1 1 4 0v3a7 7 0 0 1-7 7h-1.5a7 7 0 0 1-5.6-2.8L4 15.5a1.9 1.9 0 0 1 3-2.4L9 15"/></svg><span>คลิกบนทะเล แล้วเรือจะแล่นไปยังจุดนั้น</span></div>
+<div class="toast parch" id="toast"></div>
+
+<nav class="voyages" id="voyages" aria-label="เส้นทางการสำรวจ"></nav>
+
+<section class="log parch" id="log" aria-live="polite">
+  <div class="hd"><div><small id="lg-kicker">SHIP'S LOG</small><h2 id="lg-title">ล่องเรืออิสระ</h2><div class="who" id="lg-who"></div></div></div>
+  <div class="meter" id="lg-meter" hidden></div>
+  <div class="stop"><div class="dt" id="lg-date"></div><h3 id="lg-stop"></h3><p id="lg-text"></p></div>
+  <button class="quiz-btn" id="lg-quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>ทำแบบทดสอบท้ายเส้นทาง</button>
+  <div class="ft"><span class="sp" id="lg-pos"></span>
+    <button id="lg-play" hidden></button>
+    <button id="lg-speed" title="ความเร็ว">×1</button>
+  </div>
+</section>
+
+<div class="qwrap" id="qwrap" hidden role="dialog" aria-modal="true" aria-labelledby="q-title"><div class="quiz parch" id="quiz"></div></div>
+
+<div class="fail parch" id="fail" hidden><div><h2 style="font-family:var(--f-display)">เปิดแผนที่ 3 มิติไม่ได้</h2><p>อุปกรณ์หรือเบราว์เซอร์นี้ไม่รองรับกราฟิก 3 มิติ (WebGL) ลองเปิดด้วย Chrome, Edge หรือ Safari รุ่นใหม่</p><p><a href="index.html#media">กลับแฟ้มผลงาน</a></p></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/land.js"></script>
+<script src="js/chart3d.js"></script>
+<script>
+const NATION={pt:{th:'โปรตุเกส',flag:['#fff','#b3261e']},es:{th:'สเปน',flag:['#fff','#b3261e']}};
+const VOYAGES=[
+ {id:'dias',nation:'pt',yr:'1487–88',name:'บาร์โทโลมิว ไดแอส',sub:'อ้อมปลายทวีปแอฟริกาเป็นครั้งแรก',ink:'#8e3a1a',pts:[
+  {p:[-9.2,38.7],n:'ลิสบอน โปรตุเกส',d:'สิงหาคม ค.ศ. 1487',t:'ออกเดินทางด้วยเรือคาราเวล 2 ลำและเรือเสบียง 1 ลำ ตามพระบัญชาของพระเจ้าจอห์นที่ 2 เพื่อหาทางอ้อมแอฟริกาไปสู่ดินแดนตะวันออก'},
+  {p:[-18,26],via:1},{p:[-19,12],via:1},{p:[3,-6],via:1},{p:[10,-22],via:1},
+  {p:[12,-40],n:'ถูกพายุพัดออกทะเลลึก',d:'มกราคม ค.ศ. 1488',t:'พายุพัดกองเรือลงใต้นานราว 13 วันจนมองไม่เห็นฝั่ง เมื่อหันเรือขึ้นเหนือจึงรู้ว่าได้ผ่านปลายทวีปแอฟริกาไปแล้ว'},
+  {p:[22.14,-34.3],n:'อ่าวมอสเซล',d:'กุมภาพันธ์ ค.ศ. 1488',t:'ขึ้นฝั่งที่ชายฝั่งด้านตะวันออกของแหลม เป็นหลักฐานว่าเรือยุโรปได้อ้อมปลายทวีปแอฟริกาแล้ว'},
+  {p:[26.6,-33.9],n:'ไควฮุก',d:'มีนาคม ค.ศ. 1488',t:'ปักเสาหินหมายเขต (ปาดรัง) ไว้ ลูกเรืออ่อนล้าและขอให้กลับ ไดแอสจึงต้องหันหัวเรือกลับบ้าน'},
+  {p:[18.3,-34.6],n:'แหลมกู๊ดโฮป',d:'พฤษภาคม ค.ศ. 1488',t:'ขากลับได้เห็นแหลมและตั้งชื่อว่า "แหลมแห่งพายุ" ต่อมาพระเจ้าจอห์นที่ 2 เปลี่ยนชื่อเป็น "แหลมกู๊ดโฮป" หรือแหลมแห่งความหวัง'},
+  {p:[5,-5],via:1},{p:[-20,14],via:1},{p:[-18,30],via:1},
+  {p:[-9.2,38.7],n:'กลับถึงลิสบอน',d:'ธันวาคม ค.ศ. 1488',t:'การเดินทาง 16 เดือนพิสูจน์ว่ามหาสมุทรแอตแลนติกเชื่อมกับมหาสมุทรอินเดีย ปูทางให้วาสโก ดา กามา'}]},
+ {id:'columbus',nation:'es',yr:'1492',name:'คริสโตเฟอร์ โคลัมบัส',sub:'แล่นไปตะวันตกเพื่อหาเอเชีย แต่พบโลกใหม่',ink:'#7a1f2b',pts:[
+  {p:[-6.9,37.1],n:'ปาโลส สเปน',d:'3 สิงหาคม ค.ศ. 1492',t:'ออกเรือ 3 ลำ คือ ซานตามาเรีย ปินตา และนีญา ด้วยการสนับสนุนของพระนางอิซาเบลลาและพระเจ้าเฟอร์ดินานด์แห่งสเปน'},
+  {p:[-17.1,28.0],n:'หมู่เกาะคานารี',d:'กันยายน ค.ศ. 1492',t:'แวะซ่อมเรือและเติมเสบียงที่เกาะลาโกเมรา ก่อนออกข้ามมหาสมุทรแอตแลนติกในวันที่ 6 กันยายน'},
+  {p:[-45,26],via:1},
+  {p:[-74.4,24.1],n:'ซานซัลวาดอร์',d:'12 ตุลาคม ค.ศ. 1492',t:'ขึ้นฝั่งที่เกาะในหมู่เกาะบาฮามาส ชาวพื้นเมืองเรียกว่ากวานาฮานี โคลัมบัสเชื่อว่ามาถึงหมู่เกาะอินดีสในเอเชียแล้ว'},
+  {p:[-75.7,21.3],n:'คิวบา',d:'28 ตุลาคม ค.ศ. 1492',t:'สำรวจชายฝั่งคิวบา ซึ่งโคลัมบัสคิดว่าเป็นแผ่นดินใหญ่ของเอเชีย'},
+  {p:[-72.3,19.9],n:'ฮิสปันโยลา',d:'ธันวาคม ค.ศ. 1492',t:'เรือซานตามาเรียเกยตื้นในคืนวันคริสต์มาส จึงใช้ไม้จากเรือสร้างนิคมลานาวิแดด นิคมแห่งแรกของสเปนในโลกใหม่'}]},
+ {id:'gama',nation:'pt',yr:'1497–98',name:'วาสโก ดา กามา',sub:'เปิดเส้นทางเรือตรงจากยุโรปสู่อินเดีย',ink:'#23574f',pts:[
+  {p:[-9.2,38.7],n:'ลิสบอน โปรตุเกส',d:'8 กรกฎาคม ค.ศ. 1497',t:'ออกเดินทางด้วยเรือ 4 ลำ ตามพระบัญชาของพระเจ้ามานูเอลที่ 1 เพื่อไปให้ถึงอินเดียทางทะเล'},
+  {p:[-23.5,14.6],n:'หมู่เกาะเคปเวิร์ด',d:'กรกฎาคม ค.ศ. 1497',t:'แวะเติมน้ำจืดและเสบียงก่อนออกสู่ทะเลเปิด'},
+  {p:[-27,-8],via:1},
+  {p:[-24,-26],n:'วงโค้งกลางแอตแลนติกใต้',d:'สิงหาคม–ตุลาคม ค.ศ. 1497',t:'ใช้เส้นทางวงโค้งกว้างกลางมหาสมุทรเพื่ออาศัยลม ลูกเรือไม่เห็นแผ่นดินนานกว่า 90 วัน'},
+  {p:[18.3,-34.6],n:'แหลมกู๊ดโฮป',d:'22 พฤศจิกายน ค.ศ. 1497',t:'แล่นอ้อมแหลมกู๊ดโฮปเข้าสู่มหาสมุทรอินเดีย'},
+  {p:[40.8,-15.0],n:'โมซัมบิก',d:'มีนาคม ค.ศ. 1498',t:'พบเมืองท่าการค้าของพ่อค้าชาวอาหรับบนชายฝั่งแอฟริกาตะวันออก'},
+  {p:[40.2,-3.3],n:'มาลินดี',d:'เมษายน ค.ศ. 1498',t:'เจ้าเมืองมาลินดีเป็นมิตรและจัดหาต้นหนผู้ชำนาญลมมรสุมให้ นำทางข้ามมหาสมุทรอินเดีย'},
+  {p:[75.6,11.3],n:'กาลิกัต อินเดีย',d:'20 พฤษภาคม ค.ศ. 1498',t:'ถึงเมืองท่าศูนย์กลางการค้าเครื่องเทศบนชายฝั่งมาลาบาร์ โปรตุเกสเข้าถึงเครื่องเทศได้โดยตรงทางทะเลเป็นครั้งแรก'}]},
+ {id:'ayutthaya',nation:'pt',yr:'1511',name:'โปรตุเกสสู่อยุธยา',sub:'ชาวยุโรปชาติแรกที่เข้ามาในสยาม',ink:'#8a5a12',pts:[
+  {p:[102.25,2.15],n:'มะละกา',d:'สิงหาคม ค.ศ. 1511',t:'อัลฟองโซ เด อัลบูเคอร์คี ยึดเมืองมะละกา ศูนย์กลางการค้าของช่องแคบ แล้วส่งทูตไปเจริญสัมพันธไมตรีกับอยุธยา'},
+  {p:[104.4,1.2],via:1},{p:[105,5.5],via:1},{p:[101.8,9.8],via:1},
+  {p:[100.6,13.4],n:'ปากแม่น้ำเจ้าพระยา',d:'ค.ศ. 1511',t:'แล่นเข้าอ่าวสยามและขึ้นตามแม่น้ำเจ้าพระยาสู่ราชธานี'},
+  {p:[100.57,14.36],n:'กรุงศรีอยุธยา',d:'ค.ศ. 1511',river:1,t:'ดูอาร์เต้ เฟอร์นันเดส ทูตโปรตุเกสเข้าเฝ้าสมเด็จพระรามาธิบดีที่ 2 โปรตุเกสจึงเป็นชาติตะวันตกชาติแรกที่มีสัมพันธไมตรีกับอยุธยา และทำสนธิสัญญากันในปี ค.ศ. 1516'}]},
+ {id:'magellan',nation:'es',yr:'1519–22',name:'มาเจลลัน · เอลกาโน',sub:'การเดินเรือรอบโลกครั้งแรก',ink:'#2c3f6e',pts:[
+  {p:[-6.4,36.7],n:'ซานลูการ์ สเปน',d:'20 กันยายน ค.ศ. 1519',t:'เฟอร์ดินานด์ มาเจลลัน ออกเดินทางด้วยเรือ 5 ลำ ลูกเรือราว 270 คน มุ่งหาเส้นทางตะวันตกสู่หมู่เกาะเครื่องเทศ'},
+  {p:[-17,27],via:1},{p:[-30,-5],via:1},
+  {p:[-43.1,-23.0],n:'รีโอเดจาเนโร',d:'ธันวาคม ค.ศ. 1519',t:'แวะพักและเติมเสบียงที่อ่าวกวานาบาราบนชายฝั่งบราซิล'},
+  {p:[-67.6,-49.4],n:'ปวยร์โตซานฆูเลียน',d:'มีนาคม–สิงหาคม ค.ศ. 1520',t:'พักหลบฤดูหนาว เกิดกบฏในกองเรือ และเสียเรือซานเตียโกจากการอับปาง'},
+  {p:[-68.3,-52.4],via:1},
+  {p:[-72.8,-53.6],n:'ช่องแคบมาเจลลัน',d:'ตุลาคม–พฤศจิกายน ค.ศ. 1520',t:'ค้นพบช่องแคบที่ปลายทวีปอเมริกาใต้ ใช้เวลา 38 วันแล่นผ่านสู่มหาสมุทรที่มาเจลลันตั้งชื่อว่า "แปซิฟิก" แปลว่าสงบ'},
+  {p:[-76,-52.5],via:1},{p:[-86,-32],via:1},
+  {p:[144.8,13.3],n:'เกาะกวม',d:'6 มีนาคม ค.ศ. 1521',t:'ข้ามแปซิฟิกนานกว่า 3 เดือน ลูกเรือจำนวนมากเสียชีวิตจากความอดอยากและโรคลักปิดลักเปิด'},
+  {p:[124.1,10.2],n:'มักตัน ฟิลิปปินส์',d:'27 เมษายน ค.ศ. 1521',t:'มาเจลลันเสียชีวิตในการรบกับลาปูลาปู เจ้าเมืองมักตัน ลูกเรือที่เหลือเดินทางต่อ'},
+  {p:[127.3,0.6],n:'ตีโดเร หมู่เกาะโมลุกกะ',d:'พฤศจิกายน ค.ศ. 1521',t:'ถึงหมู่เกาะเครื่องเทศ บรรทุกกานพลูเต็มลำเรือ'},
+  {p:[124,-11.5],via:1},{p:[70,-36],via:1},
+  {p:[18.3,-35.2],n:'แหลมกู๊ดโฮป',d:'พฤษภาคม ค.ศ. 1522',t:'ฆวน เซบัสเตียน เอลกาโน นำเรือวิกตอเรียข้ามมหาสมุทรอินเดียและอ้อมแหลมกู๊ดโฮป'},
+  {p:[-24,14],via:1},{p:[-17,30],via:1},
+  {p:[-6.4,36.7],n:'กลับถึงซานลูการ์',d:'6 กันยายน ค.ศ. 1522',t:'เรือวิกตอเรียกลับถึงสเปนพร้อมลูกเรือ 18 คน นับเป็นการเดินเรือรอบโลกครั้งแรกของมนุษย์'}]}
+];
+
+
+const QUIZ={
+ dias:[
+  {q:'บาร์โทโลมิว ไดแอส ตั้งชื่อแหลมที่ปลายทวีปแอฟริกาครั้งแรกว่าอะไร',o:['แหลมแห่งพายุ','แหลมกู๊ดโฮป','แหลมฮอร์น','แหลมเวิร์ด'],a:0,e:'ไดแอสเรียกว่า "แหลมแห่งพายุ" เพราะเจอพายุรุนแรงบริเวณนั้น'},
+  {q:'ใครเป็นผู้เปลี่ยนชื่อเป็น "แหลมกู๊ดโฮป" หรือแหลมแห่งความหวัง',o:['พระเจ้ามานูเอลที่ 1','พระเจ้าจอห์นที่ 2','พระนางอิซาเบลลา','เจ้าชายเฮนรี'],a:1,e:'พระเจ้าจอห์นที่ 2 แห่งโปรตุเกส ทรงเปลี่ยนชื่อเพราะเห็นความหวังของเส้นทางสู่อินเดีย'},
+  {q:'การเดินทางของไดแอสพิสูจน์เรื่องใด',o:['โลกมีรูปร่างกลม','มีทวีปอเมริกาอยู่ทางตะวันตก','มหาสมุทรแอตแลนติกเชื่อมต่อกับมหาสมุทรอินเดีย','อินเดียอยู่ใกล้ยุโรป'],a:2,e:'การอ้อมปลายแอฟริกาได้แสดงว่าเรือสามารถแล่นจากแอตแลนติกเข้าสู่มหาสมุทรอินเดียได้'}],
+ columbus:[
+  {q:'โคลัมบัสได้รับการสนับสนุนการเดินทางจากประเทศใด',o:['โปรตุเกส','อังกฤษ','สเปน','อิตาลี'],a:2,e:'พระนางอิซาเบลลาและพระเจ้าเฟอร์ดินานด์แห่งสเปนทรงสนับสนุนการเดินทาง'},
+  {q:'โคลัมบัสขึ้นฝั่งครั้งแรกที่ใดในวันที่ 12 ตุลาคม ค.ศ. 1492',o:['คิวบา','ซานซัลวาดอร์ ในหมู่เกาะบาฮามาส','ฟลอริดา','บราซิล'],a:1,e:'เกาะที่ชาวพื้นเมืองเรียกว่ากวานาฮานี โคลัมบัสตั้งชื่อใหม่ว่าซานซัลวาดอร์'},
+  {q:'โคลัมบัสเข้าใจว่าดินแดนที่ตนค้นพบคือที่ใด',o:['ทวีปใหม่','หมู่เกาะอินดีสในเอเชีย','แอฟริกา','ออสเตรเลีย'],a:1,e:'เขาเชื่อว่าไปถึงเอเชียแล้ว จึงเรียกชาวพื้นเมืองว่า "อินเดียน"'}],
+ gama:[
+  {q:'วาสโก ดา กามา เดินทางถึงเมืองท่าใดในอินเดีย',o:['กัว','กาลิกัต','บอมเบย์','มัทราส'],a:1,e:'ถึงกาลิกัตบนชายฝั่งมาลาบาร์เมื่อ 20 พฤษภาคม ค.ศ. 1498'},
+  {q:'ใครช่วยจัดหาต้นหนนำทางข้ามมหาสมุทรอินเดียให้วาสโก ดา กามา',o:['เจ้าเมืองโมซัมบิก','เจ้าเมืองมาลินดี','กษัตริย์แห่งกาลิกัต','พ่อค้าชาวจีน'],a:1,e:'เจ้าเมืองมาลินดีเป็นมิตรและจัดหาต้นหนผู้ชำนาญลมมรสุมให้'},
+  {q:'สินค้าสำคัญที่ทำให้ชาวยุโรปอยากหาเส้นทางเรือไปอินเดียคืออะไร',o:['ทองคำ','ผ้าไหม','เครื่องเทศ','ชา'],a:2,e:'เครื่องเทศ เช่น พริกไทย กานพลู มีราคาสูงมากในยุโรป'}],
+ ayutthaya:[
+  {q:'ชาติตะวันตกชาติแรกที่เข้ามาติดต่อกับกรุงศรีอยุธยาคือชาติใด',o:['ฮอลันดา','ฝรั่งเศส','โปรตุเกส','อังกฤษ'],a:2,e:'โปรตุเกสส่งทูตมาเจริญสัมพันธไมตรีในปี ค.ศ. 1511'},
+  {q:'ทูตโปรตุเกสเข้าเฝ้าพระมหากษัตริย์พระองค์ใด',o:['สมเด็จพระรามาธิบดีที่ 2','สมเด็จพระนเรศวรมหาราช','สมเด็จพระนารายณ์มหาราช','สมเด็จพระบรมไตรโลกนาถ'],a:0,e:'ดูอาร์เต้ เฟอร์นันเดส เข้าเฝ้าสมเด็จพระรามาธิบดีที่ 2'},
+  {q:'ก่อนส่งทูตมาอยุธยา โปรตุเกสได้ยึดเมืองท่าใด',o:['ปัตตานี','มะละกา','กาลิกัต','มะนิลา'],a:1,e:'อัลฟองโซ เด อัลบูเคอร์คี ยึดมะละกาในปี ค.ศ. 1511'}],
+ magellan:[
+  {q:'มาเจลลันเสียชีวิตที่ใด',o:['ช่องแคบมาเจลลัน','เกาะกวม','มักตัน ประเทศฟิลิปปินส์','หมู่เกาะโมลุกกะ'],a:2,e:'เสียชีวิตในการรบกับลาปูลาปู เจ้าเมืองมักตัน เมื่อ 27 เมษายน ค.ศ. 1521'},
+  {q:'ใครนำเรือวิกตอเรียกลับถึงสเปนจนครบรอบโลก',o:['วาสโก ดา กามา','ฆวน เซบัสเตียน เอลกาโน','ฟรานซิส เดรก','อเมริโก เวสปุชชี'],a:1,e:'เอลกาโนนำเรือวิกตอเรียกลับถึงสเปนพร้อมลูกเรือ 18 คน'},
+  {q:'คำว่า "แปซิฟิก" ที่มาเจลลันใช้ตั้งชื่อมหาสมุทร มีความหมายว่าอะไร',o:['กว้างใหญ่','สงบ','อันตราย','ลึกลับ'],a:1,e:'มาเจลลันเห็นทะเลสงบหลังผ่านช่องแคบที่มีคลื่นลมแรง'}]};
+
+const $=id=>document.getElementById(id);
+const IC={pause:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg><span>หยุด</span>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l10.5-6.5z"/></svg><span>เล่นต่อ</span>',
+ again:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg><span>ดูอีกครั้ง</span>'};
+const mob=()=>innerWidth<900;
+const C=Chart3D($('stage'),{land:LAND,start:[-9.6,38.4],panelFrac:()=>mob()?.45:0,onSeaClick:(lon,lat,onLand)=>freeSail(lon,lat,onLand)});
+if(!C){$('fail').hidden=false}else{
+let mode='free',route=null,stopIdx=-1,speed=1,done=false;
+const fmtLL=(lon,lat)=>{let l=((lon+180)%360+360)%360-180;return `${Math.abs(lat).toFixed(1)}°${lat>=0?'N':'S'} ${Math.abs(l).toFixed(1)}°${l>=0?'E':'W'}`};
+const onTick=(ll,km)=>{$('lg-pos').textContent=`${fmtLL(ll[0],ll[1])} · แล่นมาแล้ว ${Math.round(km).toLocaleString('th-TH')} กม.`};
+function renderVoyages(){$('voyages').innerHTML=`<button class="vy free parch" data-v="free" aria-pressed="${mode==='free'}"><span class="yr">ล่องเรืออิสระ</span><b>คลิกที่ไหนก็ได้บนทะเล</b><span>ลองเป็นนักเดินเรือด้วยตัวเอง</span></button>`+
+  VOYAGES.map(v=>`<button class="vy parch" data-v="${v.id}" aria-pressed="${!!route&&route.id===v.id}"><span class="yr">${v.yr}</span><b>${v.name}</b><span>${v.sub}</span><span class="fl"><i style="background:linear-gradient(90deg,#fff 0 40%,#b3261e 40% 60%,#fff 60%)"></i>${NATION[v.nation].th}</span></button>`).join('')}
+let pinEls=[];
+function makePins(stops){pinEls=stops.map((s,i)=>{const el=document.createElement('button');el.className='pin future';el.innerHTML=`<b>${i+1}</b><span>${s.n}</span>`;el.title=s.n;el.onclick=()=>showStop(i,true);return {ll:s.p,el}});C.setPins(pinEls)}
+function showStop(i,manual){const s=route.stops[i];$('lg-date').textContent=s.d;$('lg-stop').textContent=s.n;$('lg-text').textContent=s.t;
+  $('lg-meter').innerHTML=route.stops.map((_,k)=>`<i class="${k<=Math.max(i,stopIdx)?'on':''}"></i>`).join('');
+  pinEls.forEach((p,k)=>{p.el.classList.toggle('cur',k===i);p.el.classList.toggle('future',k>Math.max(i,stopIdx))})}
+function setPlay(state){const b=$('lg-play');b.innerHTML=IC[state];b.dataset.s=state}
+function startVoyage(id){const v=VOYAGES.find(x=>x.id===id);hideHint();closeQuiz();
+  const r=C.buildRoute(v.pts);route={...v,...r};mode='voyage';stopIdx=0;done=false;C.setNation(v.nation);
+  C.placeShip(r.path[0]);C.resetKm();makePins(r.stops);
+  $('lg-kicker').textContent=`${NATION[v.nation].th} · ค.ศ. ${v.yr}`;$('lg-title').textContent=v.name;$('lg-who').textContent=v.sub;$('lg-meter').hidden=false;$('lg-play').hidden=false;setPlay('pause');$('lg-quiz').classList.remove('on');
+  showStop(0);
+  C.sail(r.path,{stops:r.stops,skipFirst:true,ink:v.ink,delay:1,onTick,onStop:i=>{stopIdx=i;showStop(i)},onDone:()=>{done=true;setPlay('again');$('lg-quiz').classList.add('on')}});
+  C.fitBounds(r.path);C.setFollow(true);renderVoyages()}
+function freeSail(lon,lat,onLand){if(!$('qwrap').hidden)return;
+  if(mode!=='free'){mode='free';route=null;C.setPins([]);pinEls=[];$('lg-meter').hidden=true;$('lg-play').hidden=true;$('lg-quiz').classList.remove('on');$('lg-kicker').textContent="SHIP'S LOG";$('lg-title').textContent='ล่องเรืออิสระ';$('lg-who').textContent='';renderVoyages();C.setNation('pt')}
+  hideHint();let path=C.seaPath(C.shipLL(),[lon,lat]);if(onLand){path=path.slice(0,-1);toast('ตรงนั้นเป็นแผ่นดิน เรือจะจอดที่ชายฝั่งใกล้ที่สุด')}
+  C.sail(path,{ink:'#8e3a1a',marker:true,onTick,onDone:()=>{$('lg-stop').textContent='ทอดสมอแล้ว'}});C.play();
+  const end=path[path.length-1];$('lg-date').textContent='จุดหมาย '+fmtLL(end[0],end[1]);$('lg-stop').textContent='กำลังออกเรือ';$('lg-text').textContent='เรือคาราเวลเลือกเส้นทางเลี่ยงแผ่นดินให้เอง เหมือนต้นหนที่อ่านแผนที่เดินเรือ ลองคลิกจุดใหม่ได้ตลอดเวลา'}
+let toastT;function toast(t){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove('show'),2200)}
+function hideHint(){const h=$('hint');h.style.opacity=0;setTimeout(()=>h.hidden=true,400)}
+/* quiz */
+let qi=0,qs=0,qset=null;
+function openQuiz(){qset=QUIZ[route.id];qi=0;qs=0;$('qwrap').hidden=false;C.pause();renderQ()}
+function closeQuiz(){$('qwrap').hidden=true}
+function renderQ(){const q=qset[qi];$('quiz').innerHTML=`<button class="x" aria-label="ปิด" data-q="close">×</button><small>แบบทดสอบท้ายเส้นทาง</small><h2 id="q-title">${route.name}</h2><div class="qn">ข้อ ${qi+1} จาก ${qset.length}</div>
+  <div class="qq">${q.q}</div><div class="opts">${q.o.map((o,i)=>`<button class="opt" data-o="${i}"><b>${'กขคง'[i]}</b><span>${o}</span></button>`).join('')}</div><div id="q-ex"></div>
+  <div class="qf"><span class="qn">คะแนน ${qs}/${qset.length}</span><button id="q-next" hidden data-q="next">${qi<qset.length-1?'ข้อถัดไป':'ดูผลคะแนน'}</button></div>`;$('quiz').querySelector('.opt').focus()}
+function answer(i){const q=qset[qi];const bs=[...document.querySelectorAll('.quiz .opt')];bs.forEach(b=>b.disabled=true);bs[q.a].classList.add('ok');if(i!==q.a)bs[i].classList.add('no');else qs++;
+  $('q-ex').innerHTML=`<p class="ex"><b>${i===q.a?'ถูกต้อง!':'ยังไม่ถูก'}</b> ${q.e}</p>`;document.querySelector('.quiz .qf .qn').textContent=`คะแนน ${qs}/${qset.length}`;const n=$('q-next');n.hidden=false;n.focus()}
+function result(){const full=qs===qset.length;$('quiz').innerHTML=`<button class="x" aria-label="ปิด" data-q="close">×</button><small>ผลแบบทดสอบ</small><h2 id="q-title">${route.name}</h2>
+  <div class="score">${full?'<div class="seal">นักเดินเรือ<br>ชั้นเยี่ยม</div>':''}<div class="big">${qs}/${qset.length}</div><p>${full?'ตอบถูกทุกข้อ ยอดเยี่ยมมาก':qs>=2?'เก่งมาก ลองอีกครั้งให้ได้เต็ม':'ลองดูเส้นทางอีกครั้ง แล้วกลับมาทำใหม่'}</p></div>
+  <div class="qf"><button class="ghost" data-q="retry">ทำอีกครั้ง</button><button data-q="nextv">${nextVoyage()?'เส้นทางถัดไป →':'ปิด'}</button></div>`}
+function nextVoyage(){const i=VOYAGES.findIndex(v=>v.id===route.id);return VOYAGES[i+1]}
+$('quiz').addEventListener('click',e=>{const o=e.target.closest('[data-o]');if(o){answer(+o.dataset.o);return}const b=e.target.closest('[data-q]');if(!b)return;const a=b.dataset.q;
+  if(a==='close')closeQuiz();else if(a==='next'){qi++;qi<qset.length?renderQ():result()}else if(a==='retry'){qi=0;qs=0;renderQ()}else if(a==='nextv'){const n=nextVoyage();closeQuiz();if(n)startVoyage(n.id)}});
+$('qwrap').addEventListener('click',e=>{if(e.target===$('qwrap'))closeQuiz()});
+$('lg-quiz').onclick=openQuiz;
+/* controls */
+$('z-in').onclick=()=>C.zoom(.7);$('z-out').onclick=()=>C.zoom(1.4);
+$('tilt').onclick=()=>{const t=C.toggleTilt();$('tilt').setAttribute('aria-pressed',t);$('tilt').textContent=t?'3D':'2D'};
+$('home').onclick=()=>{C.setFollow(false);C.flyTo(0,-1.5,30)};
+$('voyages').addEventListener('click',e=>{const b=e.target.closest('[data-v]');if(!b)return;if(b.dataset.v==='free'){if(mode!=='free')freeSail(...C.shipLL(),false);toast('คลิกบนทะเลเพื่อเลือกจุดหมาย');return}startVoyage(b.dataset.v)});
+$('lg-play').onclick=()=>{const s=$('lg-play').dataset.s;if(s==='again'){startVoyage(route.id);return}if(s==='pause'){C.pause();setPlay('play')}else{C.play();setPlay('pause')}};
+$('lg-speed').onclick=()=>{speed=speed===1?2:speed===2?4:1;C.setSpeed(speed);$('lg-speed').textContent='×'+speed};
+addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('qwrap').hidden){closeQuiz();return}if(e.key===' '&&mode==='voyage'&&$('qwrap').hidden&&!done){e.preventDefault();$('lg-play').click()}});
+/* start */
+renderVoyages();C.setCam(-2.2,-2.6,34);C.flyTo(-2.2,-2.6,19);
+$('lg-date').textContent='ท่าเรือลิสบอน · ค.ศ. 1487';$('lg-stop').textContent='เรือคาราเวลพร้อมออกเดินทาง';$('lg-text').textContent='คลิกบนทะเลตรงไหนก็ได้เพื่อให้เรือแล่นไป หรือเลือกเส้นทางของนักสำรวจด้านล่าง ดูการเดินทางจริงในประวัติศาสตร์ แล้วทำแบบทดสอบท้ายเส้นทาง';$('lg-pos').textContent=fmtLL(-9.6,38.4);
+const hv=(location.hash||'').slice(1);if(VOYAGES.some(v=>v.id===hv))startVoyage(hv);
+window.__aod={startVoyage,freeSail,openQuiz};
+}
+</script>
+</body>
+</html>
