@@ -643,6 +643,12 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
 .intro-skip:hover{background:rgba(0,0,0,.55)}
 @container (max-width:700px){.intro-go{left:50%;top:calc(100% + 34px);transform:translate(-50%,0);font-size:17px}.intro-go:hover{transform:translate(-50%,0) scale(1.05)}}
 @media (prefers-reduced-motion:reduce){.intro.ready .intro-go{animation:none}}
+
+.to-intro{display:inline-flex;align-items:center;gap:6px;flex:none;padding:7px 14px 7px 11px;border-radius:999px;font-size:14px;color:#0b1437;font-weight:500;background:linear-gradient(135deg,#fff3c4,#e2bf5e);box-shadow:0 0 0 1px rgba(255,255,255,.35);transition:transform .2s}
+.to-intro:hover{transform:translateY(-1px)}
+.to-intro svg{width:17px;height:17px}
+.top .wrap{max-width:1400px}
+@media (max-width:1399px){.to-intro{padding:8px}.to-intro span{display:none}}
 </style>
 </head>
 <body>
@@ -651,6 +657,7 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
 <div class="top"><div class="wrap">
   <button class="brand" data-nav="home" title="กลับหน้าแรก"><img class="logo" src="img/logo.png" width="44" height="44" alt="โลโก้กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนาและวัฒนธรรม"><div class="brand-text"><b>นายระพีพัฒน์ กลัดกันแสง</b><span>ครูผู้ช่วย · โรงเรียนวังหลวงพิทยาสรรพ์</span></div></button>
   <div class="tools">
+    <button class="to-intro" data-nav="intro" title="กลับหน้าแรก (หน้าเปิด)" aria-label="กลับหน้าแรก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>หน้าแรก</span></button>
     <div class="seg" role="tablist" aria-label="ด้านการประเมิน">
       <button role="tab" data-d="self"><span class="lg">ด้านการ</span>ปฏิบัติตน</button>
       <button role="tab" data-d="work"><span class="lg">ด้านการ</span>ปฏิบัติงาน</button>
@@ -671,7 +678,7 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
 <section class="screen intro" data-page="intro" id="intro" hidden aria-label="หน้าเปิด รายงานผลการปฏิบัติงาน">
   <div class="ibg" aria-hidden="true"></div>
   <div class="ibox">
-    <video id="intro-v" muted playsinline preload="auto" poster="media/intro-poster.jpg" aria-label="รายงานผลการปฏิบัติงาน การเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย นายระพีพัฒน์ กลัดกันแสง โรงเรียนวังหลวงพิทยาสรรพ์"><source src="media/intro.mp4" type="video/mp4"></video>
+    <video id="intro-v" muted loop playsinline preload="auto" poster="media/intro-poster.jpg" aria-label="รายงานผลการปฏิบัติงาน การเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย นายระพีพัฒน์ กลัดกันแสง โรงเรียนวังหลวงพิทยาสรรพ์"><source src="media/intro.mp4" type="video/mp4"></video>
     <button class="intro-go" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10.189V14"/><path d="M12 2v3"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-8.188-3.639a2 2 0 0 0-1.624 0L3 14a11.6 11.6 0 0 0 2.81 7.76"/><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>เข้าสู่ท่าเรือ</button>
   </div>
   <button class="intro-skip" data-nav="home">ข้าม ›</button>
