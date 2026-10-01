@@ -737,6 +737,14 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
 .o-node.on .lbl{background:color-mix(in srgb,var(--c) 30%,#050a1c);border-color:var(--c)}
 @media (max-width:760px){.o-node .dot{width:50px;height:50px}.o-node .dot svg{width:22px;height:22px}.o-node .lbl{top:32px;font-size:13px;padding:3px 9px 4px;border-radius:9px}.o-node .lbl small{font-size:10px}}
 @media (prefers-reduced-motion:reduce){.o-wheel{animation:none}}
+
+/* intro fills the screen on landscape screens: full bleed when the window is 16:9 or wider; on taller windows (16:10) at most ~2.5% is trimmed per side so the title and sign stay visible */
+@media (min-aspect-ratio:4/3){
+  .intro{display:block}
+  .intro{--iw:max(100vw,min(calc(100vh*16/9),105vw))}
+  @supports (height:100svh){.intro{--iw:max(100vw,min(calc(100svh*16/9),105vw))}}
+  .intro .ibox{position:absolute;width:var(--iw);left:calc((100vw - var(--iw))/2);top:50%;transform:translateY(-50%);box-shadow:none}
+}
 </style>
 </head>
 <body>
