@@ -649,6 +649,79 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
 .to-intro svg{width:17px;height:17px}
 .top .wrap{max-width:1400px}
 @media (max-width:1399px){.to-intro{padding:8px}.to-intro span{display:none}}
+
+/* Orbital home (replaces the harbor map) */
+.ohome{position:relative;height:calc(100vh - 63px);height:calc(100svh - 63px);min-height:560px;overflow:hidden;color:#eef1fb;
+  background:radial-gradient(60% 55% at 50% 52%,rgba(43,71,214,.28),transparent 70%),radial-gradient(40% 40% at 85% 10%,rgba(212,169,64,.16),transparent 70%),radial-gradient(50% 50% at 8% 95%,rgba(160,123,255,.16),transparent 70%),#050a1c}
+.ohome::before{content:"";position:absolute;inset:0;background-image:var(--pattern);opacity:.05;pointer-events:none}
+.o-stars{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 72% 12%,#fff9,transparent),radial-gradient(1.5px 1.5px at 33% 76%,#fff7,transparent),radial-gradient(1px 1px at 88% 64%,#fff8,transparent),radial-gradient(1px 1px at 52% 34%,#fff6,transparent),radial-gradient(1.5px 1.5px at 18% 52%,#f3dd9a99,transparent),radial-gradient(1px 1px at 64% 88%,#fff7,transparent),radial-gradient(1px 1px at 92% 30%,#f3dd9a88,transparent),radial-gradient(1px 1px at 6% 82%,#fff6,transparent),radial-gradient(1px 1px at 44% 8%,#fff7,transparent);animation:otw 6s ease-in-out infinite alternate}
+@keyframes otw{to{opacity:.55}}
+.o-head{position:absolute;left:24px;top:20px;z-index:300;max-width:min(520px,calc(100% - 48px));pointer-events:none}
+.o-head small{display:inline-block;font-size:12.5px;letter-spacing:.04em;padding:3px 12px;border-radius:999px;color:var(--gold-hi);background:rgba(212,169,64,.14);border:1px solid rgba(212,169,64,.4)}
+.o-head h1{margin-top:10px;font-weight:600;font-size:clamp(20px,2.2vw,30px);line-height:1.3;color:#fff}
+.o-head h1 span{display:block;font-size:.72em;font-weight:500;background:linear-gradient(100deg,#f3dd9a,#d4a940);-webkit-background-clip:text;background-clip:text;color:transparent}
+.o-head p{margin:6px 0 0;font-size:14px;line-height:1.5;color:#aab3d6}
+.o-hint{position:absolute;right:20px;top:22px;z-index:300;display:flex;align-items:center;gap:8px;font-size:13.5px;color:#c3c9e4;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);pointer-events:none}
+.o-hint svg{width:16px;height:16px;color:var(--gold-hi)}
+.o-stage{position:absolute;inset:0;display:grid;place-items:center}
+.o-orbit{position:absolute;left:50%;top:var(--cy,54%);width:0;height:0}
+.o-ring{position:absolute;left:0;top:0;width:calc(var(--r)*2);height:calc(var(--r)*2);transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(255,255,255,.12);pointer-events:none}
+.o-ring.r2{width:calc(var(--r)*2.5);height:calc(var(--r)*2.5);border-style:dashed;border-color:rgba(212,169,64,.14)}
+.o-ring.r1{width:calc(var(--r)*1.3);height:calc(var(--r)*1.3);border-color:rgba(255,255,255,.06)}
+.o-core{position:absolute;left:0;top:0;width:var(--core);height:var(--core);transform:translate(-50%,-50%);z-index:120;border-radius:50%;display:grid;place-items:center;background:conic-gradient(from 0deg,#5b7cff,#a07bff,#ff5b6e,#ff9f4a,#e2bf5e,#35c79c,#5b7cff);animation:ospin 14s linear infinite;box-shadow:0 0 50px -6px rgba(91,124,255,.6)}
+.o-core::before,.o-core::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid rgba(255,255,255,.25);animation:oping 2.4s cubic-bezier(0,0,.2,1) infinite}
+.o-core::after{inset:-16px;border-color:rgba(255,255,255,.12);animation-delay:.8s}
+.o-core img{width:calc(100% - 8px);height:calc(100% - 8px);border-radius:50%;object-fit:cover;object-position:50% 18%;border:3px solid #050a1c;animation:ospin 14s linear infinite reverse}
+@keyframes ospin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.o-core img{animation-name:ospinr}@keyframes ospinr{to{transform:rotate(-360deg)}}
+@keyframes oping{75%,100%{transform:scale(1.35);opacity:0}}
+.o-node{position:absolute;left:0;top:0;width:0;height:0;cursor:pointer;transition:opacity .4s}
+.o-node .dot{position:absolute;left:0;top:0;width:52px;height:52px;transform:translate(-50%,-50%);border-radius:50%;display:grid;place-items:center;background:#0b1437;color:#fff;border:2px solid color-mix(in srgb,var(--c) 70%,transparent);box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 14%,transparent),0 0 26px -4px var(--c);transition:transform .3s,background .3s,color .3s}
+.o-node .dot svg{width:22px;height:22px}
+.o-node .glow{position:absolute;left:0;top:0;width:96px;height:96px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 32%,transparent),transparent 68%);pointer-events:none}
+.o-node .lbl{position:absolute;left:0;top:34px;transform:translateX(-50%);white-space:nowrap;text-align:center;font-family:var(--f-head);font-size:14px;font-weight:500;color:rgba(255,255,255,.82);text-shadow:0 2px 8px #050a1c;transition:transform .3s,color .3s}
+.o-node .lbl small{display:block;font-size:11px;font-weight:400;color:color-mix(in srgb,var(--c) 75%,#fff);letter-spacing:.06em}
+.o-node:hover .dot,.o-node:focus-visible .dot{transform:translate(-50%,-50%) scale(1.12)}
+.o-node.rel .dot{background:color-mix(in srgb,var(--c) 45%,#0b1437);animation:opulse 1.6s ease-in-out infinite}
+@keyframes opulse{50%{box-shadow:0 0 0 12px color-mix(in srgb,var(--c) 10%,transparent),0 0 30px -2px var(--c)}}
+.o-node.on .dot{background:var(--c);color:#0b1437;border-color:#fff;transform:translate(-50%,-50%) scale(1.35)}
+.o-node.on .lbl{color:#fff;transform:translateX(-50%) translateY(8px) scale(1.12)}
+.o-card{position:absolute;left:0;top:calc(var(--core)/2 + 10px);transform:translateX(-50%);z-index:400;width:min(340px,calc(100vw - 32px));text-align:left;border-radius:18px;background:rgba(9,14,36,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid color-mix(in srgb,var(--c) 45%,rgba(255,255,255,.15));box-shadow:0 24px 60px -20px rgba(0,0,0,.8),0 0 40px -18px var(--c);padding:16px 18px 18px;animation:ocard .35s ease both}
+@keyframes ocard{from{opacity:0;transform:translateX(-50%) translateY(10px)}}
+.o-card[hidden]{display:none}
+.o-card .top-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.o-card .badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--c);color:#0b1437}
+.o-card .kind{font-size:12px;color:#8f98bd}
+.o-card .mid{display:grid;grid-template-columns:minmax(0,1fr) 74px;gap:10px;align-items:end;margin-top:8px}
+.o-card h3{font-size:19px;font-weight:600;line-height:1.35;color:#fff}
+.o-card p{margin:4px 0 0;font-size:13.5px;line-height:1.6;color:#c3c9e4}
+.o-card .mid img{width:74px;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.5))}
+.o-facts{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);font-size:12.5px;color:#aab3d6}
+.o-facts b{font-family:var(--f-head);font-size:18px;font-weight:600;color:#fff;margin-right:4px;font-variant-numeric:tabular-nums}
+.o-rel{margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)}
+.o-rel h4{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:500;letter-spacing:.08em;color:#8f98bd;margin:0 0 8px}
+.o-rel h4 svg{width:12px;height:12px}
+.o-rel div{display:flex;flex-wrap:wrap;gap:6px}
+.o-rel button{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;padding:3px 10px;border:1px solid rgba(255,255,255,.18);border-radius:6px;color:#dfe3f5;transition:background .2s,border-color .2s}
+.o-rel button:hover{background:rgba(255,255,255,.08);border-color:var(--c2)}
+.o-rel button i{width:7px;height:7px;border-radius:50%;background:var(--c2)}
+.o-go{margin-top:14px;width:100%;display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;font-family:var(--f-head);font-weight:500;font-size:15px;color:#0b1437;background:linear-gradient(135deg,#fff,color-mix(in srgb,var(--c) 70%,#fff));transition:transform .2s}
+.o-go:hover{transform:translateY(-2px)}
+.o-go svg{width:17px;height:17px}
+.o-legend{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:300;display:flex;gap:6px;max-width:calc(100% - 24px);overflow-x:auto;padding:5px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);scrollbar-width:none}
+.o-legend::-webkit-scrollbar{display:none}
+.o-legend button{flex:none;display:inline-flex;align-items:center;gap:7px;font-size:13px;padding:6px 12px;border-radius:999px;color:#c3c9e4;white-space:nowrap;transition:background .2s,color .2s}
+.o-legend button i{width:8px;height:8px;border-radius:50%;background:var(--c);box-shadow:0 0 8px var(--c)}
+.o-legend button:hover,.o-legend button[aria-pressed="true"]{background:rgba(255,255,255,.1);color:#fff}
+.ohome.side .o-card{left:calc(var(--r) + 96px);top:0;transform:translateY(-50%);animation-name:ocard2}
+@keyframes ocard2{from{opacity:0;transform:translateY(-50%) translateX(-12px)}}
+.ohome:not(.side) .o-card{position:fixed;left:50%;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);max-height:64vh;max-height:64svh;overflow:auto}
+@media (max-width:760px){
+  .o-head{left:16px;top:14px}.o-head h1{font-size:18px;margin-top:8px}.o-head p{font-size:12.5px}.o-hint{display:none}
+  .o-node .dot{width:44px;height:44px}.o-node .dot svg{width:19px;height:19px}.o-node .lbl{font-size:12.5px;top:28px}
+  .o-legend{bottom:10px}
+}
+@media (prefers-reduced-motion:reduce){.o-core,.o-core img,.o-core::before,.o-core::after,.o-stars{animation:none}}
 </style>
 </head>
 <body>
@@ -679,11 +752,29 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
   <div class="ibg" aria-hidden="true"></div>
   <div class="ibox">
     <video id="intro-v" muted loop playsinline preload="auto" poster="media/intro-poster.jpg" aria-label="รายงานผลการปฏิบัติงาน การเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย นายระพีพัฒน์ กลัดกันแสง โรงเรียนวังหลวงพิทยาสรรพ์"><source src="media/intro.mp4" type="video/mp4"></video>
-    <button class="intro-go" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10.189V14"/><path d="M12 2v3"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-8.188-3.639a2 2 0 0 0-1.624 0L3 14a11.6 11.6 0 0 0 2.81 7.76"/><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>เข้าสู่ท่าเรือ</button>
+    <button class="intro-go" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10.189V14"/><path d="M12 2v3"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-8.188-3.639a2 2 0 0 0-1.624 0L3 14a11.6 11.6 0 0 0 2.81 7.76"/><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>เข้าสู่แฟ้มผลงาน</button>
   </div>
   <button class="intro-skip" data-nav="home">ข้าม ›</button>
 </section>
-<section class="screen vhome" data-page="home" id="top">
+<section class="screen ohome" data-page="home" id="top" aria-label="แฟ้มผลงาน 6 หัวข้อ">
+  <div class="o-stars" aria-hidden="true"></div>
+  <header class="o-head">
+    <small>รายงานผลการปฏิบัติงาน · ครั้งที่ ๓</small>
+    <h1>นายระพีพัฒน์ กลัดกันแสง<span>การเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย</span></h1>
+    <p>โรงเรียนวังหลวงพิทยาสรรพ์ · สพม.หนองคาย</p>
+  </header>
+  <div class="o-hint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v1"/><path d="M14 10V4a2 2 0 0 0-4 0v2"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>แตะหัวข้อเพื่อดูรายละเอียด</div>
+  <div class="o-stage" id="o-stage">
+    <div class="o-orbit" id="o-orbit">
+      <span class="o-ring r2"></span><span class="o-ring"></span><span class="o-ring r1"></span>
+      <div class="o-core"><img src="img/hero.jpg" alt="นายระพีพัฒน์ กลัดกันแสง"></div>
+      <div id="o-nodes"></div>
+      <div class="o-card" id="o-card" hidden role="dialog" aria-live="polite"></div>
+    </div>
+  </div>
+  <nav class="o-legend" id="o-legend" aria-label="หัวข้อในแฟ้มผลงาน"></nav>
+</section>
+<section class="screen vhome" data-page="harbor" hidden>
   <div class="vh-stage" id="vh-stage"></div>
   <div class="vh-vig" aria-hidden="true"></div>
   <header class="vh-cart parch">
@@ -1149,6 +1240,61 @@ const PORTS=[
  {d:'media',n:4,name:'สื่อการจัดการเรียนรู้',port:'มะละกา',lm:'famosa',ll:[102.25,2.15],img:'img/mascot-media.png',below:1,tall:1},
  {d:'awards',n:5,name:'รางวัลและกิจกรรม',port:'กรุงศรีอยุธยา',lm:'ayutthaya',ll:[100.57,14.36],img:'img/mascot-awards.png',river:1},
  {d:'plan',n:6,name:'แผนการจัดการเรียนรู้',port:'มาเก๊า',lm:'stpaul',ll:[113.55,22.2],img:'img/mascot-plan.png',below:1,right:1}];
+
+/* ---------- orbital home ---------- */
+const OI={
+ user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg>',
+ brief:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>',
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>',
+ media:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/><path d="m10 7 5 3-5 3z"/></svg>',
+ trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+ plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>',
+ go:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>'};
+const OLINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
+const dsum=(a,b,f)=>{let s=0;for(let n=a;n<=b;n++)s+=f(n);return s};
+const ORB=[
+ {d:'self',n:1,c:'#6f8bff',ic:'user',kind:'องค์ประกอบที่ 1',name:'ด้านการปฏิบัติตน',desc:DDESC.self,facts:()=>[[6,'แฟ้ม'],[dsum(1,6,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(1,6,countImgs),'ภาพหลักฐาน']],rel:['work','awards']},
+ {d:'work',n:2,c:'#ff6b7d',ic:'brief',kind:'องค์ประกอบที่ 2',name:'ด้านการปฏิบัติงาน',desc:DDESC.work,facts:()=>[[6,'แฟ้ม'],[dsum(7,12,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(7,12,countImgs),'ภาพหลักฐาน']],rel:['self','plan','media']},
+ {d:'book',n:3,c:'#e2bf5e',ic:'book',kind:'E-book',name:'รูปเล่มรายงาน',desc:'รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3 เปิดอ่านแบบพลิกหน้า',facts:()=>[[BOOK_PAGES,'หน้า'],[TOC.length,'หมวดในสารบัญ']],rel:['self','work']},
+ {d:'media',n:4,c:'#a98bff',ic:'media',kind:'นวัตกรรมการสอน',name:'สื่อการจัดการเรียนรู้',desc:'สื่อ 3 มิติ เกมตอบคำถาม วิดีโอการสอน และสไลด์ประกอบการสอนที่ครูผลิตและใช้ในชั้นเรียน',facts:()=>[[5,'สื่อโต้ตอบ/เกม'],[VIDEOS.length+YTV.length,'วิดีโอ'],[DECKS.length,'ชุดสไลด์']],rel:['plan','awards','work']},
+ {d:'awards',n:5,c:'#3fd3a6',ic:'trophy',kind:'ผลงานและเกียรติบัตร',name:'รางวัลและกิจกรรม',desc:'รางวัล เกียรติบัตร และภาพกิจกรรมระหว่างการเตรียมความพร้อม รวมถึงภาพยนตร์สั้นชนะเลิศอันดับ 1 สพม.หนองคาย',facts:()=>[[AWN,'รางวัล'],[AW.length,'กิจกรรม'],[AWP,'ภาพ']],rel:['self','media']},
+ {d:'plan',n:6,c:'#ff9f4a',ic:'plan',kind:'E-book',name:'แผนการจัดการเรียนรู้',desc:'แผนการจัดการเรียนรู้ เรื่อง การเป็นเยาวชนที่ดี (KWL) สังคมศึกษา ศาสนาและวัฒนธรรม ม.1',facts:()=>[[PLAN_PAGES,'หน้า'],[PLAN_TOC.length,'หมวดในสารบัญ']],rel:['media','work']}];
+const ORBI=Object.fromEntries(ORB.map((o,i)=>[o.d,i]));
+let oAng=0,oTarget=null,oActive=-1,oRaf=0,oLast=0,oR=200,oBuilt=false,oSide=true;
+const oReduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function orbBuild(){if(oBuilt)return;oBuilt=true;
+  document.getElementById('o-nodes').innerHTML=ORB.map((o,i)=>`<div class="o-node" data-orb="${i}" style="--c:${o.c}" role="button" tabindex="0" aria-label="หัวข้อที่ ${o.n} ${o.name}"><span class="glow"></span><span class="dot">${OI[o.ic]}</span><span class="lbl"><small>หัวข้อที่ ${o.n}</small>${o.name}</span></div>`).join('');
+  document.getElementById('o-legend').innerHTML=ORB.map((o,i)=>`<button data-orb="${i}" style="--c:${o.c}" aria-pressed="false"><i></i>${o.n}. ${o.name}</button>`).join('');
+  document.getElementById('o-stage').addEventListener('click',e=>{if(!e.target.closest('[data-orb],.o-card'))orbSelect(-1)});
+  document.getElementById('o-nodes').addEventListener('keydown',e=>{const n=e.target.closest('[data-orb]');if(n&&(e.key==='Enter'||e.key===' ')){e.preventDefault();orbSelect(+n.dataset.orb)}});
+  addEventListener('resize',orbFit);orbFit()}
+function orbFit(){const s=document.getElementById('o-stage');if(!s||!s.clientWidth)return;const w=s.clientWidth,h=s.clientHeight;
+  oR=Math.max(112,Math.min(250,Math.min(w*.36,(h-170)*.42)));const core=Math.round(Math.max(76,Math.min(132,oR*.5)));
+  oSide=w/2>=oR+470;document.querySelector('.ohome').classList.toggle('side',oSide);if(oActive>=0)oTarget=orbTargetFor(oActive);
+  const o=document.getElementById('o-orbit');o.style.setProperty('--r',oR+'px');o.style.setProperty('--core',core+'px');o.style.setProperty('--cy',(w<760?56:53)+'%');orbPlace()}
+function orbTargetFor(i){return(((oSide?0:270)-(i/ORB.length)*360)%360+360)%360}
+function orbPlace(){const N=ORB.length;document.querySelectorAll('#o-nodes .o-node').forEach((el,i)=>{const a=((i/N)*360+oAng)*Math.PI/180;const x=oR*Math.cos(a),y=oR*Math.sin(a);
+  el.style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`;const on=i===oActive;el.style.zIndex=on?250:Math.round(100+50*Math.sin(a));
+  el.style.opacity=on||oActive<0?Math.max(.55,Math.min(1,.55+.45*((1+Math.sin(a))/2))):(el.classList.contains('rel')?1:.45)})}
+function orbTick(ts){oRaf=0;if(document.body.dataset.page!=='home')return;const dt=Math.min(64,ts-(oLast||ts));oLast=ts;
+  if(oTarget!=null){let d=((oTarget-oAng)%360+540)%360-180;if(Math.abs(d)<.2){oAng=oTarget;oTarget=null}else oAng+=d*Math.min(1,dt/140)}
+  else if(oActive<0&&!oReduce)oAng=(oAng+dt*.006)%360;
+  orbPlace();oRaf=requestAnimationFrame(orbTick)}
+function orbStart(){orbBuild();orbFit();if(!oRaf){oLast=0;oRaf=requestAnimationFrame(orbTick)}}
+function orbStop(){if(oRaf)cancelAnimationFrame(oRaf);oRaf=0}
+function orbSelect(i){if(i===oActive)i=-1;oActive=i;const card=document.getElementById('o-card');
+  const rel=i>=0?ORB[i].rel.map(d=>ORBI[d]):[];
+  document.querySelectorAll('#o-nodes .o-node').forEach((el,k)=>{el.classList.toggle('on',k===i);el.classList.toggle('rel',rel.includes(k))});
+  document.querySelectorAll('#o-legend button').forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+  if(i<0){card.hidden=true;oTarget=null;orbPlace();return}
+  const o=ORB[i];oTarget=orbTargetFor(i);
+  card.style.setProperty('--c',o.c);
+  card.innerHTML=`<div class="top-row"><span class="badge">หัวข้อที่ ${o.n}</span><span class="kind">${o.kind}</span></div>
+    <div class="mid"><div><h3>${o.name}</h3><p>${o.desc}</p></div><img src="img/mascot-${o.d}.png" alt=""></div>
+    <div class="o-facts">${o.facts().map(([v,l])=>`<span><b>${v}</b>${l}</span>`).join('')}</div>
+    <div class="o-rel"><h4>${OLINK}หัวข้อที่เกี่ยวข้อง</h4><div>${o.rel.map(d=>{const r=ORB[ORBI[d]];return `<button data-orb="${ORBI[d]}" style="--c2:${r.c}"><i></i>${r.name}</button>`}).join('')}</div></div>
+    <button class="o-go" data-nav="${o.d}">เข้าสู่หัวข้อ ${OI.go}</button>`;
+  card.hidden=false;card.style.animation='none';card.offsetWidth;card.style.animation='';orbPlace()}
 let VH=null,vhState='idle',vhCur=-1,vhFailed=false;
 function loadScript(src){return new Promise((ok,no)=>{if(document.querySelector(`script[data-src="${src}"]`))return ok();const s=document.createElement('script');s.src=src;s.dataset.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s)})}
 function vhFallback(){vhFailed=true;document.getElementById('cover-fallback').hidden=false;['vh-hint','vh-legend'].forEach(id=>document.getElementById(id).hidden=true);document.querySelector('.vh-cart').hidden=true}
@@ -1181,7 +1327,7 @@ function sailToPort(i){const P=PORTS[i];
   VH.sail(path,{ink:'#8e3a1a',marker:true,pace:Math.max(3,pathLen(path)/2.6),onDone:()=>{vhState='idle';vhToast(`<small>ทอดสมอที่ท่าที่ ${P.n} · ${P.port}</small>${P.name}`,1200);setTimeout(()=>{if(vhCur===i&&document.body.dataset.page==='home'){txSub=`ทอดสมอที่ท่าที่ ${P.n} · ${P.port}`;go(P.d)}},750)}})}
 function route(h){
   h=h||(location.hash||'').slice(1)||'intro';
-  if(VH&&h!=='home')VH.stop();introStop();
+  if(VH&&h!=='harbor')VH.stop();if(h!=='home')orbStop();introStop();
   killBook();lbCaps=[];lbYt=[];if(typeof pl!=='undefined'&&!pl.hidden)plClose();if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
   let m;
   if(h==='menu'){showPage('menu');setSel(null)}
@@ -1191,7 +1337,8 @@ function route(h){
   else if(h==='media'){showPage('content');openMedia()}
   else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
   else if(h==='intro'){showPage('intro');introPlay()}
-  else{showPage('home');setSel(null);vhInit();if(VH){VH.start();vhFit()}}
+  else if(h==='harbor'){showPage('harbor');setSel(null);vhInit();if(VH){VH.start();vhFit()}}
+  else{showPage('home');setSel(null);orbStart()}
   scrollTo(0,0);
   if(window.fxWake)window.fxWake();
 }
@@ -1205,7 +1352,7 @@ introV.addEventListener('ended',()=>introEl.classList.add('ready'));
 introV.addEventListener('error',()=>introEl.classList.add('ready'),true);
 let txSub='';
 function labelFor(h){let t='',s='';const m=h.match(/^f(\d+)$/);
-  if(h==='home'){t='แผนที่เดินเรือ';s=document.body.dataset.page==='intro'?'เริ่มออกเดินทางสู่ท่าเรือ':'กลับสู่หน้าแรก'}else if(h==='intro'){t='รายงานผลการปฏิบัติงาน';s='ครูผู้ช่วย ครั้งที่ 3'}else if(h==='menu'){t='เลือกหัวข้อ';s='แฟ้มผลงานการประเมินครั้งที่ 3'}
+  if(h==='home'){t='แฟ้มผลงาน 6 หัวข้อ';s=document.body.dataset.page==='intro'?'เข้าสู่แฟ้มผลงาน':'กลับสู่หน้าหลัก'}else if(h==='intro'){t='รายงานผลการปฏิบัติงาน';s='ครูผู้ช่วย ครั้งที่ 3'}else if(h==='menu'){t='เลือกหัวข้อ';s='แฟ้มผลงานการประเมินครั้งที่ 3'}
   else if(m&&FOLDERS[m[1]]){t=FOLDERS[m[1]].name;s=`${DNAME[FOLDERS[m[1]].d]} · แฟ้มที่ ${m[1]}`}
   else if(DNAME[h]){t=DNAME[h];s=({self:'หัวข้อที่ 1',work:'หัวข้อที่ 2',book:'หัวข้อที่ 3 · E-book',media:'หัวข้อที่ 4',awards:'หัวข้อที่ 5',plan:'หัวข้อที่ 6 · E-book'})[h]||''}
   if(txSub){s=txSub;txSub=''}return [t,s]}
@@ -1216,7 +1363,8 @@ let hashByGo=null;
 function go(h){if(location.hash==='#'+h){nav(h);return}hashByGo=h;try{location.hash=h}catch(e){}if(location.hash!=='#'+h){hashByGo=null;nav(h)}}
 window.addEventListener('hashchange',()=>{hashByGo=null;nav((location.hash||'').slice(1)||'intro')});
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl],[data-port],[data-yt]');if(!t)return;
+  const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl],[data-port],[data-yt],[data-orb]');if(!t)return;
+  if(t.dataset.orb!==undefined){orbSelect(+t.dataset.orb);return}
   if(t.dataset.yt!==undefined){if(!YT_EMBED)return;e.preventDefault();lb.hidden=true;lb.classList.remove('zoom');openYT(t.dataset.yt,+(t.dataset.ytT||0),t.dataset.ytTitle||'',t.dataset.ytKind||'YouTube');return}
   if(t.dataset.port!==undefined){sailToPort(+t.dataset.port);return}
   if(t.dataset.sl!==undefined){showSlide(+t.dataset.sl);return}
