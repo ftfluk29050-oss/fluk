@@ -627,6 +627,22 @@ a.vcard{text-decoration:none;color:inherit}
 .lb .bar a.lb-yt[hidden]{display:none}
 .lb .bar a.lb-yt svg{width:16px;height:16px}
 @media (max-width:640px){.lb .bar{flex-wrap:wrap;gap:8px 10px}}
+
+/* Intro splash (before the harbor) */
+body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
+.intro{position:fixed;inset:0;z-index:40;display:grid;place-items:center;overflow:hidden;background:#071233;color:#fff}
+.intro .ibg{position:absolute;inset:-40px;background:url(media/intro-poster.jpg) center/cover;filter:blur(28px) brightness(.55) saturate(1.2);transform:scale(1.05)}
+.intro .ibox{position:relative;width:min(100vw,calc(100svh*16/9));aspect-ratio:16/9;container-type:inline-size;box-shadow:0 30px 80px -30px rgba(0,0,0,.8)}
+.intro video,.intro .ibox>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.intro-go{position:absolute;left:20.3%;top:86%;transform:translate(-50%,-50%);display:inline-flex;align-items:center;gap:.6em;white-space:nowrap;padding:.75em 1.6em .75em 1.3em;border-radius:999px;font-family:var(--f-head);font-weight:600;font-size:clamp(14px,1.45cqw,26px);color:#0b1437;background:linear-gradient(135deg,#fff3c4,#e2bf5e 55%,#c49a35);border:2px solid rgba(255,255,255,.85);box-shadow:0 0 0 6px rgba(226,191,94,.25),0 14px 30px -10px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .6s,transform .25s,box-shadow .25s}
+.intro.ready .intro-go{opacity:1;pointer-events:auto;animation:igo 2.4s ease-in-out infinite}
+.intro-go:hover{transform:translate(-50%,-50%) scale(1.06);box-shadow:0 0 0 10px rgba(226,191,94,.3),0 18px 36px -10px rgba(0,0,0,.75)}
+.intro-go svg{width:1.35em;height:1.35em;flex:none}
+@keyframes igo{50%{box-shadow:0 0 0 12px rgba(226,191,94,.12),0 14px 30px -10px rgba(0,0,0,.7)}}
+.intro-skip{position:absolute;right:16px;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:2;font-size:13px;padding:6px 14px;border-radius:999px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);color:#e9ecf8}
+.intro-skip:hover{background:rgba(0,0,0,.55)}
+@container (max-width:700px){.intro-go{left:50%;top:calc(100% + 34px);transform:translate(-50%,0);font-size:17px}.intro-go:hover{transform:translate(-50%,0) scale(1.05)}}
+@media (prefers-reduced-motion:reduce){.intro.ready .intro-go{animation:none}}
 </style>
 </head>
 <body>
@@ -652,6 +668,14 @@ a.vcard{text-decoration:none;color:inherit}
 
 <canvas id="fx" aria-hidden="true"></canvas>
 
+<section class="screen intro" data-page="intro" id="intro" hidden aria-label="หน้าเปิด รายงานผลการปฏิบัติงาน">
+  <div class="ibg" aria-hidden="true"></div>
+  <div class="ibox">
+    <video id="intro-v" muted playsinline preload="auto" poster="media/intro-poster.jpg" aria-label="รายงานผลการปฏิบัติงาน การเตรียมความพร้อมและพัฒนาอย่างเข้ม ตำแหน่งครูผู้ช่วย นายระพีพัฒน์ กลัดกันแสง โรงเรียนวังหลวงพิทยาสรรพ์"><source src="media/intro.mp4" type="video/mp4"></video>
+    <button class="intro-go" data-nav="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 10.189V14"/><path d="M12 2v3"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-8.188-3.639a2 2 0 0 0-1.624 0L3 14a11.6 11.6 0 0 0 2.81 7.76"/><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>เข้าสู่ท่าเรือ</button>
+  </div>
+  <button class="intro-skip" data-nav="home">ข้าม ›</button>
+</section>
 <section class="screen vhome" data-page="home" id="top">
   <div class="vh-stage" id="vh-stage"></div>
   <div class="vh-vig" aria-hidden="true"></div>
@@ -1149,8 +1173,8 @@ function sailToPort(i){const P=PORTS[i];
   vhState='sailing';document.getElementById('vh-hint').style.opacity=0;
   VH.sail(path,{ink:'#8e3a1a',marker:true,pace:Math.max(3,pathLen(path)/2.6),onDone:()=>{vhState='idle';vhToast(`<small>ทอดสมอที่ท่าที่ ${P.n} · ${P.port}</small>${P.name}`,1200);setTimeout(()=>{if(vhCur===i&&document.body.dataset.page==='home'){txSub=`ทอดสมอที่ท่าที่ ${P.n} · ${P.port}`;go(P.d)}},750)}})}
 function route(h){
-  h=h||(location.hash||'').slice(1)||'home';
-  if(VH&&h!=='home'&&(h||'home')!=='home')VH.stop();
+  h=h||(location.hash||'').slice(1)||'intro';
+  if(VH&&h!=='home')VH.stop();introStop();
   killBook();lbCaps=[];lbYt=[];if(typeof pl!=='undefined'&&!pl.hidden)plClose();if(typeof lb!=='undefined'){lb.hidden=true;lb.classList.remove('zoom')}
   let m;
   if(h==='menu'){showPage('menu');setSel(null)}
@@ -1159,13 +1183,22 @@ function route(h){
   else if(h==='awards'){showPage('content');openAwards()}
   else if(h==='media'){showPage('content');openMedia()}
   else if((m=h.match(/^f(\d+)$/))&&DATA[m[1]]){showPage('content');openFolder(+m[1])}
+  else if(h==='intro'){showPage('intro');introPlay()}
   else{showPage('home');setSel(null);vhInit();if(VH){VH.start();vhFit()}}
   scrollTo(0,0);
   if(window.fxWake)window.fxWake();
 }
+
+/* intro splash */
+const introEl=document.getElementById('intro'),introV=document.getElementById('intro-v');let introT=0;
+function introPlay(){introEl.classList.remove('ready');clearTimeout(introT);introT=setTimeout(()=>introEl.classList.add('ready'),2600);
+  try{introV.currentTime=0;const p=introV.play();if(p&&p.catch)p.catch(()=>introEl.classList.add('ready'))}catch(e){introEl.classList.add('ready')}}
+function introStop(){clearTimeout(introT);if(introV&&!introV.paused)introV.pause()}
+introV.addEventListener('ended',()=>introEl.classList.add('ready'));
+introV.addEventListener('error',()=>introEl.classList.add('ready'),true);
 let txSub='';
 function labelFor(h){let t='',s='';const m=h.match(/^f(\d+)$/);
-  if(h==='home'){t='แผนที่เดินเรือ';s='กลับสู่หน้าแรก'}else if(h==='menu'){t='เลือกหัวข้อ';s='แฟ้มผลงานการประเมินครั้งที่ 3'}
+  if(h==='home'){t='แผนที่เดินเรือ';s=document.body.dataset.page==='intro'?'เริ่มออกเดินทางสู่ท่าเรือ':'กลับสู่หน้าแรก'}else if(h==='intro'){t='รายงานผลการปฏิบัติงาน';s='ครูผู้ช่วย ครั้งที่ 3'}else if(h==='menu'){t='เลือกหัวข้อ';s='แฟ้มผลงานการประเมินครั้งที่ 3'}
   else if(m&&FOLDERS[m[1]]){t=FOLDERS[m[1]].name;s=`${DNAME[FOLDERS[m[1]].d]} · แฟ้มที่ ${m[1]}`}
   else if(DNAME[h]){t=DNAME[h];s=({self:'หัวข้อที่ 1',work:'หัวข้อที่ 2',book:'หัวข้อที่ 3 · E-book',media:'หัวข้อที่ 4',awards:'หัวข้อที่ 5',plan:'หัวข้อที่ 6 · E-book'})[h]||''}
   if(txSub){s=txSub;txSub=''}return [t,s]}
@@ -1174,7 +1207,7 @@ function nav(h){const fromHome=document.body.dataset.page==='home',toHome=h==='h
   if(window.ScrollTx&&(fromHome||toHome)&&!(fromHome&&toHome)){stxTop();ScrollTx.run(()=>route(h),labelFor(h))}else{txSub='';route(h)}}
 let hashByGo=null;
 function go(h){if(location.hash==='#'+h){nav(h);return}hashByGo=h;try{location.hash=h}catch(e){}if(location.hash!=='#'+h){hashByGo=null;nav(h)}}
-window.addEventListener('hashchange',()=>{hashByGo=null;nav((location.hash||'').slice(1)||'home')});
+window.addEventListener('hashchange',()=>{hashByGo=null;nav((location.hash||'').slice(1)||'intro')});
 document.addEventListener('click',e=>{
   const t=e.target.closest('[data-d],[data-f],[data-go],[data-lb],[data-jump],[data-tog],[data-all],[data-nav],[data-bp],[data-aw],[data-flt],[data-md],[data-mf],[data-vid],[data-deck],[data-sl],[data-port],[data-yt]');if(!t)return;
   if(t.dataset.yt!==undefined){if(!YT_EMBED)return;e.preventDefault();lb.hidden=true;lb.classList.remove('zoom');openYT(t.dataset.yt,+(t.dataset.ytT||0),t.dataset.ytTitle||'',t.dataset.ytKind||'YouTube');return}
