@@ -755,12 +755,12 @@ body[data-page="intro"] .top,body[data-page="intro"] footer{display:none}
   <div class="tools">
     <button class="to-intro" data-nav="intro" title="กลับหน้าแรก (หน้าเปิด)" aria-label="กลับหน้าแรก"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>หน้าแรก</span></button>
     <div class="seg" role="tablist" aria-label="ด้านการประเมิน">
+      <button role="tab" data-d="book">รูปเล่ม<span class="lg">รายงาน</span></button>
       <button role="tab" data-d="self"><span class="lg">ด้านการ</span>ปฏิบัติตน</button>
       <button role="tab" data-d="work"><span class="lg">ด้านการ</span>ปฏิบัติงาน</button>
-      <button role="tab" data-d="book">รูปเล่ม<span class="lg">รายงาน</span></button>
+      <button role="tab" data-d="plan">แผน<span class="lg">การ</span>จัดการเรียนรู้</button>
       <button role="tab" data-d="media">สื่อ<span class="lg">การเรียนรู้</span></button>
       <button role="tab" data-d="awards">รางวัล<span class="lg">และกิจกรรม</span></button>
-      <button role="tab" data-d="plan">แผน<span class="lg">การ</span>จัดการเรียนรู้</button>
     </div>
     <button class="theme-switch" id="theme-switch" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด">
       <svg id="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
@@ -947,8 +947,8 @@ const NSLIDES=DECKS.reduce((a,d)=>a+d.n,0);
 const TOC=[['ปก',0],['คำนำ',1],['สารบัญ',2],['ข้อมูลผู้ขอรับการประเมิน',3],['องค์ประกอบที่ 1 การปฏิบัติตน',8],['องค์ประกอบที่ 2 การปฏิบัติงาน',18],['ภาคผนวก ก คำสั่งการปฏิบัติราชการ',23],['ภาคผนวก ข เกียรติบัตร รางวัล',28],['ภาคผนวก ค รูปภาพกิจกรรม',33],['ปกหลัง',55]];
 const PLAN_TOC=[['ปก',0],['มาตรฐานและจุดประสงค์',1],['กระบวนการจัดการเรียนรู้',2],['สื่อ การวัดและประเมินผล',5],['บันทึกหลังการสอน',8],['แบบประเมินและเกณฑ์',10],['ใบกิจกรรม KWL',24],['คำชี้แจง KWL',30],['ใบความรู้',31],['ใบกิจกรรมและเฉลย',34],['ปกหลัง',37]];
 const EBOOKS={
-  book:{dir:'book',n:BOOK_PAGES,toc:TOC,label:'รูปเล่มรายงาน',no:'03'},
-  plan:{dir:'plan',n:PLAN_PAGES,toc:PLAN_TOC,label:'แผนการจัดการเรียนรู้',no:'06'}};
+  book:{dir:'book',n:BOOK_PAGES,toc:TOC,label:'รูปเล่มรายงาน',no:'01'},
+  plan:{dir:'plan',n:PLAN_PAGES,toc:PLAN_TOC,label:'แผนการจัดการเรียนรู้',no:'04'}};
 let EB=EBOOKS.book;
 const ICO_BOOK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>';
 const DDESC={self:'วินัย คุณธรรม จริยธรรม จรรยาบรรณวิชาชีพ เศรษฐกิจพอเพียง และความเป็นครู',work:'การจัดการเรียนการสอน การบริหารชั้นเรียน การพัฒนาตนเอง ทีมงาน และงานสถานศึกษา'};
@@ -967,17 +967,14 @@ const exOf=(n,no)=>EXTRA[n+'|'+no]||[];
 const exImgs=(n,no)=>exOf(n,no).reduce((a,i)=>a+AW[i].photos.length,0);
 function countImgs(n){return DATA[n].reduce((a,s)=>a+s.blocks.filter(b=>b.img).length+exImgs(n,s.no),0)}
 function domStats(d){let f=0,i=0,p=0;for(const n in FOLDERS)if(FOLDERS[n].d===d){f++;i+=DATA[n].length;p+=countImgs(n)}return{f,i,p}}
-document.getElementById('domains').innerHTML=['self','work'].map((d,x)=>{const s=domStats(d);
-  return `<button class="dcard" role="tab" data-d="${d}"><span class="stagebg"><img class="mascot" src="img/mascot-${d}.png" alt="" loading="lazy"></span><span class="dtext"><small>ด้านที่ ${x+1}</small><h2>${DNAME[d]}</h2><p>${DDESC[d]}</p></span>
-  <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('')
-  +`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 3</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
-  <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>สื่อการจัดการเรียนรู้</h2><p>แผนที่ 3 มิติยุคแห่งการสำรวจ วิดีโอการสอน สไลด์ประกอบการสอน และเกมการเรียนรู้</p></span>
-  <span class="meta"><span><b>${VIDEOS.length+YTV.length}</b>วิดีโอ</span><span><b>${DECKS.length}</b>ชุดสไลด์</span><span><b>${MEDIA.length}</b>สื่ออื่น ๆ</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 5</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
-  <span class="meta"><span><b>${AWN}</b>รางวัล</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></span></button>`
-  +`<button class="dcard" role="tab" data-d="plan"><span class="stagebg"><img class="mascot" src="img/mascot-plan.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 6</small><h2>แผนการจัดการเรียนรู้</h2><p>แผนการจัดการเรียนรู้ KWL เรื่อง การเป็นเยาวชนที่ดี พร้อมแบบประเมิน ใบกิจกรรม และใบความรู้</p></span>
-  <span class="meta"><span><b>${PLAN_PAGES}</b>หน้า</span><span><b>${PLAN_TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`;
+const SWCARDS=['self','work'].map((d,x)=>{const s=domStats(d);
+  return `<button class="dcard" role="tab" data-d="${d}"><span class="stagebg"><img class="mascot" src="img/mascot-${d}.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ ${x+2} · ด้านที่ ${x+1}</small><h2>${DNAME[d]}</h2><p>${DDESC[d]}</p></span>
+  <span class="meta"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></span></button>`}).join('');
+document.getElementById('domains').innerHTML=`<button class="dcard" role="tab" data-d="book"><span class="stagebg"><img class="mascot" src="img/mascot-book.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 1</small><h2>รูปเล่มรายงาน</h2><p>รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</p></span>
+  <span class="meta"><span><b>${BOOK_PAGES}</b>หน้า</span><span><b>${TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`+SWCARDS+`<button class="dcard" role="tab" data-d="plan"><span class="stagebg"><img class="mascot" src="img/mascot-plan.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 4</small><h2>แผนการจัดการเรียนรู้</h2><p>แผนการจัดการเรียนรู้ KWL เรื่อง การเป็นเยาวชนที่ดี พร้อมแบบประเมิน ใบกิจกรรม และใบความรู้</p></span>
+  <span class="meta"><span><b>${PLAN_PAGES}</b>หน้า</span><span><b>${PLAN_TOC.length}</b>หมวด</span><span><b>E-book</b>พลิกอ่านได้</span></span></button>`+`<button class="dcard" role="tab" data-d="media"><span class="stagebg"><img class="mascot" src="img/mascot-media.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 5</small><h2>สื่อการจัดการเรียนรู้</h2><p>แผนที่ 3 มิติยุคแห่งการสำรวจ วิดีโอการสอน สไลด์ประกอบการสอน และเกมการเรียนรู้</p></span>
+  <span class="meta"><span><b>${VIDEOS.length+YTV.length}</b>วิดีโอ</span><span><b>${DECKS.length}</b>ชุดสไลด์</span><span><b>${MEDIA.length}</b>สื่ออื่น ๆ</span></span></button>`+`<button class="dcard" role="tab" data-d="awards"><span class="stagebg"><img class="mascot" src="img/mascot-awards.png" alt="" loading="lazy"></span><span class="dtext"><small>หัวข้อที่ 6</small><h2>รางวัลและกิจกรรม</h2><p>รางวัลที่ได้รับ เกียรติบัตร และภาพกิจกรรมตลอดการปฏิบัติงาน</p></span>
+  <span class="meta"><span><b>${AWN}</b>รางวัล</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></span></button>`;
 
 function renderSide(d){
   document.getElementById('side-title').textContent=DNAME[d];
@@ -1022,7 +1019,7 @@ function renderView(n){
       </div></div></div></article>`;
   });
   const p=n>1?n-1:null,x=n<12?n+1:null;
-  html+=`<nav class="pager">${p?`<button data-go="${p}"><small>← แฟ้มที่ ${p}</small><span>${FOLDERS[p].name}</span></button>`:''}${x?`<button class="next" data-go="${x}"><small>แฟ้มที่ ${x} →</small><span>${FOLDERS[x].name}</span></button>`:`<button class="next" data-nav="book"><small>หัวข้อที่ 3 →</small><span>รูปเล่มรายงาน</span></button>`}</nav></div>`;
+  html+=`<nav class="pager">${p?`<button data-go="${p}"><small>← แฟ้มที่ ${p}</small><span>${FOLDERS[p].name}</span></button>`:''}${x?`<button class="next" data-go="${x}"><small>แฟ้มที่ ${x} →</small><span>${FOLDERS[x].name}</span></button>`:`<button class="next" data-nav="plan"><small>หัวข้อที่ 4 →</small><span>แผนการจัดการเรียนรู้</span></button>`}</nav></div>`;
   document.getElementById('view').innerHTML=html;
 }
 
@@ -1032,17 +1029,18 @@ const isEbook=()=>document.body.dataset.domain in EBOOKS;
 function killBook(){if(pf){try{pf.destroy()}catch(e){}pf=null}}
 const EB_HINT=ICO_HAND+'คลิกที่มุมกระดาษหรือลากเพื่อพลิกหน้า ใช้ปุ่มลูกศรบนคีย์บอร์ดได้ และกด "ขยายอ่าน" เพื่อดูตัวอักษรชัด ๆ';
 const EB_BANNER={
-  book:()=>`<div class="kick"><span class="g">หัวข้อที่ 3</span><span>E-book · ${EB.n} หน้า</span></div>
+  book:()=>`<div class="kick"><span class="g">หัวข้อที่ 1</span><span>E-book · ${EB.n} หน้า</span></div>
     <h2><small>รูปเล่มรายงานผลการปฏิบัติงาน</small>การเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3</h2>
     <div class="facts"><span><b>${EB.n}</b>หน้า</span><span><b>${EB.toc.length}</b>หมวดในสารบัญ</span></div>`,
-  plan:()=>`<div class="kick"><span class="g">หัวข้อที่ 6</span><span>E-book · ${EB.n} หน้า</span></div>
+  plan:()=>`<div class="kick"><span class="g">หัวข้อที่ 4</span><span>E-book · ${EB.n} หน้า</span></div>
     <h2><small>แผนการจัดการเรียนรู้ · สังคมศึกษา ศาสนาและวัฒนธรรม ม.1</small>การเป็นเยาวชนที่ดี (KWL)</h2>
     <div class="facts"><span><b>${EB.n}</b>หน้า</span><span><b>${EB.toc.length}</b>หมวดในสารบัญ</span><span><b>1</b>ชั่วโมง</span><span><b>KWL</b>เครื่องมือสอนคิด</span></div>`};
 const EB_EXTRA={
   plan:()=>`<div class="sec-title">สื่อที่เกี่ยวข้องกับแผนการจัดการเรียนรู้นี้</div>
     <div class="vgrid">${YTV.map(ytCard).join('')}${vidCard(VIDEOS[0],0)}</div>`};
 const EB_PAGER={
-  plan:`<nav class="pager"><button data-nav="awards"><small>← หัวข้อที่ 5</small><span>รางวัลและกิจกรรม</span></button><button class="next" data-nav="home"><small>กลับสู่ →</small><span>หน้าแรก</span></button></nav>`};
+  book:`<nav class="pager"><button data-nav="home"><small>← กลับสู่</small><span>หน้าหลัก</span></button><button class="next" data-nav="self"><small>หัวข้อที่ 2 →</small><span>ด้านการปฏิบัติตน</span></button></nav>`,
+  plan:`<nav class="pager"><button data-nav="work"><small>← หัวข้อที่ 3</small><span>ด้านการปฏิบัติงาน</span></button><button class="next" data-nav="media"><small>หัวข้อที่ 5 →</small><span>สื่อการจัดการเรียนรู้</span></button></nav>`};
 function openEbook(k){
   killBook();EB=EBOOKS[k];current=0;document.body.dataset.domain=k;setSel(k);
   document.getElementById('main').classList.add('full');
@@ -1100,14 +1098,15 @@ function showDomain(d){
   document.body.dataset.domain=d;setSel(d);document.getElementById('main').classList.add('full');
   const s=domStats(d),x=d==='self'?1:2,ids=Object.keys(FOLDERS).filter(n=>FOLDERS[n].d===d);
   crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],[DNAME[d]]]);
-  const nxt=d==='self'?['work','ด้านที่ 2 →',DNAME.work]:['book','หัวข้อที่ 3 →','รูปเล่มรายงาน'];
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="${pad(x)}"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-${d}.png" alt="">
-    <div class="kick"><span class="g">ด้านที่ ${x}</span><span>การประเมินครั้งที่ 3</span></div>
+  const prv=d==='self'?['book','← หัวข้อที่ 1','รูปเล่มรายงาน']:['self','← หัวข้อที่ 2',DNAME.self];
+  const nxt=d==='self'?['work','หัวข้อที่ 3 →',DNAME.work]:['plan','หัวข้อที่ 4 →','แผนการจัดการเรียนรู้'];
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="${pad(x+1)}"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-${d}.png" alt="">
+    <div class="kick"><span class="g">หัวข้อที่ ${x+1}</span><span>ด้านที่ ${x} · การประเมินครั้งที่ 3</span></div>
     <h2><small>การประเมินด้านที่ ${x}</small>${DNAME[d]}</h2>
     <div class="facts"><span><b>${s.f}</b>องค์ประกอบ</span><span><b>${s.i}</b>ตัวชี้วัด</span><span><b>${s.p}</b>ภาพหลักฐาน</span></div></div>
     <div class="sec-title">เลือกแฟ้มที่ต้องการดู</div>
     <div class="fgrid">${ids.map(n=>{const f=FOLDERS[n];return `<button class="fcard" data-f="${n}"><img src="img/cover${n}.jpg" alt="" loading="lazy"><span><span class="fn">แฟ้มที่ ${n} · องค์ประกอบที่ ${f.k}</span><h3>${f.name}</h3><span class="fm">${DATA[n].length} ตัวชี้วัด · ${countImgs(n)} ภาพหลักฐาน</span></span><span class="go">${ICO_GO}</span></button>`}).join('')}</div>
-    <nav class="pager"><button data-nav="menu"><small>← กลับ</small><span>เลือกหัวข้อ</span></button><button class="next" data-nav="${nxt[0]}"><small>${nxt[1]}</small><span>${nxt[2]}</span></button></nav></div>`;
+    <nav class="pager"><button data-nav="${prv[0]}"><small>${prv[1]}</small><span>${prv[2]}</span></button><button class="next" data-nav="${nxt[0]}"><small>${nxt[1]}</small><span>${nxt[2]}</span></button></nav></div>`;
 }
 function openFolder(n){
   current=n;const d=FOLDERS[n].d;document.body.dataset.domain=d;setSel(d);
@@ -1136,8 +1135,8 @@ function openAwards(){
   awFilter='all';
   const cnt=k=>AW.filter(a=>k==='award'?a.award:a.cat===k).length;
   const awards=AW.map((a,i)=>[a,i]).filter(([a])=>a.award);
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="05"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-awards.png" alt="">
-    <div class="kick"><span class="g">หัวข้อที่ 5</span><span>การประเมินครั้งที่ 3</span></div>
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="06"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-awards.png" alt="">
+    <div class="kick"><span class="g">หัวข้อที่ 6</span><span>การประเมินครั้งที่ 3</span></div>
     <h2><small>ผลงานระหว่างการเตรียมความพร้อม</small>รางวัลและกิจกรรม</h2>
     <div class="facts"><span><b>${AWN}</b>รางวัล</span><span><b>${cnt('cert')}</b>เกียรติบัตร</span><span><b>${AW.length}</b>กิจกรรม</span><span><b>${AWP}</b>ภาพ</span></div></div>
     <div class="sec-title">ผลงานภาพยนตร์สั้น</div>
@@ -1151,7 +1150,7 @@ function openAwards(){
       ${Object.keys(AWCAT).map(k=>`<button data-flt="${k}">${AWCAT[k]}<small>${cnt(k)}</small></button>`).join('')}
     </div>
     <div class="agrid" id="agrid"></div>
-    <nav class="pager"><button data-nav="media"><small>← หัวข้อที่ 4</small><span>สื่อการจัดการเรียนรู้</span></button><button class="next" data-nav="plan"><small>หัวข้อที่ 6 →</small><span>แผนการจัดการเรียนรู้</span></button></nav></div>`;
+    <nav class="pager"><button data-nav="media"><small>← หัวข้อที่ 5</small><span>สื่อการจัดการเรียนรู้</span></button><button class="next" data-nav="home"><small>กลับสู่ →</small><span>หน้าหลัก</span></button></nav></div>`;
   renderAwGrid();ytThumbs();
 }
 
@@ -1169,8 +1168,8 @@ function openMedia(){
   crumbs([['หน้าแรก','home'],['เลือกหัวข้อ','menu'],['สื่อการจัดการเรียนรู้']]);
   mFilter='all';
   const np=MEDIA.reduce((a,m)=>a+m.photos.length,0);
-  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="04"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-media.png" alt="">
-    <div class="kick"><span class="g">หัวข้อที่ 4</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
+  document.getElementById('view').innerHTML=`<div class="fade"><div class="banner compact" data-num="05"><span class="shine" aria-hidden="true"></span><img class="b-mascot" src="img/mascot-media.png" alt="">
+    <div class="kick"><span class="g">หัวข้อที่ 5</span><span>กลุ่มสาระสังคมศึกษา ศาสนาและวัฒนธรรม</span></div>
     <h2><small>นวัตกรรมและสื่อที่ใช้ในชั้นเรียน</small>สื่อการจัดการเรียนรู้</h2>
     <div class="facts"><span><b>5</b>สื่อเชิงโต้ตอบและเกม</span><span><b>${VIDEOS.length+YTV.length}</b>วิดีโอการสอน</span><span><b>${DECKS.length}</b>ชุดสไลด์ (${NSLIDES} หน้า)</span><span><b>${MEDIA.length}</b>สื่อและกิจกรรมอื่น ๆ</span></div></div>
     <div class="sec-title">สื่อเชิงโต้ตอบและเกมการเรียนรู้</div>
@@ -1212,7 +1211,7 @@ function openMedia(){
       ${Object.keys(MTYPE).map(k=>`<button data-mf="${k}">${MTYPE[k]}<small>${MEDIA.filter(m=>m.t===k).length}</small></button>`).join('')}
     </div>
     <div class="mgrid" id="mgrid"></div>
-    <nav class="pager"><button data-nav="book"><small>← หัวข้อที่ 3</small><span>รูปเล่มรายงาน</span></button><button class="next" data-nav="awards"><small>หัวข้อที่ 5 →</small><span>รางวัลและกิจกรรม</span></button></nav></div>`;
+    <nav class="pager"><button data-nav="plan"><small>← หัวข้อที่ 4</small><span>แผนการจัดการเรียนรู้</span></button><button class="next" data-nav="awards"><small>หัวข้อที่ 6 →</small><span>รางวัลและกิจกรรม</span></button></nav></div>`;
   renderMGrid();ytThumbs();
 }
 
@@ -1276,12 +1275,12 @@ const OI={
 const OLINK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>';
 const dsum=(a,b,f)=>{let s=0;for(let n=a;n<=b;n++)s+=f(n);return s};
 const ORB=[
- {d:'self',n:1,c:'#6f8bff',ic:'user',kind:'องค์ประกอบที่ 1',name:'ด้านการปฏิบัติตน',desc:DDESC.self,facts:()=>[[6,'แฟ้ม'],[dsum(1,6,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(1,6,countImgs),'ภาพหลักฐาน']],rel:['work','awards']},
- {d:'work',n:2,c:'#ff6b7d',ic:'brief',kind:'องค์ประกอบที่ 2',name:'ด้านการปฏิบัติงาน',desc:DDESC.work,facts:()=>[[6,'แฟ้ม'],[dsum(7,12,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(7,12,countImgs),'ภาพหลักฐาน']],rel:['self','plan','media']},
- {d:'book',n:3,c:'#e2bf5e',ic:'book',kind:'E-book',name:'รูปเล่มรายงาน',desc:'รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3 เปิดอ่านแบบพลิกหน้า',facts:()=>[[BOOK_PAGES,'หน้า'],[TOC.length,'หมวดในสารบัญ']],rel:['self','work']},
- {d:'media',n:4,c:'#a98bff',ic:'media',kind:'นวัตกรรมการสอน',name:'สื่อการจัดการเรียนรู้',desc:'สื่อ 3 มิติ เกมตอบคำถาม วิดีโอการสอน และสไลด์ประกอบการสอนที่ครูผลิตและใช้ในชั้นเรียน',facts:()=>[[5,'สื่อโต้ตอบ/เกม'],[VIDEOS.length+YTV.length,'วิดีโอ'],[DECKS.length,'ชุดสไลด์']],rel:['plan','awards','work']},
- {d:'awards',n:5,c:'#3fd3a6',ic:'trophy',kind:'ผลงานและเกียรติบัตร',name:'รางวัลและกิจกรรม',desc:'รางวัล เกียรติบัตร และภาพกิจกรรมระหว่างการเตรียมความพร้อม รวมถึงภาพยนตร์สั้นชนะเลิศอันดับ 1 สพม.หนองคาย',facts:()=>[[AWN,'รางวัล'],[AW.length,'กิจกรรม'],[AWP,'ภาพ']],rel:['self','media']},
- {d:'plan',n:6,c:'#ff9f4a',ic:'plan',kind:'E-book',name:'แผนการจัดการเรียนรู้',desc:'แผนการจัดการเรียนรู้ เรื่อง การเป็นเยาวชนที่ดี (KWL) สังคมศึกษา ศาสนาและวัฒนธรรม ม.1',facts:()=>[[PLAN_PAGES,'หน้า'],[PLAN_TOC.length,'หมวดในสารบัญ']],rel:['media','work']}];
+ {d:'book',n:1,c:'#e2bf5e',ic:'book',kind:'E-book',name:'รูปเล่มรายงาน',desc:'รูปเล่มรายงานผลการปฏิบัติงานการเตรียมความพร้อมและพัฒนาอย่างเข้ม ครั้งที่ 3 เปิดอ่านแบบพลิกหน้า',facts:()=>[[BOOK_PAGES,'หน้า'],[TOC.length,'หมวดในสารบัญ']],rel:['self','work']},
+ {d:'self',n:2,c:'#6f8bff',ic:'user',kind:'องค์ประกอบที่ 1',name:'ด้านการปฏิบัติตน',desc:DDESC.self,facts:()=>[[6,'แฟ้ม'],[dsum(1,6,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(1,6,countImgs),'ภาพหลักฐาน']],rel:['work','awards']},
+ {d:'work',n:3,c:'#ff6b7d',ic:'brief',kind:'องค์ประกอบที่ 2',name:'ด้านการปฏิบัติงาน',desc:DDESC.work,facts:()=>[[6,'แฟ้ม'],[dsum(7,12,n=>DATA[n].length),'ตัวชี้วัด'],[dsum(7,12,countImgs),'ภาพหลักฐาน']],rel:['self','plan','media']},
+ {d:'plan',n:4,c:'#ff9f4a',ic:'plan',kind:'E-book',name:'แผนการจัดการเรียนรู้',desc:'แผนการจัดการเรียนรู้ เรื่อง การเป็นเยาวชนที่ดี (KWL) สังคมศึกษา ศาสนาและวัฒนธรรม ม.1',facts:()=>[[PLAN_PAGES,'หน้า'],[PLAN_TOC.length,'หมวดในสารบัญ']],rel:['media','work']},
+ {d:'media',n:5,c:'#a98bff',ic:'media',kind:'นวัตกรรมการสอน',name:'สื่อการจัดการเรียนรู้',desc:'สื่อ 3 มิติ เกมตอบคำถาม วิดีโอการสอน และสไลด์ประกอบการสอนที่ครูผลิตและใช้ในชั้นเรียน',facts:()=>[[5,'สื่อโต้ตอบ/เกม'],[VIDEOS.length+YTV.length,'วิดีโอ'],[DECKS.length,'ชุดสไลด์']],rel:['plan','awards','work']},
+ {d:'awards',n:6,c:'#3fd3a6',ic:'trophy',kind:'ผลงานและเกียรติบัตร',name:'รางวัลและกิจกรรม',desc:'รางวัล เกียรติบัตร และภาพกิจกรรมระหว่างการเตรียมความพร้อม รวมถึงภาพยนตร์สั้นชนะเลิศอันดับ 1 สพม.หนองคาย',facts:()=>[[AWN,'รางวัล'],[AW.length,'กิจกรรม'],[AWP,'ภาพ']],rel:['self','media']}];
 const ORBI=Object.fromEntries(ORB.map((o,i)=>[o.d,i]));
 let oAng=0,oTarget=null,oActive=-1,oRaf=0,oLast=0,oR=200,oBuilt=false,oSide=true;
 const oReduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1377,7 +1376,7 @@ let txSub='';
 function labelFor(h){let t='',s='';const m=h.match(/^f(\d+)$/);
   if(h==='home'){t='แฟ้มผลงาน 6 หัวข้อ';s=document.body.dataset.page==='intro'?'เข้าสู่แฟ้มผลงาน':'กลับสู่หน้าหลัก'}else if(h==='intro'){t='รายงานผลการปฏิบัติงาน';s='ครูผู้ช่วย ครั้งที่ 3'}else if(h==='menu'){t='เลือกหัวข้อ';s='แฟ้มผลงานการประเมินครั้งที่ 3'}
   else if(m&&FOLDERS[m[1]]){t=FOLDERS[m[1]].name;s=`${DNAME[FOLDERS[m[1]].d]} · แฟ้มที่ ${m[1]}`}
-  else if(DNAME[h]){t=DNAME[h];s=({self:'หัวข้อที่ 1',work:'หัวข้อที่ 2',book:'หัวข้อที่ 3 · E-book',media:'หัวข้อที่ 4',awards:'หัวข้อที่ 5',plan:'หัวข้อที่ 6 · E-book'})[h]||''}
+  else if(DNAME[h]){t=DNAME[h];s=({book:'หัวข้อที่ 1 · E-book',self:'หัวข้อที่ 2',work:'หัวข้อที่ 3',plan:'หัวข้อที่ 4 · E-book',media:'หัวข้อที่ 5',awards:'หัวข้อที่ 6'})[h]||''}
   if(txSub){s=txSub;txSub=''}return [t,s]}
 function stxTop(){const tb=document.querySelector('.top');document.documentElement.style.setProperty('--stx-top',(tb?tb.getBoundingClientRect().bottom:0)+'px')}
 function nav(h){const fromHome=document.body.dataset.page==='home',toHome=h==='home';
